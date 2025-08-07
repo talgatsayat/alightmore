@@ -1,0 +1,2397 @@
+#
+# #%L
+# This file is part of "Apromore Core".
+# %%
+# Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+# %%
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Lesser Public License for more details.
+#
+# You should have received a copy of the GNU General Lesser Public
+# License along with this program.  If not, see
+# <http://www.gnu.org/licenses/lgpl-3.0.html>.
+# #L%
+#
+
+databaseChangeLog:
+  - changeSet:
+      id: 20200916094800
+      author: Frank.ma
+      comment: "insert data into table"
+      changes:
+      - insert:
+          tableName: usermetadata_type
+          columns:
+          - column:
+              name: id
+              value: "1"
+          - column:
+              name: type
+              value: "FILTER"
+          - column:
+               name: version
+               value: "1"
+          - column:
+               name: is_valid
+               value: "1"
+
+      - insert:
+           tableName: usermetadata_type
+           columns:
+           - column:
+               name: id
+               value: "2"
+           - column:
+               name: type
+               value: "DASHBOARD"
+           - column:
+                name: version
+                value: "1"
+           - column:
+                name: is_valid
+                value: "1"
+
+      - insert:
+           tableName: usermetadata_type
+           columns:
+           - column:
+               name: id
+               value: "3"
+           - column:
+               name: type
+               value: "CSV_IMPORTER"
+           - column:
+                name: version
+                value: "1"
+           - column:
+                name: is_valid
+                value: "1"
+
+      - insert:
+           tableName: usermetadata_type
+           columns:
+           - column:
+               name: id
+               value: "4"
+           - column:
+               name: type
+               value: "LOG_ANIMATION"
+           - column:
+                name: version
+                value: "1"
+           - column:
+                name: is_valid
+                value: "1"
+        
+      - insert:
+           tableName: usermetadata_type
+           columns:
+           - column:
+               name: id
+               value: "5"
+           - column:
+               name: type
+               value: "DASH_TEMPLATE"
+           - column:
+                name: version
+                value: "1"
+           - column:
+                name: is_valid
+                value: "1"
+
+  - changeSet:
+      id:  20201124091000
+      author:  frankma
+      changes:
+        -  update:
+             columns:
+               -  column:
+                    name:  revision
+                    value: 1
+             tableName:  usermetadata
+             where:  revision is null
+
+        - update:
+            columns:
+              - column:
+                  name:  name
+                  value: "My dashboard"
+            tableName:  usermetadata
+            where:  name is null and type_id = 2
+
+        - update:
+            columns:
+              - column:
+                  name:  name
+                  valueComputed: substring(content,10,instr(content,'\",\"criteria')-10)
+            tableName:  usermetadata
+            where:  name is null and type_id = 1
+
+  - changeSet:
+      id:  20201127091000
+      author:  frankma
+      changes:
+        - insert:
+            tableName: usermetadata_type
+            columns:
+              - column:
+                  name: id
+                  value: "6"
+              - column:
+                  name: type
+                  value: "SIMULATOR"
+              - column:
+                  name: version
+                  value: "1"
+              - column:
+                  name: is_valid
+                  value: "1"
+
+
+  - changeSet:
+      id:  20201217141000
+      author:  frankma
+      changes:
+        - delete:
+            tableName: native_type
+            where: id IN (1, 2, 3, 4, 6)
+
+  - changeSet:
+      id:  20210209114000
+      author:  frankma
+      context: MYSQL
+      changes:
+        - delete:
+            tableName: usermetadata
+            where: STR_TO_DATE(created_time,'%d-%m-%Y %H:%i:%s') < '2021-02-10' AND type_id = 3
+
+  - changeSet:
+      id:  20210409080300
+      author:  frankma
+      changes:
+        - delete:
+            tableName: group_usermetadata
+
+  - changeSet:
+      id:  20210413181000
+      author:  frankma
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "9"
+              - column:
+                  name: row_guid
+                  value: "0ae1fd05-680e-44fa-993f-de62bba90e56"
+              - column:
+                  name: role_name
+                  value: "ROLE_INTEGRATOR"
+              - column:
+                  name: description
+                  value: "Allowed access to all log management endpoints"
+
+  - changeSet:
+      id:  20210907091000
+      author:  frankma
+      changes:
+        - insert:
+            tableName: usermetadata_type
+            columns:
+              - column:
+                  name: id
+                  value: "7"
+              - column:
+                  name: type
+                  value: "FILTER_TEMPLATE"
+              - column:
+                  name: version
+                  value: "1"
+              - column:
+                  name: is_valid
+                  value: "1"
+        - insert:
+            tableName: usermetadata_type
+            columns:
+              - column:
+                  name: id
+                  value: "8"
+              - column:
+                  name: type
+                  value: "PERSPECTIVE_TAG"
+              - column:
+                  name: version
+                  value: "1"
+              - column:
+                  name: is_valid
+                  value: "1"
+
+  - changeSet:
+      id: 20211201134000
+      author: janeh
+      comment: "migrate user role to analyst"
+      changes:
+        - delete:
+            tableName: user_role
+            where: roleid = 2 AND userid IN (
+              SELECT userid
+              FROM (SELECT * FROM `user_role`) AS user_role_copy
+              WHERE roleid IN (2, 4)
+              GROUP BY userid
+              HAVING COUNT(roleid) > 1
+              );
+
+        - update:
+            tableName: user_role
+            columns:
+              - column:
+                  name: roleid
+                  value: 4
+            where: roleid = 2
+
+        - delete:
+            tableName: role
+            where: id = 2
+
+  - changeSet:
+      id: 20211201151600
+      author: janeh
+      comment: "add permissions"
+      changes:
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "5"
+              - column:
+                  name: row_guid
+                  value: "41877a02-722d-43f7-b47b-75c544013f0f"
+              - column:
+                  name: permission_name
+                  value: "Create pipeline"
+              - column:
+                  name: permission_description
+                  value: "Create data pipelines"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "6"
+              - column:
+                  name: row_guid
+                  value: "a5e0c805-0dec-469c-8bda-1d279e751bd7"
+              - column:
+                  name: permission_name
+                  value: "Manage pipelines"
+              - column:
+                  name: permission_description
+                  value: "View and modify data pipelines"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "7"
+              - column:
+                  name: row_guid
+                  value: "e673de93-0646-447e-94fe-98b095290bfe"
+              - column:
+                  name: permission_name
+                  value: "Create model"
+              - column:
+                  name: permission_description
+                  value: "Create bpmn models"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "8"
+              - column:
+                  name: row_guid
+                  value: "09c77c0b-6aef-46b2-ad87-e0742092e3ad"
+              - column:
+                  name: permission_name
+                  value: "Discover model"
+              - column:
+                  name: permission_description
+                  value: "Discover model from log"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "9"
+              - column:
+                  name: row_guid
+                  value: "df0e4630-2019-41aa-980d-73eb08e612ac"
+              - column:
+                  name: permission_name
+                  value: "Edit model"
+              - column:
+                  name: permission_description
+                  value: "Edit and publish models"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "10"
+              - column:
+                  name: row_guid
+                  value: "0159eb6c-226e-4c85-8098-b3538f0be1b8"
+              - column:
+                  name: permission_name
+                  value: "View models"
+              - column:
+                  name: permission_description
+                  value: "View models"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "11"
+              - column:
+                  name: row_guid
+                  value: "03c2ff79-738d-47cb-9386-0cc745604a75"
+              - column:
+                  name: permission_name
+                  value: "Filter log"
+              - column:
+                  name: permission_description
+                  value: "Create, edit and delete filters on logs"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "12"
+              - column:
+                  name: row_guid
+                  value: "bc0253f4-5ae1-44a6-83e2-bbe63f239dd7"
+              - column:
+                  name: permission_name
+                  value: "Animate logs"
+              - column:
+                  name: permission_description
+                  value: "Animate logs"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "13"
+              - column:
+                  name: row_guid
+                  value: "86a5eea2-57f8-4ba4-a88c-e007f4b18ab9"
+              - column:
+                  name: permission_name
+                  value: "Compare models"
+              - column:
+                  name: permission_description
+                  value: "View differences between two models"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "14"
+              - column:
+                  name: row_guid
+                  value: "76d044bd-52b9-4261-bc2b-969656f0bd39"
+              - column:
+                  name: permission_name
+                  value: "Check conformance"
+              - column:
+                  name: permission_description
+                  value: "View differences between a model and a log"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "15"
+              - column:
+                  name: row_guid
+                  value: "09e6f182-a2af-448e-a7f6-6d02a0477360"
+              - column:
+                  name: permission_name
+                  value: "Simulate model"
+              - column:
+                  name: permission_description
+                  value: "Simulate a model"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "16"
+              - column:
+                  name: row_guid
+                  value: "9eabfb63-8e39-4e03-803d-c94dbe431059"
+              - column:
+                  name: permission_name
+                  value: "View dashboards"
+              - column:
+                  name: permission_description
+                  value: "View mode for dashboards"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "17"
+              - column:
+                  name: row_guid
+                  value: "a1c46230-c5c5-420b-99a2-43be5fbabd3a"
+              - column:
+                  name: permission_name
+                  value: "Edit dashboards"
+              - column:
+                  name: permission_description
+                  value: "Create and edit dashboards"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "18"
+              - column:
+                  name: row_guid
+                  value: "7e1f8cc2-7532-406c-b106-3bf7095047dc"
+              - column:
+                  name: permission_name
+                  value: "Merge models"
+              - column:
+                  name: permission_description
+                  value: "Merge multiple models"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "19"
+              - column:
+                  name: row_guid
+                  value: "7c0f5dc2-7d39-456e-b1cb-139bb030ee98"
+              - column:
+                  name: permission_name
+                  value: "Search similar models"
+              - column:
+                  name: permission_description
+                  value: "Search for similar models"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "20"
+              - column:
+                  name: row_guid
+                  value: "db2c4517-c9c7-421e-bccf-277baf2fdb72"
+              - column:
+                  name: permission_name
+                  value: "Manage calendars"
+              - column:
+                  name: permission_description
+                  value: "Create, view, edit and delete calendars"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "5"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "6"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "7"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "8"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "9"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "11"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "14"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "15"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "17"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "18"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "19"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "20"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "5"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "6"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "7"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "8"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "9"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "11"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "14"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "15"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "17"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "18"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "19"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "20"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "8"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "11"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "15"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "17"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "20"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "7"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "9"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "3"
+              - column:
+                  name: permissionid
+                  value: "16"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "8"
+              - column:
+                  name: permissionid
+                  value: "16"
+
+  - changeSet:
+      id: 20211203144900
+      author: janeh
+      comment: "add viewer (models) role"
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "10"
+              - column:
+                  name: row_guid
+                  value: "dd28764a-d9cd-4905-aa23-011fb12c4fd8"
+              - column:
+                  name: role_name
+                  value: "ROLE_VIEWER_MODELS"
+              - column:
+                  name: description
+                  value: "Allowed access to view models"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "10"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "10"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "10"
+              - column:
+                  name: permissionid
+                  value: "19"
+  - changeSet:
+      id: 20211207160500
+      author: janeh
+      comment: "change observer to viewer"
+      changes:
+        - update:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: "ROLE_VIEWER"
+            where: role_name = 'ROLE_OBSERVER'
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "21"
+              - column:
+                  name: row_guid
+                  value: "c4f70933-dd23-4ccb-bdcd-85681124d34c"
+              - column:
+                  name: permission_name
+                  value: "View filter"
+              - column:
+                  name: permission_description
+                  value: "View filters"
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "22"
+              - column:
+                  name: row_guid
+                  value: "f404c3e9-5a4d-4d4e-9d6b-0aa2e806c7bc"
+              - column:
+                  name: permission_name
+                  value: "View discover model"
+              - column:
+                  name: permission_description
+                  value: "Open process discoverer in view mode"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "22"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "21"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "16"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "19"
+
+  - changeSet:
+      id: 20211210090500
+      author: frankma
+      comment: "delete all data in role and role_permission table"
+      changes:
+        - sql:
+           dbms: '!h2, mysql'
+           splitStatements: true
+           sql: SET FOREIGN_KEY_CHECKS=0; DELETE FROM `role`; DELETE FROM `role_permission`; SET FOREIGN_KEY_CHECKS=1;
+           stripComments: false
+        - sql:
+           dbms: 'h2, !mysql'
+           splitStatements: true
+           sql: SET REFERENTIAL_INTEGRITY FALSE; DELETE FROM role; DELETE FROM role_permission; SET REFERENTIAL_INTEGRITY TRUE;
+           stripComments: false
+
+  - changeSet:
+      id:  20211210100500
+      author:  frankma
+      comment: "initialise data of role table"
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: row_guid
+                  value: "80da507e-cdd7-40f4-a9f8-b2d2edb12856"
+              - column:
+                  name: role_name
+                  value: "ROLE_ADMIN"
+              - column:
+                  name: description
+                  value: "Ultimate power to administer other users"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: row_guid
+                  value: "72503ce0-d7cd-47b3-a33c-1b741d7599a1"
+              - column:
+                  name: role_name
+                  value: "ROLE_MANAGER"
+              - column:
+                  name: description
+                  value: "Allowed to administer folders models and event logs"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "4"
+              - column:
+                  name: row_guid
+                  value: "e0ae8c02-bfe0-11ea-992a-17a70e2c7d0f"
+              - column:
+                  name: role_name
+                  value: "ROLE_ANALYST"
+              - column:
+                  name: description
+                  value: "Allowed access to all tools except predictive monitoring training"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "5"
+              - column:
+                  name: row_guid
+                  value: "43fbd3c8-bfe1-11ea-9694-abeaa8ed1c0f"
+              - column:
+                  name: role_name
+                  value: "ROLE_VIEWER"
+              - column:
+                  name: description
+                  value: "Allowed access to all tools in read-only mode"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "6"
+              - column:
+                  name: row_guid
+                  value: "4ff46cbc-bfe1-11ea-abec-aba9c1ea1178"
+              - column:
+                  name: role_name
+                  value: "ROLE_DESIGNER"
+              - column:
+                  name: description
+                  value: "Allowed access to the BPMN editor"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "7"
+              - column:
+                  name: row_guid
+                  value: "596fcfd4-bfe1-11ea-8564-4f9db22c941e"
+              - column:
+                  name: role_name
+                  value: "ROLE_DATA_SCIENTIST"
+              - column:
+                  name: description
+                  value: "Allowed access to all tools including predictive monitoring training"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "8"
+              - column:
+                  name: row_guid
+                  value: "64e734a6-bfe1-11ea-b4cf-2bed596c2920"
+              - column:
+                  name: role_name
+                  value: "ROLE_OPERATIONS"
+              - column:
+                  name: description
+                  value: "Allowed access to the predictive monitoring dashboard (runtime)"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "9"
+              - column:
+                  name: row_guid
+                  value: "0ae1fd05-680e-44fa-993f-de62bba90e56"
+              - column:
+                  name: role_name
+                  value: "ROLE_INTEGRATOR"
+              - column:
+                  name: description
+                  value: "Allowed access to all log management endpoints"
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "10"
+              - column:
+                  name: row_guid
+                  value: "dd28764a-d9cd-4905-aa23-011fb12c4fd8"
+              - column:
+                  name: role_name
+                  value: "ROLE_VIEWER_MODELS"
+              - column:
+                  name: description
+                  value: "Allowed access to view models"
+  - changeSet:
+      id:  20211210110500
+      author:  frankma
+      comment: "initialise data of role_permission table"
+      changes:
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "1"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "2"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "3"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "4"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "5"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "6"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "7"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "8"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "9"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "11"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "14"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "15"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "17"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "18"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "19"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "20"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "3"
+              - column:
+                  name: permissionid
+                  value: "3"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "3"
+              - column:
+                  name: permissionid
+                  value: "16"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "5"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "6"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "7"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "8"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "9"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "11"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "14"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "15"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "17"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "18"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "19"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "20"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "16"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "19"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "21"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "22"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "7"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "9"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "8"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "11"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "12"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "15"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "17"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "20"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "8"
+              - column:
+                  name: permissionid
+                  value: "16"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "10"
+              - column:
+                  name: permissionid
+                  value: "10"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "10"
+              - column:
+                  name: permissionid
+                  value: "13"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "10"
+              - column:
+                  name: permissionid
+                  value: "19"
+
+  - changeSet:
+      id: 20211213140400
+      author: janeh
+      comment: "migrate existing users to admin or analyst role"
+      changes:
+        - sql:
+            dbms: 'h2, mysql'
+            sql: INSERT INTO user_role
+              SELECT DISTINCT 4 AS roleid, userid
+              FROM user_role
+              WHERE userid NOT IN (
+              SELECT DISTINCT userid
+              FROM user_role
+              WHERE roleid IN (1, 4, 9)
+              );
+        - delete:
+            tableName: user_role
+            where: roleid NOT IN (1, 4, 9);
+        - delete:
+            tableName: user_role
+            where: userid IN (
+              SELECT userid
+              FROM (SELECT * FROM user_role) AS user_role_copy
+              WHERE roleid = 1
+              ) AND roleid NOT IN (1, 9);
+  - changeSet:
+      id: 20220125105200
+      author: janeh
+      comment: "add login permission"
+      changes:
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "23"
+              - column:
+                  name: row_guid
+                  value: "d7ff28d6-7cdc-11ec-90d6-0242ac120003"
+              - column:
+                  name: permission_name
+                  value: "Portal login"
+              - column:
+                  name: permission_description
+                  value: "Log in to Apromore Portal"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "23"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "3"
+              - column:
+                  name: permissionid
+                  value: "23"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "23"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "5"
+              - column:
+                  name: permissionid
+                  value: "23"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "23"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "7"
+              - column:
+                  name: permissionid
+                  value: "23"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "8"
+              - column:
+                  name: permissionid
+                  value: "23"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "10"
+              - column:
+                  name: permissionid
+                  value: "23"
+  - changeSet:
+      id: 20220125160600
+      author: janeh
+      comment: "change admin to super admin"
+      changes:
+        - update:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: "ROLE_SUPER_ADMIN"
+            where: id = 1
+  - changeSet:
+      id: 20220201104100
+      author: janeh
+      comment: "add new admin role"
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "11"
+              - column:
+                  name: row_guid
+                  value: "381bba7a-82ed-11ec-a8a3-0242ac120002"
+              - column:
+                  name: role_name
+                  value: "ROLE_ADMIN"
+              - column:
+                  name: description
+                  value: "Allowed access to manage users and access rights"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "11"
+              - column:
+                  name: permissionid
+                  value: "1"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "11"
+              - column:
+                  name: permissionid
+                  value: "2"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "11"
+              - column:
+                  name: permissionid
+                  value: "3"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "11"
+              - column:
+                  name: permissionid
+                  value: "4"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "11"
+              - column:
+                  name: permissionid
+                  value: "23"
+  - changeSet:
+      id: 20220201144000
+      author: janeh
+      comment: "add data engineer role"
+      changes:
+        - insert:
+            tableName: role
+            columns:
+              - column:
+                  name: id
+                  value: "12"
+              - column:
+                  name: row_guid
+                  value: "fd433676-830f-11ec-a8a3-0242ac120002"
+              - column:
+                  name: role_name
+                  value: "ROLE_DATA_ENGINEER"
+              - column:
+                  name: description
+                  value: "Allowed access to create and manage data pipelines"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "12"
+              - column:
+                  name: permissionid
+                  value: "5"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "12"
+              - column:
+                  name: permissionid
+                  value: "6"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "12"
+              - column:
+                  name: permissionid
+                  value: "23"
+  - changeSet:
+      id: 20220216164800
+      author: janeh
+      comment: "remove calendars not associated with a user"
+      changes:
+        - delete:
+            tableName: custom_calendar
+            where: created_by IS NULL OR owner IS NULL
+  - changeSet:
+      id: 20220224112500
+      author: janeh
+      comment: "add publish model permission"
+      changes:
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "24"
+              - column:
+                  name: row_guid
+                  value: "607b5dfe-9508-11ec-b909-0242ac120002"
+              - column:
+                  name: permission_name
+                  value: "Publish models"
+              - column:
+                  name: permission_description
+                  value: "Create and revoke publish model links"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "24"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "4"
+              - column:
+                  name: permissionid
+                  value: "24"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "24"
+  - changeSet:
+      id: 20220301150700
+      author: janeh
+      comment: "add manage access rights permission"
+      changes:
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "25"
+              - column:
+                  name: row_guid
+                  value: "165962fc-9913-11ec-b909-0242ac120002"
+              - column:
+                  name: permission_name
+                  value: "Manage access rights"
+              - column:
+                  name: permission_description
+                  value: "Manage access rights for artifacts"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "25"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "11"
+              - column:
+                  name: permissionid
+                  value: "25"
+  - changeSet:
+      id:  20220321091000
+      author:  frankma
+      changes:
+        - insert:
+            tableName: usermetadata_type
+            columns:
+              - column:
+                  name: id
+                  value: "9"
+              - column:
+                  name: type
+                  value: "COST_TABLE"
+              - column:
+                  name: version
+                  value: "1"
+              - column:
+                  name: is_valid
+                  value: "1"
+  - changeSet:
+      id:  20220325144900
+      author:  janeh
+      comment: "update permission names"
+      changes:
+        -  update:
+             columns:
+               -  column:
+                    name: permission_name
+                    value: "View users"
+             tableName: permission
+             where: id = 1
+        -  update:
+             columns:
+               -  column:
+                    name: permission_name
+                    value: "Edit users"
+             tableName: permission
+             where: id = 2
+        -  update:
+             columns:
+               -  column:
+                    name: permission_name
+                    value: "Edit groups"
+             tableName: permission
+             where: id = 3
+        -  update:
+             columns:
+               -  column:
+                    name: permission_name
+                    value: "Edit roles"
+             tableName: permission
+             where: id = 4
+  - changeSet:
+      id: 20220328105600
+      author: janeh
+      comment: "add rest api permission"
+      changes:
+        - insert:
+            tableName: permission
+            columns:
+              - column:
+                  name: id
+                  value: "26"
+              - column:
+                  name: row_guid
+                  value: "0decac8d-b9a2-4424-8174-aace22ba4f39"
+              - column:
+                  name: permission_name
+                  value: "Access rest apis"
+              - column:
+                  name: permission_description
+                  value: "Access to all rest apis"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "1"
+              - column:
+                  name: permissionid
+                  value: "26"
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "9"
+              - column:
+                  name: permissionid
+                  value: "26"
+  - changeSet:
+      id: 20220401093400
+      author: janeh
+      comment: "change super admin to superuser"
+      changes:
+        - update:
+            tableName: role
+            columns:
+              - column:
+                  name: role_name
+                  value: "ROLE_SUPERUSER"
+            where: id = 1
+
+  - changeSet:
+      id: 20220408161500
+      author: janeh
+      comment: "add analyst role to all users with only integrator role"
+      changes:
+        - sql:
+            dbms: 'h2, mysql'
+            sql: INSERT INTO user_role SELECT DISTINCT 4 AS roleid, userid
+              FROM user_role WHERE userid IN (
+              SELECT DISTINCT userid
+              FROM user_role WHERE roleid = 9
+              AND userid NOT IN (
+              SELECT userid
+              FROM user_role
+              WHERE roleid != 9
+              ));
+
+  - changeSet:
+      id: 20220411095800
+      author: janeh
+      comment: "remove integrator role from all users with superuser role"
+      changes:
+        - delete:
+            tableName: user_role
+            where: roleid = 9 AND userid IN (
+              SELECT userid
+              FROM (SELECT * FROM user_role) AS user_role_copy
+              WHERE roleid = 1
+              );
+
+  - changeSet:
+      id: 20220603152200
+      author: janeh
+      comment: "grant designer role simulate models permission"
+      changes:
+        - insert:
+            tableName: role_permission
+            columns:
+              - column:
+                  name: roleid
+                  value: "6"
+              - column:
+                  name: permissionid
+                  value: "15"
+
+  - changeSet:
+      id:  20220606090001
+      author:  lahirumahanama
+      changes:
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: type
+                  value: "CASE_ID"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: type
+                  value: "START_TIME"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: type
+                  value: "END_TIME"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "4"
+              - column:
+                  name: type
+                  value: "ACTIVITY"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "5"
+              - column:
+                  name: type
+                  value: "RESOURCE"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "6"
+              - column:
+                  name: type
+                  value: "ROLE"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "7"
+              - column:
+                  name: type
+                  value: "EVENT_ATTRIBUTE"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "8"
+              - column:
+                  name: type
+                  value: "CASE_ATTRIBUTE"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: attribute_type
+            columns:
+              - column:
+                  name: id
+                  value: "9"
+              - column:
+                  name: type
+                  value: "IGNORED_ATTRIBUTE"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+
+        - insert:
+            tableName: data_type
+            columns:
+              - column:
+                  name: id
+                  value: "1"
+              - column:
+                  name: type
+                  value: "STRING"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: data_type
+            columns:
+              - column:
+                  name: id
+                  value: "2"
+              - column:
+                  name: type
+                  value: "TIMESTAMP"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: data_type
+            columns:
+              - column:
+                  name: id
+                  value: "3"
+              - column:
+                  name: type
+                  value: "REAL"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()
+        - insert:
+            tableName: data_type
+            columns:
+              - column:
+                  name: id
+                  value: "4"
+              - column:
+                  name: type
+                  value: "INTEGER"
+              - column:
+                  name: created_timestamp
+                  value: NOW()
+              - column:
+                  name: updated_timestamp
+                  value: NOW()

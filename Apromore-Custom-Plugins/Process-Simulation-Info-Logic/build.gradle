@@ -1,0 +1,26 @@
+plugins {
+	id "checkstyle"
+	id "com.github.spotbugs" version "${spotbugsPluginVersion}"
+	id "jacoco"
+}
+
+apply from: 'config/checkstyle/checkstyle.gradle'
+apply from: 'config/spotbugs/spotbugs.gradle'
+apply from: 'config/jacoco/jacoco.gradle'
+
+group = 'org.apromore'
+version = '2.0.0'
+description = 'Process Simulation Info Logic'
+
+dependencies {
+	implementation project(':Apromore-Commons')
+	implementation project(':Apromore-Calendar')
+	implementation project(':Apromore-ProcessMining-Collection')
+	implementation project(':Apromore-Custom-Plugins:Log-Logic')
+	implementation project(':Apromore-Custom-Plugins:Process-Discoverer-Logic')
+	implementation project(':Apromore-Extras:OpenXES')
+	implementation project(':Apromore-Core-Components:Apromore-Manager')
+
+	implementation 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+}

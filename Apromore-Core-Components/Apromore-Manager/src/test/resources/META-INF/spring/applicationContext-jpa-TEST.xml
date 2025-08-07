@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+            http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+            http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa-1.1.xsd">
+
+    <context:annotation-config />
+    <context:spring-configured />
+    <context:component-scan base-package="org.apromore"/>
+
+    <jpa:repositories base-package="org.apromore.dao" repository-impl-postfix="CustomImpl" />
+
+    <!-- Setting up the Data Access details -->
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+    <jdbc:embedded-database id="dataSource" type="H2">
+        <jdbc:script location="file:src/test/resources/database/db-h2.sql"/>
+        <jdbc:script location="file:src/test/resources/database/db-data.sql"/>
+        <!--<jdbc:script location="classpath:*/**/db-h2.sql"/>-->
+        <!--<jdbc:script location="classpath:*/**/db-data.sql"/>-->
+    </jdbc:embedded-database>
+
+    <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="persistenceUnitName" value="TESTApromore" />
+        <property name="jpaDialect">
+            <bean class="org.springframework.orm.jpa.vendor.EclipseLinkJpaDialect"/>
+        </property>
+        <property name="jpaVendorAdapter">
+            <bean id="vendorAdaptor" class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter"
+                  p:generateDdl="false" p:database="H2" p:showSql="false"
+                  p:databasePlatform="org.eclipse.persistence.platform.database.H2Platform" />
+        </property>
+        <property name="jpaProperties">
+            <util:properties id="jpaProperties">
+                <prop key="showSql">false</prop>
+                <prop key="eclipselink.weaving">static</prop>
+                <prop key="eclipselink.query-results-cache">true</prop>
+                <prop key="eclipselink.jdbc.cache-statements">true</prop>
+                <prop key="eclipselink.persistence-context.persist-on-commit">true</prop>
+                <prop key="eclipselink.persistence-context.close-on-commit">true</prop>
+                <prop key="eclipselink.persistence-context.flush-mode">AUTO</prop>
+
+                <prop key="eclipselink.cache.shared.default">false</prop>
+                <prop key="eclipselink.cache.type.default">SOFT</prop>
+
+                <prop key="eclipselink.logging.level">OFF</prop>
+                <prop key="eclipselink.logging.level.sql">OFF</prop>
+                <prop key="eclipselink.logging.parameters">false</prop>
+            </util:properties>
+        </property>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate" >
+        <constructor-arg type="javax.sql.DataSource" ref="dataSource"/>
+    </bean>
+
+    <tx:annotation-driven  />
+
+    <bean id="cacheRepo" class="org.apromore.dao.jpa.CacheRepositoryImpl">
+        <property name="cacheName" value="xlog"/> <!-- cache name defined in ehcache.xml -->
+        <property name="ehCacheCacheManager" ref="ehCacheCacheManager"/>
+    </bean>
+
+    <bean id="ehCacheCacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager">
+        <property name="cacheManager" ref="ehcache"/>
+    </bean>
+
+    <bean id="ehcache"
+          class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+        <property name="configLocation" value="classpath:ehcache.xml"/>
+    </bean>
+
+</beans>

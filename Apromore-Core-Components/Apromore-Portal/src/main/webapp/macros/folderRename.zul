@@ -1,0 +1,51 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  Copyright (C) 2012 - 2017 Queensland University of Technology.
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<!-- editprocessdata window has EditDataOneProcess.java as a controller
+for editing purpose 
+and CreateProcessController.java for creating process purpose.
+-->
+
+<window width="500px" closable="false" position="center" mode="modal" title="${labels.file_renameFolder_text}" id="winFolderRename">
+    <vbox vflex="1">
+        <grid sclass="ap-grid ap-form">
+            <columns sizable="true">
+                <column width="30%"></column>
+                <column width="70%"></column>
+            </columns>
+            <rows>
+                <row tooltiptext="${labels.common_folderName_hint}">
+                    <label value="${labels.common_folderName_text}" width="100%"/>
+                    <textbox id="txtName" width="100%" constraint="${labels.common_nameConstraint_text}" submitByEnter="true" />
+                </row>
+                <row spans="3" sclass="ap-window-footer-actions">
+                    <div align="center">
+                        <button id="btnSave" label="${labels.common_ok_text}" iconSclass="z-icon-check-circle"></button>
+                        <button id="btnCancel" label="${labels.common_cancel_text}" iconSclass="z-icon-times-circle"></button>
+                        <button id="resetButton" label="${labels.common_reset_text}" iconSclass="z-icon-undo" />
+                    </div>
+                </row>
+            </rows>
+        </grid>
+    </vbox>
+</window>

@@ -1,0 +1,339 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  Copyright (C) 2012 - 2017 Queensland University of Technology.
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<?page title="${labels.brand_shortName} - ${labels.portal_title_text}" contentType="text/html;charset=UTF-8" ?>
+
+<?component name="ShortMessages" macroURI="~./macros/shortmessages.zul" ?>
+<?component name="Navigation" macroURI="~./macros/navigation.zul" ?>
+<?component name="SimpleSearch" macroURI="~./macros/simplesearch.zul" ?>
+<!--<?component name="Filter" macroURI="macros/filter/baseFilter.zul" ?>-->
+
+<?component name="DetailView" macroURI="~./macros/detail/baseDetail.zul" ?>
+<?component name="BaseListbox" macroURI="~./macros/listbox/baseListbox.zul" ?>
+<?component name="LangChooser" macroURI="~./macros/langChooser.zul" ?>
+
+
+<!-- must call this in the head -->
+<?link rel="shortcut icon" href="~./themes/${labels.theme}/common/img/brand/favicon.ico" ?>
+<?link rel="prefetch" href="~./themes/${labels.theme}/common/img/brand/loader.svg" ?>
+<?link rel="stylesheet" type="text/css" href="~./themes/ap/common/css/headload.css" ?>
+<?link rel="stylesheet" type="text/css" href="~./themes/${labels.theme}/common/css/index.css" ?>
+<?link rel="stylesheet" type="text/css" href="~./themes/${labels.theme}/portal/css/portal.css" ?>
+<?script src="~./themes/ap/common/js/index.js"?>
+<?script src="~./themes/ap/portal/js/portal.js" ?>
+
+<zk xmlns="http://www.zkoss.org/2005/zul"
+    xmlns:h="http://www.w3.org/1999/xhtml"
+    xmlns:ca="client/attribute"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.zkoss.org/2005/zul http://www.zkoss.org/2005/zul/zul.xsd"
+    xmlns:x="xhtml" xmlns:zk="zk">
+
+    <style src="~./css/cytoscape-context-menus.css"/>
+    <script type="text/javascript" src="~./libs/jquery/3.5.1/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="~./libs/tippy/6.2.7/popper.min.js"></script>
+    <script type="text/javascript" src="~./libs/tippy/6.2.7/tippy-bundle.umd.min.js"></script>
+    <script type="text/javascript" src="~./calendar/js/index.js"></script>
+    <style src="~./css/chiaroscuro.css"></style>
+    <style>
+        /* must be embedded here */
+        .ap-portal .z-north-body,
+        .ap-portal .z-south-body,
+        .ap-portal .z-west-body,
+        .ap-portal .z-center-body,
+        .ap-portal .z-east-body {
+        padding: 0 !important;
+        }
+
+        .ap-wrapper-process .z-vlayout-inner,
+        .ap-wrapper-process .z-window {
+        background-color: transparent;
+        width: 100% !important;
+        height: 100% !important;
+        }
+    </style>
+    <custom-attributes theme="${labels.theme}"/>
+
+    <style>
+        .custom-btn {
+        font-family: Arial, Sans-Serif;
+        font-size: 16px;
+        text-decoration: none;
+        /*text-shadow: -1px -1px 1px #616161;*/
+        position: relative;
+
+        -webkit-box-shadow: 0px 0px 0 #9a9a9a;
+        -moz-box-shadow: 0px 0px 0 #9a9a9a;
+        -webkit-transition: all 0.1s ease;
+        -moz-transition: all 0.1s ease;
+        padding: 0px;
+        width: 40px;
+        height: 100%;
+        }
+
+        .z-toolbarbutton-content {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        font-size: 12px;
+        font-weight: normal;
+        font-style: normal;
+        color: unset;
+        background-color: transparent;
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        -o-border-radius: 4px;
+        -ms-border-radius: 4px;
+        border-radius: 4px;
+        line-height: 18px;
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        white-space: nowrap;
+        }
+        .custom-window {
+        padding: 0;
+        margin: 0;
+        }
+        .z-window-content {
+        background-color: unset;
+        padding: 0;
+        margin: 0;
+        }
+
+        .z-paging {
+        background: unset;
+        }
+
+        .z-listbox-autopaging .z-listcell-content {
+        height: 32px;
+        min-height: 10px;
+        }
+
+        .z-treerow .z-treecell {
+        border-top: 0px;
+        }
+        .z-menubar {
+        border-top: unset;
+        }
+
+        /*.z-north-header, .z-south-header, .z-west-header, .z-center-header, .z-east-header {
+        padding: 4px 4px 4px;
+        }*/
+    </style>
+
+    <style> body { padding: 0} </style>
+    <style src="~./css/astyle.css"/>
+    <style>
+        .ap-portal-menu-buttons button {
+        background: transparent;
+        }
+        .ap-portal-menu-buttons button img {
+        visibility: hidden;
+        }
+    </style>
+
+    <script type="text/javascript">
+        window.onerror = function myErrorHandler(errorMsg, url, lineNumber) {
+            window.location.reload();
+        }
+
+        window.addEventListener('keydown', (evt) => {
+
+        evt = evt||window.event ;
+        var keyCode = evt.keyCode;
+        var target = evt.target || evt.srcElement;
+
+        if(evt.ctrlKey||evt.metaKey) {
+            if (target.tagName.toUpperCase() == 'INPUT') return;
+
+            if (keyCode==67 || keyCode==86 || keyCode==88 || keyCode == 65 || keyCode == 97) {
+                if(keyCode == 65 || keyCode == 97){
+                    document.getElementsByTagName("body")[0].className = "ap-disable-selection";
+                }
+                zAu.send(new zk.Event(zk.Widget.$(jq("$mainW")), 'onCtrlPress',keyCode));
+            }
+        }
+        });
+           
+          function clearSelection(){
+          	var selectedArea = window.getSelection ? window.getSelection() : document.selection;
+				if (selectedArea) {
+				    if (selectedArea.removeAllRanges) {
+				        selectedArea.removeAllRanges();
+				    } else if (selectedArea.empty) {
+				        selectedArea.empty();
+				    } else if (selectedArea.selection) { 
+					  selectedArea.selection.empty();
+					}
+				}
+          } 
+        
+    </script>
+
+    <window id="mainW" border="none" height="100%" width="100%"
+            onClientInfo="onClientInfo(event)"
+            apply="org.apromore.portal.dialogController.MainController"
+            sclass="custom-window ap-portal ap-font-base">
+      <zscript>
+        void onClientInfo(ClientInfoEvent evt) {
+          int height = evt.getDesktopHeight();
+          int width = evt.getDesktopWidth();
+          leftPanel.setMaxsize(width - 840);
+        }
+      </zscript>
+        <!--<div class="z-listheader">-->
+        <!--
+        <style>
+            <![CDATA[
+            @import url('https://fonts.googleapis.com/css?family=Lexend+Deca&display=swap');
+            ]]>
+        </style>
+        <image src="~./img/logo.svg" style="font-size: 24pt; height: 2ex; margin: 3px"/>
+        <label value="apromore" zclass="z-listheader" style="font-family: 'Lexend Deca'; font-size: 24pt; position: absolute; top: -0.3ex"/>
+        -->
+        <!--<h:a href="https://apromore.org" style="position: relative; top: 1.3ex; left: 0.3em">
+            <h:img src="~./img/apromore_header.png" width="115"/>
+        </h:a>
+        <h:a href="https://apromore.org/documentation/features" style="float: right; padding: 6px">
+            <h:img src="~./img/icon/svg/help-icon.svg"/>
+        </h:a>-->
+        <!--</div>-->
+
+        <borderlayout vflex="true" sclass="ap-portal-layout">
+            <north height="34px" border="0" sclass="ap-header-region" >
+                <div height="34px" hflex="1">
+                    <h:div class="ap-header">
+                        <h:a href="/"><h:div class="ap-header-logo"></h:div></h:a>
+                        <h:div class="ap-header-title">${labels.portal_title_text}</h:div>
+
+                        <h:div class="ap-header-actions">
+                            <h:a href="${labels.help_portal}" target="_blank">
+                                <h:button class="ap-icon ap-icon-help"/>
+                            </h:a>
+                        </h:div>
+                    </h:div>
+                </div>
+            </north>
+            <west id="leftPanel" title="${labels.portal_navigation_text}" width="400px" collapsible="true" splittable="true" sclass="ap-portal-left-section" border="0">
+                <borderlayout sclass="ap-left-layout">
+                    <!--<north id="leftNorthPanel" sclass="ap-wrapper-search" height="0px" border="0"></north>-->
+                    <center id="leftInnerCenterPanel" border="0" vflex="true" hflex="true" style="padding: 10px 3px 10px 10px;">
+                        <Navigation id="navigationcomp" vflex="true" hflex="true" border="0" />
+                    </center>
+                    <south title="${labels.portal_detailsTitle_text}" size="25%" hflex="true" splittable="true" border="0" sclass="ap-process-detail-wrapper">
+                        <DetailView id="baseDetail" vflex="true" hflex="true" border="0" style="margin-left: 5px; margin-top: 5px"/>
+                    </south>
+                </borderlayout>
+            </west>
+            <center id="mainPanel" sclass="ap-portal-right-section" vflex="1" border="0">
+                <vlayout vflex="1" sclass="ap-portal-right-content" spacing="0">
+                    <menubar id="menucomp" sclass="ap-portal-menu" height="32px" width="100%" apply="org.apromore.portal.dialogController.MenuController" />
+                    <div sclass="ap-icon ap-icon-static ap-icon-globe-americas ap-lang-chooser-icon"/>
+                    <combobox
+                        sclass="ap-lang-chooser"
+                        style="font-size: 12px"
+                        id="langChooser"
+                        autodrop="true"
+                        mold="rounded"
+                        width="251px"
+                        readonly="true"
+                        popupWidth="251px"
+                        buttonVisible="true"
+                    />
+                    <hbox id="pagingandbuttons" sclass="ap-portal-menu-actions" height="32px" width="100%" spacing="0"  >
+                        <paging sclass="ap-portal-paging" id="pg" width="140px" style="border: 0" visible="false" />
+                        <hbox sclass="ap-portal-action-buttons" id="buttons" align="start" pack="start" width="300px" spacing="0" style="margin-left: 10px;" >
+                            <button autodisable="self" id="refreshB" sclass="ap-icon ap-icon-sync" ca:data-t="reload" tooltiptext="${labels.portal_reload_hint}" />
+                            <h:span class="ap-action-sep"></h:span>
+                            <!--<button id="showVisualisation" label="" style="background: transparent; border:none" image="~./img/clustering.png" tooltiptext="Show Clustering" />-->
+                            <button autodisable="self" id="btnUpload" sclass="ap-icon ap-icon-upload" ca:data-t="upload" tooltiptext="${labels.portal_upload_hint}"/>
+                            <button autodisable="self" id="btnDownload" sclass="ap-icon ap-icon-download" ca:data-t="download" tooltiptext="${labels.portal_download_hint}"/>
+
+                            <h:span class="ap-action-sep"></h:span>
+                            <button autodisable="self" id="btnCreateDataPipeline" visible="false" sclass="ap-icon ap-icon-etl-pipeline" ca:data-t="createDataPipeline" tooltiptext="${labels.portal_createDataPipeline_hint}"/>
+                            <button autodisable="self" id="btnManageDataPipelines" visible="false" sclass="ap-icon ap-icon-etl-pipeline-manage" ca:data-t="manageDataPipelines" tooltiptext="${labels.portal_manageDataPipelines_hint}"/>
+                            <span id="btnEtlSep" class="ap-action-sep" visible="false"></span>
+                            <button autodisable="self" id="btnSelectAll" visible="true" sclass="ap-icon ap-icon-select-all" ca:data-t="selectAll" tooltiptext="${labels.common_selectAll_text}"/>
+                            <button autodisable="self" id="btnSelectNone" visible="true" sclass="ap-icon ap-icon-select-none" ca:data-t="selectNone" tooltiptext="${labels.common_selectNone_text}"/>
+                            <h:span class="ap-action-sep"></h:span>
+                            <button autodisable="self" id="btnCut" visible="true" sclass="ap-icon ap-icon-cut" ca:data-t="cut" tooltiptext="${labels.common_cut_text}"/>
+                            <button autodisable="self" id="btnCopy" visible="true" sclass="ap-icon ap-icon-copy" ca:data-t="copy" tooltiptext="${labels.common_copy_text}"/>
+                            <button autodisable="self" id="btnPaste" visible="true" sclass="ap-icon ap-icon-paste" ca:data-t="paste" tooltiptext="${labels.common_paste_text}"/>
+                            <h:span class="ap-action-sep"></h:span>
+                            <button autodisable="self" id="btnAddFolder" sclass="ap-icon ap-icon-folder-add" ca:data-t="addFolder" tooltiptext="${labels.portal_addFolder_hint}"/>
+                            <button autodisable="self" id="btnRenameFolder" sclass="ap-icon ap-icon-rename" ca:data-t="rename" tooltiptext="${labels.portal_rename_hint}" visible="true"/>
+                            <button autodisable="self" id="btnRemoveFolder" sclass="ap-icon ap-icon-trash" ca:data-t="delete" tooltiptext="${labels.portal_delete_hint}" visible="true" />
+                            <h:span class="ap-action-sep"></h:span>
+                            <button autodisable="self" id="btnUserMgmt" visible="false" sclass="ap-icon ap-icon-users" ca:data-t="userMgmt" tooltiptext="${labels.portal_tbarUsrMgt_hint}"/>
+                            <button autodisable="self" id="btnSecurity" sclass="ap-icon ap-icon-user-lock" ca:data-t="security" tooltiptext="${labels.portal_tbarAccessCtrl_hint}"/>
+                            <button autodisable="self" id="btnShare" sclass="ap-icon ap-icon-share" ca:data-t="share" tooltiptext="${labels.portal_tbarShare_hint}"/>
+                            <span id="btnCalendarSep" class="ap-action-sep"></span>
+                            <button autodisable="self" id="btnCalendar" sclass="ap-icon ap-icon-calendar" ca:data-t="calendar" tooltiptext="${labels.portal_tbarCalendar_hint}"/>
+                        </hbox>
+                        <div hflex="1">
+                          <menupopup id="orderListItemPopup" />
+                        </div>
+                        <hbox sclass="ap-portal-action-buttons" align="start" pack="end" width="70px" spacing="0" style="margin-right: 5px;" >
+                            <button id="btnView" sclass="ap-icon ap-icon-tiles" ca:data-t="portalView" tooltiptext=""/>
+                            <button id="orderListSortBtn" sclass="ap-icon ap-icon-sort-down"  tooltiptext="${labels.portal_sortList_hint}"  />
+                            <h:span class="ap-action-sep"></h:span>
+                        </hbox>
+                        <SimpleSearch id="simplesearchcomp" border="0" width="259px" />
+                    </hbox>
+                    <html id="folders" visible="false" />
+                    <div style="position:absolute; padding: 8px 5px 0 2px; z-index: 10000;" sclass="ap-bread-crumbs">
+                        <span sclass="ap-portal-crumb">
+                            <a ca:onclick="Ap.portal.clickBreadcrumb('0')">Home<!--<h:i class="ap-icon ap-icon-home-solid"></h:i>--></a>
+                        </span>
+                        <html id="breadCrumbs" />
+                    </div>
+                    <tabbox id="tabbox" vflex="1" hflex="1" sclass="ap-portal-tabbox">
+                        <tabs id="tabs" vflex="1" hflex="1">
+                            <tab id="tabCrumbs" sclass="ap-tab-crumbs" style="pointer-events: none;"/>
+                        </tabs>
+                        <tabpanels id="tabpanels" vflex="1" hflex="1">
+                            <tabpanel vflex="1" hflex="1">
+                                <BaseListbox id="baseListboxProcesses" height="100%" width="100%" border="0"/>
+                            </tabpanel>
+                        </tabpanels>
+                    </tabbox>
+                </vlayout>
+            </center>
+        </borderlayout>
+        <menubar sclass="ap-user-menu" id="userMenu" style="position: absolute;" apply="org.apromore.portal.dialogController.UserMenuController" />
+        <ShortMessages id="shortmessagescomp" visible="false" />
+    </window>
+
+    <!-- Following script improves performance of listbox dropdown display time-->
+    <script defer="true">
+        <![CDATA[
+            zul.inp.Combobox.prototype.slideDown_ = function(pp) {
+                pp.style.visibility = "visible";
+                pp.style.display = "block";
+            };
+            zul.inp.Bandbox.prototype.slideDown_ = zul.inp.Combobox.prototype.slideDown_;
+
+            window.__AP__ = {};
+        ]]>
+    </script>
+    <h:script type="text/javascript" defer="defer" src="~./libs/jschardet/jschardet.min.js"></h:script>
+</zk>

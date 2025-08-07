@@ -1,0 +1,409 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+
+/* @import url('https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700&display=swap'); */
+@import url('../fonts/source-sans-pro/fonts.css');
+@import url('../fonts/gilroy-free/gilroy-free.css');
+
+:root {
+    /* Filter */
+    --ap-filter-ico-orange: invert(82%) sepia(12%) saturate(7033%) hue-rotate(338deg) brightness(98%) contrast(101%);
+    --ap-filter-ico-sunset: invert(50%) sepia(96%) saturate(3596%) hue-rotate(1deg) brightness(98%) contrast(101%);
+    --ap-filter-ico-maroon: invert(27%) sepia(95%) saturate(1140%) hue-rotate(319deg) brightness(88%) contrast(87%);
+    --ap-filter-ico-green: invert(57%) sepia(82%) saturate(362%) hue-rotate(90deg) brightness(94%) contrast(89%);
+    --ap-filter-ico-oceanic-dark-3: invert(46%) sepia(94%) saturate(110%) hue-rotate(163deg) brightness(101%) contrast(98%);
+    --ap-filter-grey-light-5: invert(100%) sepia(0%) saturate(3124%) hue-rotate(194deg) brightness(119%) contrast(80%);
+
+    /* ---ap-c-grey */
+    --ap-filter-ico-grey-dark: invert(0%) sepia(2%) saturate(3755%) hue-rotate(336deg) brightness(103%) contrast(84%);
+    --ap-filter-ico-normal-dark: invert(27%) sepia(0%) saturate(0%) hue-rotate(56deg) brightness(95%) contrast(81%);
+    --ap-filter-ico-grey-minor: invert(63%) sepia(31%) saturate(0%) hue-rotate(228deg) brightness(101%) contrast(104%);;
+    /* --ap-c-orange-light-3: #fdd69d; */
+    --ap-filter-ico-normal-light: invert(82%) sepia(16%) saturate(924%) hue-rotate(340deg) brightness(106%) contrast(98%);
+    --ap-filter-ico-black: none; /* keep black */
+    --ap-filter-ico-white: invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%); /* white */
+    --ap-filter-ico-static: invert(27%) sepia(0%) saturate(0%) hue-rotate(56deg) brightness(95%) contrast(81%);; /* ---ap-c-grey */
+    --ap-filter-neutral-light: invert(94%) sepia(11%) saturate(12%) hue-rotate(132deg) brightness(86%) contrast(100%);
+
+    --ap-filter-ico-check: var(--ap-filter-ico-green);
+
+    --ap-c-asset-title: white;
+    --ap-grad-window-header: linear-gradient( 30deg, #fcb88c 0%, #fee8c8 20%, #edf7fb 60% );
+
+    --ap-grad-chart-bi-legend: linear-gradient(90deg, var(--ap-c-green-light-5), var(--ap-c-maroon-light-5));
+    --ap-grad-chart-bi-legend-reverse: linear-gradient(90deg, var(--ap-c-maroon-light-5), var(--ap-c-green-light-5));
+
+    /* High-level structure colours */
+    --ap-c-line-sep: #f3f3f3;
+    --ap-c-line-sep-strong: #e3e3e3;
+    --ap-c-line-sep-selected: var(--ap-c-grey-light-5);
+    --ap-c-grey-minor: var(--ap-c-grey-light-3);
+    --ap-c-line-grid: var(--ap-c-grey-light-5);
+
+    --ap-c-text-strong: black;
+    --ap-c-text-light: var(--ap-c-grey-light-4);
+    --ap-c-text-normal: var(--ap-c-grey-light-1);
+    --ap-c-text-minor: var(--ap-c-grey-light-2);
+    --ap-c-text-accent: var(--ap-c-sunset);
+    --ap-c-text-strong: var(--ap-c-maroon);
+    --ap-c-text-heading: var(--ap-c-oceanic-dark-3);
+
+    --ap-c-widget: var(--ap-c-oceanic-dark-1);
+    --ap-c-widget-hover: var(--ap-c-oceanic-dark-2);
+    --ap-c-widget-active: var(--ap-c-oceanic-light-2);
+    --ap-c-widget-selected: var(--ap-c-maroon);
+
+    --ap-c-bg-medium: #f0f0f0;
+    --ap-c-bg-lighter: #f7f7f7;
+    --ap-c-bg-lightest: #f9fcff;
+
+    --ap-c-button-text: white;
+    --ap-c-button: var(--ap-c-soft-blue-dark-3);
+    --ap-c-button-hover: var(--ap-c-oceanic-dark-1);
+    --ap-c-button-active: var(--ap-c-soft-blue-dark-3);
+    --ap-c-button-sep: var(--ap-c-oceanic-light-1);
+
+    --ap-c-action-bg-normal: var(--ap-c-grey-light-5);
+    --ap-c-action-bg-hover: #f3f3f3;
+
+    --ap-c-tab-bg-normal: #f3f3f3;
+    --ap-c-tab-bg-hover: var(--ap-c-oceanic-light-5);
+    --ap-c-tab-bg-selected: #f3f3f3;
+    --ap-c-tab-text-normal: var(--ap-c-grey);
+    --ap-c-tab-text-hover: var(--ap-c-sunset);
+    --ap-c-tab-text-hover-filter: var(--ap-filter-ico-sunset);
+    --ap-c-tab-text-selected: var(--ap-c-maroon);
+    --ap-c-tab-text-selected-filter: var(--ap-filter-ico-maroon);
+    --ap-c-tab-bar-normal: transparent;
+    --ap-c-tab-bar-selected: var(--ap-c-maroon);
+
+    --ap-c-menu-bg-hover: var(--ap-c-maroon-light-3);
+    --ap-c-menu-bg-normal: var(--ap-c-maroon-light-4);
+    --ap-c-menu-bg-selected: var(--ap-c-maroon-dark-1);
+    --ap-c-menu-text-normal: var(--ap-c-grey);
+    --ap-c-menu-text-hover: var(--ap-c-grey);
+    --ap-c-menu-text-selected: var(--ap-c-oceanic-light-5);
+
+    --ap-c-scroll: var(--ap-c-grey-light-3);
+
+    --ap-c-grid-head-bg: var(--ap-c-soft-blue-dark-3);
+    --ap-c-column-sep: var(--ap-c-soft-blue-dark-1);
+
+    --ap-c-grid-row-bg-normal: transparent;
+    --ap-c-grid-row-bg-selected: var(--ap-c-oceanic-light-3);
+    --ap-c-grid-row-bg-hover: var(--ap-c-oceanic-light-5);
+
+    /* Greater than, less than */
+    --ap-c-operator-normal: var(--ap-c-grey-light-4);
+    --ap-c-operator-hover: var(--ap-c-grey-light-3);
+
+    /* Typography */
+    --ap-font-base: 'Source Sans Pro', sans-serif;
+    --ap-font-brand: 'Gilroy-Light', sans-serif;
+    --ap-font-size-base: 16px;
+
+    /* Shadow */
+    /* --ap-box-shadow: 0 1px 3px 0 rgba(127, 127, 127, 0.5); */
+    --ap-box-shadow: 0 2px 2px 0 rgba(127, 127, 127, 0.2);
+    --ap-box-shadow-darker: 0 0 10px 0 rgba(127, 127, 127, 0.5);
+    --ap-box-shadow-window: 0 0 12px 0px rgba(127, 127,127, 0.5);
+
+    /* Form input */
+    --ap-input-outline-normal: var(--ap-c-grey-light-4);
+    --ap-input-outline-focus: var(--ap-c-widget);
+    --ap-input-outline-hover: var(--ap-c-widget);
+
+    /* Border */
+    --ap-border-default: 1px solid var(--ap-c-grey-light-5);
+    --ap-border-color-default: var(--ap-c-grey-light-5);
+    --ap-border-color-light: rgba(200, 200, 200, 0.3);
+
+    /* Size and position */
+    --ap-icon-height: 26px;
+    --ap-header-height: 34px;
+    --ap-menu-height: 32px;
+    --ap-offset-doc-title: 4px;
+    --ap-header-logo-width: 120px;
+    --ap-header-title-left: 120px;
+
+    /*
+    ZK Windows z-index start at 1800
+     */
+    /* Z-indexing */
+    --ap-z-alert: 2000;
+    --ap-z-header: 1000;
+    --ap-z-header-logo: 1010;
+    --ap-z-header-help: 1020;
+    --ap-z-header-title: 1030;
+    --ap-z-user-menu: 1040;
+    --ap-z-editor-window: 900;
+    --ap-z-editor-toolbar: 910;
+}
+
+/* State */
+.ap-state-on {
+    color: var(--ap-c-maroon) !important;
+}
+
+.ap-state-off {
+    color: var(--ap-c-text-normal) !important;
+    /* TO DO: Reconcile this */
+    color: var(--text-color-default) !important;
+}
+
+.ap-state-on.ap-icon,
+.ap-state-on .ap-icon
+{
+    filter: var(--ap-filter-ico-maroon) !important;
+}
+
+.ap-state-off.ap-icon,
+.ap-state-off .ap-icon {
+    filter: var(--ap-filter-ico-normal-dark) !important;
+}
+
+[class^="ap-state-"] {
+    cursor: pointer;
+}
+
+/* Filter classes */
+/* use filter to color svg that is included via img, the fill color should be black */
+.ap-filter-light {
+    filter: invert(100%) saturate(0%) brightness(100%) contrast(100%);
+}
+
+.ap-filter-dark {
+    /* use filter to color svg that is included via img, the fill color should be black */
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+/* Common headers */
+.ap-header {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    height: var(--ap-header-height);
+    background-color: var(--ap-c-maroon);
+    /* background-image: linear-gradient(-30deg, #5B889B 0%, #C24C00 40%,  var(--ap-c-maroon) 80%); */
+    background-image: url('../img/brand/background.jpg');
+    /* background-size: cover; */
+    background-size: 100% 100%;
+    vertical-align: middle;
+}
+
+.ap-header-logo {
+    display: inline-block;
+    width: var(--ap-header-logo-width);
+    height: var(--ap-header-height);;
+    background-image: url('../img/brand/logo.svg');
+    background-repeat: no-repeat;
+    background-size: auto 20px;
+    background-position: center center;
+    cursor: pointer;
+}
+
+.ap-header-title {
+    display: block;
+    position: absolute;
+    top: 9px;
+    left: var(--ap-header-title-left);
+    font-family: var(--ap-font-brand);
+    font-style: normal;
+    font-size: 16px;
+    line-height: 16px;
+    color: var(--ap-c-orange-light-3);
+}
+
+.ap-header-actions {
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    z-index: var(--ap-z-header-help);
+}
+
+.ap-header-actions a,
+.ap-header-actions a:hover,
+.ap-header-actions a:visited {
+    text-decoration: none;
+}
+.ap-header-actions .ap-icon:focus,
+.ap-header-actions .ap-icon {
+    background-color: transparent !important;
+    filter: var(--ap-filter-ico-normal-light);
+}
+
+.ap-header-actions .ap-icon:hover {
+    background-color: transparent !important;
+    filter: var(--ap-filter-ico-white) !important;
+}
+
+/* Common third-party overriders */
+
+.highcharts-title {
+    font-family: var(--ap-font-base);
+}
+
+svg text, svg tspan {
+    font-family: var(--ap-font-base) !important;
+}
+
+.bjs-powered-by {
+    z-index: 3020 !important;
+}
+
+.bjs-powered-by img {
+    width: 30px !important;
+}
+
+/* Palette */
+
+.ap-left-panel {
+    /* background-color: var(--ap-c-maroon); */
+    /* background-image: linear-gradient(-30deg, #9DD2E9 0%, #C24C00 30%,  var(--ap-c-maroon) 40%); */
+    /* background-size: cover; */
+
+    background-image: radial-gradient(farthest-corner at 100% 100%, var(--ap-c-oceanic) 0%, var(--ap-c-sunset-dark-2) 50%, var(--ap-c-maroon) 80%);
+    background-image: linear-gradient(-30deg, var(--ap-c-oceanic), var(--ap-c-sunset-dark-2), var(--ap-c-maroon));
+
+    background-size: 200% 200%;
+
+    -webkit-animation: bgcycle 10s ease infinite;
+    -moz-animation: bgcycle 10s ease infinite;
+    -o-animation: bgcycle 10s ease infinite;
+    animation: bgcycle 10s ease infinite;
+}
+
+#wrapper.palette-1 .ap-left-panel {
+    background-image: radial-gradient(farthest-corner at 100% 100%, var(--ap-c-oceanic) 0%, var(--ap-c-sunset-dark-2) 50%, var(--ap-c-maroon) 80%);
+    background-image: linear-gradient(-30deg, var(--ap-c-oceanic), var(--ap-c-sunset-dark-2), var(--ap-c-maroon));
+}
+
+#wrapper.palette-2 .ap-left-panel {
+    background-image: radial-gradient(farthest-corner at 100% 100%, var(--ap-c-maroon) 0%, var(--ap-c-sunset-dark-2) 50%, var(--ap-c-oceanic) 100%);
+    background-image: linear-gradient(-30deg, var(--ap-c-maroon), var(--ap-c-sunset-dark-2), var(--ap-c-oceanic));
+}
+
+#wrapper.palette-3 .ap-left-panel {
+    background-image: radial-gradient(farthest-corner at 100% 100%, var(--ap-c-oceanic) 0%, var(--ap-c-maroon) 40%, var(--ap-c-sunset-dark-2) 80%);
+    background-image: linear-gradient(-30deg, var(--ap-c-oceanic), var(--ap-c-maroon), var(--ap-c-sunset-dark-2));
+}
+
+
+@-webkit-keyframes ap-about-bg-anim {
+    0% {
+        background-position: 0% 100%;
+    }
+    50% {
+        background-position: 100% 0%;
+    }
+    100% {
+        background-position: 0% 100%;
+    }
+}
+@-moz-keyframes ap-about-bg-anim {
+    0% {
+        background-position: 0% 100%;
+    }
+    50% {
+        background-position: 100% 0%;
+    }
+    100% {
+        background-position: 0% 100%;
+    }
+}
+@keyframes ap-about-bg-anim {
+    0% {
+        background-position: 0% 100%;
+    }
+    50% {
+        background-position: 100% 0%;
+    }
+    100% {
+        background-position: 0% 100%;
+    }
+}
+
+.ap-about-window {
+    background: linear-gradient(20deg, #84c7e3, #bb3a50, #f26424);
+    background-size: 300% 300%;
+
+    -webkit-animation: ap-about-bg-anim 27s ease infinite;
+    -moz-animation: ap-about-bg-anim 27s ease infinite;
+    animation: ap-about-bg-anim 27s ease infinite;
+}
+
+@-webkit-keyframes ap-about-bg-anim-2 {
+    0% {
+        background-position: 100% 0%;
+    }
+    30% {
+        background-position: 50% 100%;
+    }
+    60% {
+        background-position: -50% -50%;
+    }
+    100% {
+        background-position: 100% 0%;
+    }
+}
+
+@-moz-keyframes ap-about-bg-anim-2 {
+    0% {
+        background-position: 100% 0%;
+    }
+    30% {
+        background-position: 50% 100%;
+    }
+    60% {
+        background-position: -50% -50%;
+    }
+    100% {
+        background-position: 100% 0%;
+    }
+}
+
+@keyframes ap-about-bg-anim-2 {
+    0% {
+        background-position: 100% 0%;
+    }
+    30% {
+        background-position: 50% 100%;
+    }
+    60% {
+        background-position: -50% -50%;
+    }
+    100% {
+        background-position: 100% 0%;
+    }
+}
+
+.ap-about-window .z-window-content {
+    background: radial-gradient(rgba(249, 97, 0, 0.4), rgba(199, 225, 238, 0));
+    background-size: 100% 100%;
+    background-color: transparent;
+
+    -webkit-animation: ap-about-bg-anim-2 20s ease infinite;
+    -moz-animation: ap-about-bg-anim-2 20s ease infinite;
+    animation: ap-about-bg-anim-2 20s ease infinite;
+}

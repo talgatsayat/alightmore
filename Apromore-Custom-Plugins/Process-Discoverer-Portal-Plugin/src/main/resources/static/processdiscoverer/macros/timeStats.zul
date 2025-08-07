@@ -1,0 +1,95 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+
+<vlayout sclass="ap-pd-timestats"
+         spacing="0px"
+         xmlns:ca="client/attribute"
+         xmlns:w="client"
+         xmlns:n="native">
+  <n:div class="section">${arg.pdLabels.compTimeStats_text}</n:div>
+  <n:div class="spacer" style="height:1px;"></n:div>
+  <hlayout
+      style="overflow:auto;"
+      width="100%"
+      spacing="0px"
+      sclass="ap-pd-timestats-duration">
+    <vlayout spacing="15px" hflex="8">
+      <div sclass="ap-pd-timestats-header ap-link" tooltiptext="${arg.pdLabels.filterByPerformance_text}">
+        <span id="spnCaseHeading" class="ap-icon ap-icon-duration-range"></span>
+        <label id="lblCaseHeading" sclass="title" ca:title="${arg.pdLabels.statDuration_text}">
+          ${arg.pdLabels.statDuration_text}
+        </label>
+      </div>
+      <div sclass="ap-pd-duration">
+        <div>
+          <n:span>${arg.pdLabels.stat_min_text}</n:span>
+          <label id="minDuration" sclass="ap-stat-val"></label>
+        </div>
+        <div>
+          <n:span>${arg.pdLabels.stat_median_text}</n:span>
+          <label id="medianDuration" sclass="ap-stat-val"></label>
+        </div>
+        <div>
+          <n:span>${arg.pdLabels.stat_mean_text}</n:span>
+          <label id="meanDuration" sclass="ap-stat-val"></label>
+        </div>
+        <div>
+          <n:span>${arg.pdLabels.stat_max_text}</n:span>
+          <label id="maxDuration" sclass="ap-stat-val"></label>
+        </div>
+      </div>
+    </vlayout>
+    <vlayout sclass="ap-pd-timestats-range"
+          hflex="7"
+          spacing="15px">
+      <div sclass="ap-pd-timestats-header ap-link" tooltiptext="${arg.pdLabels.filterByTimeframe_text}">
+        <span id="spnLogHeading" class="ap-icon ap-icon-clock"></span>
+        <label id="lblLogHeading" sclass="title" ca:title="${arg.pdLabels.statTimerange_text}">
+          ${arg.pdLabels.statTimerange_text}
+        </label>
+      </div>
+      <div sclass="ap-pd-timerange">
+        <div>
+          <label sclass="ap-stat-val ap-pd-start-time"
+                 id="startTime">
+            ${arg.pdLabels.stat_startTime_text}
+          </label>
+        </div>
+        <div sclass="from-to-x"
+             height="42px"
+             align="center">
+          <n:div class="ap-line-arrow">
+            <n:div class="ap-line"></n:div>
+            <n:div class="ap-arrow-down"></n:div>
+          </n:div>
+        </div>
+        <div>
+          <label sclass="ap-stat-val ap-pd-end-time"
+                 id="endTime">
+            ${arg.pdLabels.stat_endTime_text}
+          </label>
+        </div>
+      </div>
+    </vlayout>
+  </hlayout>
+</vlayout>

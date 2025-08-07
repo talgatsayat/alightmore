@@ -1,0 +1,49 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+package org.apromore.processmining.models.shapes;
+
+import java.awt.geom.Point2D;
+
+public class Octagon extends Polygon {
+
+	private final double cornerOffset;
+
+	public Octagon(double cornerOffset) {
+		this.cornerOffset = cornerOffset;
+	}
+
+	protected Point2D[] getPoints(double x, double y, double width, double height) {
+		Point2D[] points = new Point2D[8];
+		double offset = width * cornerOffset;
+
+		points[0] = new Point2D.Double(x + offset, y);
+		points[1] = new Point2D.Double(x, y + (height - 1) / 3);
+		points[2] = new Point2D.Double(x, y + 2 * (height - 1) / 3);
+		points[3] = new Point2D.Double(x + offset, y + height - 1);
+		points[4] = new Point2D.Double(x + width - 1 - offset, y + height - 1);
+		points[5] = new Point2D.Double(x + width - 1, y + 2 * (height - 1) / 3);
+		points[6] = new Point2D.Double(x + width - 1, y + (height - 1) / 3);
+		points[7] = new Point2D.Double(x + width - 1 - offset, y);
+		return points;
+	}
+
+}

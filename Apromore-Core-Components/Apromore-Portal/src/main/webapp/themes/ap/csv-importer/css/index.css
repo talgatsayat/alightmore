@@ -1,0 +1,302 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+
+.ap-csv-importer .z-window-content {
+    padding: 0;
+}
+
+.ap-csv-importer-main .z-center-body {
+    padding: 0;
+}
+
+.ap-csv-importer .greenLabel {
+    font-family: var(--ap-font-base);
+}
+
+.ap-csv-importer .p-1 {
+    top: 8px !important;
+    left: 20px;
+    display: block;
+    box-sizing: border-box;
+    box-shadow: var(--ap-box-shadow-darker);
+    position: absolute !important;
+    z-index: 10;
+}
+
+.ap-csv-importer .p-1 .z-textbox {
+    margin-top: 5px;
+    width: 100% !important;
+}
+
+.ap-csv-importer .z-grid-body {
+    overflow: hidden !important;
+}
+
+.ap-csv-importer .z-auxheader {
+    vertical-align: top !important;
+    height: 34px !important;
+    border-bottom: none;
+}
+
+.ap-csv-importer-format-icon {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    border: 0;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    padding: 0;
+    top: 3px;
+    right: 0;
+    margin-right: 2px;
+}
+
+.ap-csv-importer-parsed-icon:active {
+    background-color: transparent !important;
+}
+
+.ap-csv-importer-parsed-icon {
+    background-color: transparent;
+    color: rgba(144, 198, 149, 1);
+    border: 0;
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border-radius: 8px;
+    padding: 0;
+    top: 7px;
+    right: 24px;
+    font-size: 1.11em;
+}
+
+.ap-csv-importer-failedParse-icon {
+    background-color: transparent;
+    color: rgba(207, 0, 15, 1);
+    border: 0;
+    position: absolute;
+    width: 28px;
+    height: 24px;
+    border-radius: 8px;
+    padding: 0;
+    top: 4px;
+    right: 23px;
+    font-size: 1.4em;
+}
+
+
+.ap-csv-importer-format-icon:hover {
+    color: white;
+    background-color: transparent;
+}
+
+.ap-csv-importer-format-icon:hover {
+    color: white;
+}
+
+.ap-csv-importer .p-1 .z-a button {
+    font-size: 12px !important;
+    margin: 0;
+    float: right;
+    line-height: 5px;
+    min-height: 5px;
+    padding: 0;
+    background-color: transparent;
+    color: var(--ap-c-grey-minor);
+    border: 0;
+}
+
+.ap-csv-importer .p-1 .z-a button:focus {
+    box-shadow: none !important;
+}
+
+.ap-csv-importer .p-1 .z-a button i {
+    font-size: 12px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.ap-csv-importer-main {
+    border: 0;
+    border-bottom: 1px solid var(--ap-c-line-sep);
+}
+
+.ap-csv-importer-main .z-grid-header-border {
+    display: none;
+}
+
+.ap-csv-importer .myGroupBox {
+    background-image: linear-gradient(
+            270deg,
+            var(--ap-c-soft-blue-light-5) 0%,
+            var(--ap-c-sunset-light-5) 100%
+    );
+    background-size: cover;
+}
+
+
+.ap-csv-importer-grid-wrapper .z-grid-header,
+.ap-csv-importer-grid-wrapper .z-auxheader,
+.ap-csv-importer-grid-wrapper .z-grid-header-border,
+.ap-csv-importer-grid-wrapper .z-column {
+    /*border: 0;*/
+    border-color: var(--ap-c-column-sep);
+}
+
+.ap-csv-importer-grid-wrapper {
+    background-image: linear-gradient(
+            0deg,
+            var(--ap-c-soft-blue-dark-4),
+            var(--ap-c-soft-blue-dark-4)
+    );
+    background-size: 100% 66px;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-color: white;
+}
+
+.ap-csv-importer-grid-wrapper .z-column-content {
+    line-height: 24px !important;
+}
+
+.ap-csv-importer-header button,
+.ap-csv-importer-footer button {
+    font-family: 'Source Sans Pro', FontAwesome, sans-serif !important;
+}
+
+.ap-csv-importer-grid .z-grid-body table {
+    border-collapse: collapse;
+}
+
+.ap-csv-importer-grid tr.z-row td.z-row-inner {
+    border-right: 1px solid var(--ap-c-line-grid);
+    border-bottom: 1px solid var(--ap-c-line-grid);
+}
+
+.ap-csv-importer-grid tr.z-row td.z-row-inner:last-child {
+    border-right: none;
+}
+
+.ap-csv-importer-grid .z-row-content {
+    padding: 2px 0;
+}
+
+.ap-csv-importer-grid .z-auxheader-content option {
+    color: black;
+}
+
+/* Fixes for CSV importer list */
+.ap-csv-importer .myGroupBox .z-window-content {
+    padding: 0 !important;
+}
+
+.ap-csv-importer .myGroupBox .z-label {
+    font-size: 14px !important;
+    line-height: 16px !important;
+}
+
+/* Old CSS */
+
+.ap-csv-importer .greenLabel {
+    padding-left: 1px;
+    color: green;
+    font-size: 12px;
+    margin-left: 0px;
+}
+
+.ap-csv-importer .redLabel {
+    padding-left: 1px;
+    color: red;
+    font-size: 12px;
+    margin-left: 0px;
+}
+
+.ap-csv-importer .z-row-content, .z-group-content, .z-groupfoot-content, .z-footer-content {
+
+    overflow: hidden;
+    width: max-content;
+}
+
+.ap-csv-importer .myGroupBox {
+    display: block;
+    height: inherit;
+    border: 0px solid #cfcfcf;
+    border-top: 0;
+    padding: 0px;
+    overflow: auto;
+    zoom: 1;
+}
+
+.ap-csv-importer .relativePos{
+    position:relative;
+    width: 100%;
+    padding-top:60px;
+}
+
+.ap-csv-importer tr.z-row td.z-row-inner, tr.z-row .z-cell {
+    padding-left: 10px;
+}
+
+.ap-csv-importer .z-window-content {
+    border: 1px solid #cfcfcf;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    zoom: 1;
+}
+
+.ap-csv-importer .z-paging {
+    position: absolute;
+    bottom: 2px;
+    width: 98%;
+}
+
+.ap-csv-importer .z-paging-info {
+    position: absolute;
+    right: 10px;
+    top: 0px;
+}
+
+.ap-csv-importer .z-window-content {
+    border: unset;
+}
+
+
+.ap-csv-importer .z-grid-body {
+    overflow-x: hidden !important;
+}
+
+.ap-csv-importer .z-grid-header table th {
+    text-align: -webkit-center;
+}
+
+.ap-csv-importer .z-select {
+    font-size: 14px;
+    background: transparent;
+    filter: invert(1);
+    border: 1px solid;
+}
+
+.z-fileupload-manager .z-div .z-label:first-child {
+    visibility: hidden;
+}

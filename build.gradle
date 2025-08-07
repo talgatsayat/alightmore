@@ -1,0 +1,225 @@
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+    mavenCentral()
+  }
+  dependencies {
+    classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+    classpath "io.spring.gradle:dependency-management-plugin:${dependencyMgmtVersion}"
+    classpath "com.gorylenko.gradle-git-properties:gradle-git-properties:${gitPorpertiesVersion}"
+    classpath "gradle.plugin.com.hierynomus.gradle.plugins:license-gradle-plugin:${gradleLicensePluginVersion}"
+    classpath "org.jacoco:org.jacoco.ant:${jacocoAntVersion}"
+  }
+}
+
+plugins {
+  id 'base'
+  id "org.sonarqube" version "${sonarQubeVersion}"
+  id "com.gorylenko.gradle-git-properties" version "${gitPorpertiesVersion}"
+}
+
+group = 'org.apromore'
+version = '0.0.1-SNAPSHOT'
+
+subprojects {
+  apply plugin: "org.springframework.boot"
+  apply plugin: "io.spring.dependency-management"
+  apply plugin: "java"
+  apply plugin: "java-library"
+  apply plugin: "eclipse"
+  apply plugin: "com.github.hierynomus.license"
+  apply plugin: "jacoco"
+
+  sourceCompatibility = '11'
+
+  configurations {
+    compileOnly {
+      extendsFrom annotationProcessor
+    }
+  }
+
+  repositories {
+    mavenCentral()
+
+    maven {
+      url = uri('https://raw.github.com/apromore/ApromoreCore_SupportLibs/master/mvn-repo/')
+    }
+
+    maven {
+      url = uri('https://mavensync.zkoss.org/maven2')
+    }
+
+    maven {
+      url = uri('https://repository.springsource.com/maven/bundles/external')
+    }
+  }
+
+  dependencies {
+    /*
+     * TODO: workaround for CVE-2022-22965 mitigation
+     * Temporarily downgrading and fixing the version of hibernate-core, which is bundled with spring-boot-starter-data-jpa
+     * until https://hibernate.atlassian.net/browse/HHH-15142 is resolved,
+     * at which point we will need to upgrade to the next available version of spring boot (2.6.7?)
+     */
+    implementation "org.hibernate:hibernate-core:${hibernateCoreVersion}"
+
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation group: 'org.keycloak', name: 'keycloak-spring-boot-starter'
+    implementation 'javax.activation:javax.activation-api'
+    implementation 'javax.annotation:javax.annotation-api'
+    implementation 'javax.inject:javax.inject:1'
+    implementation 'commons-io:commons-io:2.8.0'
+    implementation 'com.google.guava:guava:30.1.1-jre'
+    compileOnly 'javax.servlet:javax.servlet-api'
+    implementation 'org.apache.commons:commons-lang3'
+    implementation "org.json:json:20201115"
+    implementation 'org.apache.servicemix.bundles:org.apache.servicemix.bundles.joda-time:2.3_1'
+    implementation 'org.eclipse.collections:eclipse-collections:10.4.0'
+    implementation 'org.springframework.boot:spring-boot-starter-jersey'
+
+    implementation 'org.codehaus.groovy:groovy-all:2.4.7'
+
+    compileOnly 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  }
+
+  test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // report is always generated after tests run
+  }
+
+  dependencyManagement {
+    imports {
+      mavenBom "org.keycloak.bom:keycloak-adapter-bom:14.0.0"
+    }
+  }
+
+  jacoco {
+    toolVersion = "0.8.7"
+  }
+
+  jacocoTestReport {
+    dependsOn test
+    reports {
+      xml.enabled true
+      csv.enabled false
+      html.destination file("${buildDir}/jacocoHtml")
+    }
+  }
+
+  project(':Apromore-Boot') {
+
+    bootJar.baseName = "Apromore-Core"
+    ext['user_home'] = System.properties['user.home'].replaceAll("\\\\", "/")
+    ext['version_edition'] = 'Apromore Community Edition'
+
+    processResources {
+      dependsOn generateGitProperties
+      filesMatching('**/application*.properties') {
+        expand(user_home: user_home, version_edition: version_edition, project_version: project.version)
+      }
+      from('../build/resources/main')
+    }
+  }
+
+  bootJar {
+    enabled = false
+  }
+
+  bootJarMainClassName {
+    enabled = false
+  }
+
+  jar {
+    enabled = true
+  }
+  license {
+    header = rootProject.file('LICENSE.txt')
+    skipExistingHeaders = true
+    includes(["**/*.java", "**/*.xml", "**/*.zul", "**/*.js", "**/*.css", "**/*.html", "**/*.yaml"])
+    excludes(["**/*.properties", "**/package-info.java"])
+    ext.year = '2018 - 2022'
+    ext.company = 'Apromore Pty Ltd'
+    ext.module = 'Apromore Core'
+    headerDefinitions {
+      custom_style {
+        firstLine = "/*-"
+        endLine   = " */EOL"
+        beforeEachLine = " * "
+        firstLineDetectionPattern = "(\\s|\\t)*/\\*.*\$"
+        lastLineDetectionPattern  = ".*\\*/(\\s|\\t)*\$"
+        allowBlankLines = false
+        isMultiline = true
+      }
+    }
+    mapping {
+      java='custom_style'
+      javascript='JAVADOC_STYLE'
+      yaml='SCRIPT_STYLE'
+      zul='XML_STYLE'
+    }
+  }
+  licenseMain.dependsOn licenseFormat
+}
+
+gitProperties {
+  failOnNoGitDirectory = false
+  keys = ['git.commit.id', 'git.commit.time', 'git.commit.id.abbrev']
+  dateFormat = "yyyy-MM-dd'T'HH.mmZ"
+
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "apromore_ApromoreCore"
+    property "sonar.organization", "apromore"
+    property "sonar.host.url", "https://sonarcloud.io"
+    property "sonar.issue.ignore.multicriteria", "S1948"
+    property "sonar.issue.ignore.multicriteria.S1948.ruleKey", "java:S1948"
+    property "sonar.issue.ignore.multicriteria.S1948.resourceKey", "src/main/java/org/apromore/**/*.java"
+    property 'sonar.coverage.jacoco.xmlReportPaths', "${project.buildDir}/reports/jacoco/report.xml"
+  }
+}
+
+clean {
+  delete "${project.buildDir}"
+}
+
+task jacocoGenerateRootReport(type: JacocoReport, group: 'Test Reporting') {
+  description = 'Generates aggregate report from all subprojects.'
+
+  def excludeFilter = [
+          '**/similaritysearch/common/stemmer/ext/*',
+          '**/org/apromore/jgraph/*',
+          '**/org/deckfour/xes/*',
+          '**/com/processconfiguration/*',
+          '**/de/*',
+          '**/org/oryxeditor/*',
+          '**/servlet/*',
+          '**/config/*',
+          '**/*.zul']
+  def includeFilter = ['**/build/classes/java/main/**/*.class']
+  def classTree = fileTree(dir: "${rootProject.projectDir}", includes: includeFilter, excludes: excludeFilter)
+  def sourceTree = fileTree(dir: "${rootProject.projectDir}", includes: ['**/src/main/java/**/*.*'])
+  def executionTree = fileTree(dir: "${rootProject.projectDir}", includes: ['**/build/jacoco/*.exec'])
+
+  classDirectories.from = files([classTree])
+  jacocoClasspath = rootProject.buildscript.configurations.classpath
+  sourceDirectories.from = files([sourceTree])
+  executionData.from = files([executionTree])
+  reports {
+    xml.enabled true
+    xml.destination file("${rootProject.projectDir}/build/reports/jacoco/report.xml")
+    html.enabled true
+    html.destination file("${rootProject.projectDir}/build/reports/jacoco/htmlReport")
+  }
+}
+
+tasks['sonarqube'].dependsOn jacocoGenerateRootReport

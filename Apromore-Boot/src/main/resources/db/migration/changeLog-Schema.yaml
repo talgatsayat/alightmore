@@ -1,0 +1,1916 @@
+#
+# #%L
+# This file is part of "Apromore Core".
+# %%
+# Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+# %%
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Lesser Public License for more details.
+#
+# You should have received a copy of the GNU General Lesser Public
+# License along with this program.  If not, see
+# <http://www.gnu.org/licenses/lgpl-3.0.html>.
+# #L%
+#
+
+databaseChangeLog:
+ - changeSet:
+    id: 20200915024502
+    author: nolantellis
+    changes:
+      - createTable:
+           tableName: usermetadata_type
+           columns: 
+             - column:
+                  name: id
+                  type: INT  
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_usermetadata_type_id                  
+             - column:                
+                constraints:
+                   nullable: true
+                name: type
+                type: VARCHAR(255)
+                remarks: 'Metadata type'
+             - column:
+                constraints:
+                   nullable: false
+                name: version
+                type: INT
+                remarks: 'Metadata type'
+             - column:
+                  constraints:
+                     nullable: false
+                  name: is_valid
+                  type: TINYINT
+                  remarks: 'Indicate whether this record is valid'           
+      - createTable:
+         columns:
+            - column:
+                autoIncrement: true
+                constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: pk_usermetadata_id
+                name: id
+                type: INT
+            - column:
+                constraints:
+                  nullable: false
+                name: type_id
+                type: INT
+                remarks: 'FK User mtadata type id'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: created_by
+                 type: VARCHAR(255)
+                 remarks: 'The user create this metadata'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: created_time
+                 type: VARCHAR(40)
+                 remarks: 'Create time'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: updated_by
+                 type: VARCHAR(255)
+                 remarks: 'The user updated this metadata'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: updated_time
+                 type: VARCHAR(40)
+                 remarks: 'Update time'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: content
+                 type: MEDIUMTEXT
+                 remarks: 'Content of user metadata'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: revision
+                 type: INT
+                 remarks: 'reserve for optimistic lock'
+            - column:
+                 constraints:
+                   nullable: false
+                 name: is_valid
+                 type: TINYINT
+                 remarks: 'Indicate whether this record is valid'        
+         tableName: usermetadata
+      
+      - addForeignKeyConstraint:
+         baseColumnNames: type_id
+         baseTableName: usermetadata
+         constraintName: FK_usermetadata_type_id
+         deferrable: false
+         initiallyDeferred: false
+         onDelete: CASCADE
+         onUpdate: CASCADE
+         referencedColumnNames: id
+         referencedTableName: usermetadata_type
+         validate: true
+      
+      - createIndex:
+         columns:
+            - column:
+                name: type_id
+         indexName: IDX_type_id
+         tableName: usermetadata
+      
+      - createTable:
+         columns:
+            - column:
+                autoIncrement: true
+                constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: pk_usermetadata_log_id
+                name: id
+                type: INT
+            - column:
+                 constraints:
+                   nullable: true
+                 name: usermetadata_id
+                 type: INT
+                 remarks: 'FK USERMETADATA ID'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: log_id
+                 type: INT
+                 remarks: 'FK LOGID ID'
+         tableName: usermetadata_log
+      
+      - addForeignKeyConstraint:
+         baseColumnNames: log_id
+         baseTableName: usermetadata_log
+         constraintName: FK_usermetadata_log_id
+         deferrable: false
+         initiallyDeferred: false
+         onDelete: CASCADE
+         onUpdate: CASCADE
+         referencedColumnNames: id
+         referencedTableName: log
+         validate: true
+      
+      - addForeignKeyConstraint:
+         baseColumnNames: usermetadata_id
+         baseTableName: usermetadata_log
+         constraintName: FK_usermetadata_usermetadata_id
+         deferrable: false
+         initiallyDeferred: false
+         onDelete: CASCADE
+         onUpdate: CASCADE
+         referencedColumnNames: id
+         referencedTableName: usermetadata
+         validate: true
+
+      - createTable:
+         columns:
+            - column:
+                autoIncrement: true
+                constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: pk_usermetadata_process_id
+                name: id
+                type: INT
+            - column:
+                 constraints:
+                   nullable: true
+                 name: usermetadata_id
+                 type: INT
+                 remarks: 'FK USERMETADATA ID'
+            - column:
+                 constraints:
+                   nullable: true
+                 name: process_id
+                 type: INT
+                 remarks: 'FK PROCESS ID'
+         tableName: usermetadata_process
+      
+      - addForeignKeyConstraint:
+         baseColumnNames: usermetadata_id
+         baseTableName: usermetadata_process
+         constraintName: usermetadata_process_ibfk_1
+         deferrable: false
+         initiallyDeferred: false
+         onDelete: CASCADE
+         onUpdate: CASCADE
+         referencedColumnNames: id
+         referencedTableName: usermetadata
+         validate: true
+      
+      - addForeignKeyConstraint:
+         baseColumnNames: process_id
+         baseTableName: usermetadata_process
+         constraintName: usermetadata_process_ibfk_2
+         deferrable: false
+         initiallyDeferred: false
+         onDelete: CASCADE
+         onUpdate: CASCADE
+         referencedColumnNames: id
+         referencedTableName: process
+         validate: true
+
+      - createTable:
+         columns:
+            - column:
+                autoIncrement: true
+                constraints:
+                  nullable: false
+                  primaryKey: true
+                  primaryKeyName: pk_group_usermetadata_id
+                name: id
+                type: INT
+            - column:
+                 constraints:
+                   nullable: false
+                 name: group_id
+                 type: INT
+                 remarks: 'FK GROUP ID'
+            - column:
+                 constraints:
+                   nullable: false
+                 name: usermetadata_id
+                 type: INT
+                 remarks: 'FK USER METADATA ID'
+            - column:
+                 constraints:
+                   nullable: false
+                 name: has_read
+                 type: TINYINT
+                 remarks: 'Has read permission'
+            - column:
+                 constraints:
+                   nullable: false
+                 name: has_write
+                 type: TINYINT
+                 remarks: 'Has write permission'
+            - column:
+                 constraints:
+                   nullable: false
+                 name: has_ownership
+                 type: TINYINT
+                 remarks: 'Has ownership permission'
+         tableName: group_usermetadata
+      
+      - addForeignKeyConstraint:
+         baseColumnNames: group_id
+         baseTableName: group_usermetadata
+         constraintName: group_usermetadata_ibfk_1
+         deferrable: false
+         initiallyDeferred: false
+         onDelete: CASCADE
+         onUpdate: CASCADE
+         referencedColumnNames: id
+         referencedTableName: group
+         validate: true
+      
+      - addForeignKeyConstraint:
+         baseColumnNames: usermetadata_id
+         baseTableName: group_usermetadata
+         constraintName: group_usermetadata_ibfk_2
+         deferrable: false
+         initiallyDeferred: false
+         onDelete: CASCADE
+         onUpdate: CASCADE
+         referencedColumnNames: id
+         referencedTableName: usermetadata
+         validate: true
+
+ - changeSet:
+     id: 20200928103000
+     author: frankm
+     changes:
+       - modifyDataType:
+           columnName:  content
+           newDataType:  LONGTEXT
+           tableName:  usermetadata
+           
+ - changeSet:
+    id: 20200929015111
+    author: nolantellis
+    changes:
+      - createTable:
+           tableName: custom_calendar
+           columns: 
+             - column:
+                  name: id
+                  type: BIGINT  
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_custom_calendar_id                  
+             - column:                
+                constraints:
+                   nullable: false
+                   unique: true
+                name: name
+                type: VARCHAR(100)
+                remarks: 'Description for the calender'
+             - column:
+                constraints:
+                   nullable: false
+                name: created
+                type: VARCHAR(100)
+                remarks: 'creation time for the calender'
+             
+             - column:
+                constraints:
+                   nullable: false
+                name: updated
+                type: VARCHAR(100)
+                remarks: 'update time for the calender'
+ 
+             - column:                
+                constraints:
+                   nullable: true
+                name: created_by
+                type: VARCHAR(100)    
+                
+             - column:                
+                constraints:
+                   nullable: true
+                name: updated_by
+                type: VARCHAR(100)
+                
+      - createTable:
+           tableName: work_day
+           columns: 
+             - column:
+                  name: id
+                  type: BIGINT  
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_work_day_id                  
+             - column:                
+                constraints:
+                   nullable: false
+                name: day_of_week
+                type: VARCHAR(10)
+                remarks: 'Description for the work_day'
+             - column:
+                constraints:
+                   nullable: false
+                name: start_time
+                type: VARCHAR(100)
+                remarks: 'start_time time for the work_day'
+             
+             - column:
+                constraints:
+                   nullable: false
+                name: end_time
+                type: VARCHAR(100)
+                remarks: 'end_time for the work_day'
+ 
+             - column:                
+                constraints:
+                   nullable: false
+                name: is_working_day
+                type: BOOLEAN
+                
+             - column:                
+                constraints:
+                   nullable: false
+                   referencedTableName: custom_calendar
+                   referencedColumnNames: id
+                   foreignKeyName: fk_work_day_custom_calendar_idk
+                   deleteCascade: true
+                name: calendar_id
+                type: BIGINT    
+                
+             - column:
+                constraints:
+                   nullable: true
+                name: created_by
+                type: VARCHAR(100)
+                remarks: 'created_by time for the work_day'
+             
+             - column:
+                constraints:
+                   nullable: true
+                name: updated_by
+                type: VARCHAR(100)
+                remarks: 'updated_by for the work_day'
+                
+      - addUniqueConstraint:           
+         columnNames:  day_of_week,calendar_id,start_time
+         constraintName:  work_day_constraint  
+         deferrable:  true  
+         disabled:  false  
+         initiallyDeferred:  false   
+         tableName:  work_day
+         validate:  true
+         
+      - createTable:
+           tableName: holiday
+           columns: 
+             - column:
+                  name: id
+                  type: BIGINT  
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_holiday_id
+                    
+             - column:
+                constraints:
+                   nullable: true
+                name: created_by
+                type: VARCHAR(100)
+                remarks: 'created_by time for the holiday'
+             
+             - column:
+                constraints:
+                   nullable: true
+                name: updated_by
+                type: VARCHAR(100)
+                remarks: 'updated_by for the holiday'   
+                
+             - column:                
+                constraints:
+                   nullable: false
+                   referencedTableName: custom_calendar
+                   referencedColumnNames: id
+                   foreignKeyName: fk_holiday_custom_calendar_idk
+                   deleteCascade: true
+                name: calendar_id
+                type: BIGINT 
+                
+             - column:
+                constraints:
+                   nullable: false
+                name: name
+                type: VARCHAR(100)
+               
+             - column:
+                constraints:
+                   nullable: true
+                name: description
+                type: VARCHAR(100)
+                
+             - column:
+                constraints:
+                   nullable: false
+                name: holiday_date
+                type: VARCHAR(20)
+                
+             - column:
+                constraints:
+                   nullable: true
+                name: reference_id
+                type: BIGINT
+
+ - changeSet:
+     id: 20201014123300
+     author: frankm
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+           - or:
+               - foreignKeyConstraintExists:
+                   foreignKeyName: fk_user_group
+               - indexExists:
+                   indexName: idx_search_history_position_search
+                   tableName: search_history
+               - indexExists:
+                   indexName: idx_group_row_guid
+                   tableName: group
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: groupid
+           baseTableName: user
+           constraintName: fk_user_group
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: group
+           validate: true
+
+       - createIndex:
+           columns:
+             - column:
+                 name: position
+             - column:
+                 name: search
+           indexName: idx_search_history_position_search
+           tableName: search_history
+           unique: true
+
+       - createIndex:
+           columns:
+             - column:
+                 name: row_guid
+           indexName: idx_group_row_guid
+           tableName: group
+           unique: true
+
+ - changeSet:
+     id: 20201014125100
+     author: frankm
+     preConditions:
+       - onFail: MARK_RAN
+       - tableExists:
+           tableName: dashboard_layout
+     changes:
+       - dropTable:
+           cascadeConstraints:  true
+           tableName:  dashboard_layout
+
+ - changeSet:
+     id: 20201021113000
+     author: frankm
+     changes:
+       - addColumn:
+           tableName: usermetadata
+           columns:
+             - column:
+                 name: name
+                 type: varchar(255)
+
+ - changeSet:
+     id: 20201109125100
+     author: nolantellis
+     changes:
+        - addColumn:
+            tableName: custom_calendar
+            columns:
+               - column:
+                  name: zone_id
+                  type: varchar(50))
+                  constraints:
+                      nullable: false
+
+ - changeSet:
+     id: 20201125100000
+     author: dreamind
+     changes:
+       - createIndex:
+           columns:
+             - column:
+                 name: name
+           indexName: IDX_LOG_NAME
+           tableName: log
+
+ - changeSet:
+    id: 20201121125100
+    author: nolantellis
+    changes:
+     - addColumn:
+        tableName: holiday
+        columns:
+         - column:
+            name: holiday_type
+            type: varchar(20)
+
+ - changeSet:
+     id: 20201205121100
+     author: nolantellis
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+          - foreignKeyConstraintExists:
+             foreignKeyName: fk_group_log_log
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: logid
+           baseTableName: group_log
+           constraintName: fk_group_log_log
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: log
+           validate: true
+
+ - changeSet:
+     id: 20201205122400
+     author: nolantellis
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+          - foreignKeyConstraintExists:
+             foreignKeyName: fk_group_log_group
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: groupid
+           baseTableName: group_log
+           constraintName: fk_group_log_group
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: group
+           validate: true
+
+ - changeSet:
+     id: 20201205124000
+     author: nolantellis
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+          - foreignKeyConstraintExists:
+             foreignKeyName: fk_group_process_process
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: processid
+           baseTableName: group_process
+           constraintName: fk_group_process_process
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: process
+           validate: true
+
+ - changeSet:
+     id: 20201205124400
+     author: nolantellis
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+          - foreignKeyConstraintExists:
+             foreignKeyName: fk_group_process_group
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: groupid
+           baseTableName: group_process
+           constraintName: fk_group_process_group
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: group
+           validate: true
+
+ - changeSet:
+     id: 20201205124600
+     author: nolantellis
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+          - foreignKeyConstraintExists:
+             foreignKeyName: fk_group_folder_folder
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: folderid
+           baseTableName: group_folder
+           constraintName: fk_group_folder_folder
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: folder
+           validate: true
+
+ - changeSet:
+     id: 20201205124700
+     author: nolantellis
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+          - foreignKeyConstraintExists:
+             foreignKeyName: fk_group_folder_group
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: groupid
+           baseTableName: group_folder
+           constraintName: fk_group_folder_group
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: group
+           validate: true
+
+ - changeSet:
+     id: 20201205021800
+     author: nolantellis
+     preConditions:
+       - onFail: MARK_RAN
+       - not:
+          - foreignKeyConstraintExists:
+             foreignKeyName: fk_history_user
+     changes:
+       - addForeignKeyConstraint:
+           baseColumnNames: userid
+           baseTableName: history_event
+           constraintName: fk_history_user
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: user
+           validate: true
+
+ - changeSet:
+    id: 20201222022311
+    author: nolantellis
+    changes:
+      - createTable:
+           tableName: storage
+           columns: 
+             - column:
+                  name: id
+                  type: BIGINT  
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_storage_id                  
+             - column:                
+                constraints:
+                   nullable: false
+                   unique: false
+                name: storage_path
+                type: VARCHAR(200)
+                remarks: 'Storage path'
+             - column:                
+                constraints:
+                   nullable: false
+                   unique: false
+                name: prefix
+                type: VARCHAR(100)
+                remarks: 'prefix for storage'
+             - column:                
+                constraints:
+                   nullable: false
+                   unique: false
+                name: key
+                type: VARCHAR(200)
+                remarks: 'key for storage'
+             - column:
+                constraints:
+                   nullable: false
+                name: created
+                type: VARCHAR(100)
+                remarks: 'creation time for the storage'             
+             - column:
+                constraints:
+                   nullable: false
+                name: updated
+                type: VARCHAR(100)
+                remarks: 'update time for the storage'
+
+      - addColumn:
+            tableName: log
+            columns:
+               - column:
+                  name: storage_id
+                  type: BIGINT
+                  constraints:
+                      nullable: true
+
+      - addForeignKeyConstraint:
+           baseColumnNames: storage_id
+           baseTableName: log
+           constraintName: fk_log_storage
+           deferrable: false
+           initiallyDeferred: false
+           referencedColumnNames: id
+           referencedTableName: storage
+           validate: true
+ 
+ - changeSet:       
+     id: 20210111215600
+     author: frankm
+     changes:
+       - createView:
+           fullDefinition: false
+           remarks: 'Change view KEYWORDS'
+           replaceIfExists: true
+           context: MYSQL,H2
+           selectQuery: |2-
+               select cast(process.id as char(10))
+               as value, 'process' as type, process.id as processid, null as logid, null as folderid
+               from process union
+             select process.name
+               as value, 'process' as type, process.id as processid, null as logid, null as folderid
+               from process union
+             select process.domain
+               as value, 'process' as type, process.id as processid, null as logid, null as folderid
+               from process union
+             select native_type.nat_type
+               as value, 'process' as type, process.id as processid, null as logid, null as folderid
+               from process join native_type on (process.nativetypeid = native_type.id) union
+             select `user`.first_name
+               as value, 'process' as type, process.id as processid, null as logid, null as folderid
+               from process join `user` on (process.owner = `user`.username) union
+             select `user`.last_name
+               as value, 'process' as type, process.id as processid, null as logid, null as folderid
+               from process join `user` on (process.owner = `user`.username) union
+             select process_branch.branch_name
+               as value, 'process' as type, process_branch.processid as processid, null as logid, null as folderid
+               from process_branch union
+             select cast(`log`.id as char(10))
+               as value, 'log' as type, null as processid, `log`.id as logid, null as folderid
+               from `log` union
+             select `log`.name
+               as value, 'log' as type, null as processid, `log`.id as logid, null as folderid
+               from `log` union
+             select `log`.domain
+               as value, 'log' as type, null as processid, `log`.id as logid, null as folderid
+               from `log` union
+             select folder.folder_name
+               as value, 'folder' as type, null as processid, null as logid, folder.id as folderid
+               from folder;
+           viewName: keywords
+
+ - changeSet:
+     id: 20210201031400
+     author: nolantellis
+     changes:
+        - addColumn:
+            tableName: folder
+            columns:
+               - column:
+                  name: parent_folder_chain
+                  type: VARCHAR(200)
+                  defaultValue: '-1'
+                  constraints:
+                      nullable: false
+
+        - createIndex:
+           columns:
+             - column:
+                 name: parent_folder_chain
+           indexName: IDX_FOLDER_PARENT_FOLDER_CHAIN
+           tableName: folder
+
+ - changeSet:
+    id: 20210217055000
+    author: nolantellis
+    changes:
+      - addColumn:
+            tableName: log
+            columns:
+               - column:
+                  name: calendar_id
+                  type: BIGINT
+                  constraints:
+                      nullable: true
+
+      - addForeignKeyConstraint:
+           baseColumnNames: calendar_id
+           baseTableName: log
+           constraintName: fk_log_calendar
+           deferrable: false
+           initiallyDeferred: false
+           referencedColumnNames: id
+           referencedTableName: custom_calendar
+           validate: true
+
+ - changeSet:
+     id: 20210315090000
+     author: frankm
+     changes:
+       - dropForeignKeyConstraint:
+           baseTableName:  folder
+           constraintName:  FOLDER_CREATOR
+
+       - dropForeignKeyConstraint:
+           baseTableName:  folder
+           constraintName:  FOLDER_MODIFIED_BY
+
+       - addForeignKeyConstraint:
+           baseColumnNames: creatorid
+           baseTableName: folder
+           constraintName: FK_FOLDER_CREATOR
+           onDelete:  SET NULL
+           onUpdate:  CASCADE
+           deferrable: false
+           initiallyDeferred: false
+           referencedColumnNames: id
+           referencedTableName: user
+           validate: true
+
+       - addForeignKeyConstraint:
+           baseColumnNames: modifiedbyid
+           baseTableName: folder
+           constraintName: FK_FOLDER_MODIFIED_BY
+           onDelete:  SET NULL
+           onUpdate:  CASCADE
+           deferrable: false
+           initiallyDeferred: false
+           referencedColumnNames: id
+           referencedTableName: user
+           validate: true
+
+       - dropForeignKeyConstraint:
+           baseTableName:  process
+           constraintName:  FK_PROCESS1
+
+       - addForeignKeyConstraint:
+           baseColumnNames: owner
+           baseTableName: process
+           constraintName: FK_PROCESS_CREATOR
+           onDelete:  SET NULL
+           onUpdate:  CASCADE
+           deferrable: false
+           initiallyDeferred: false
+           referencedColumnNames: id
+           referencedTableName: user
+           validate: true
+
+ - changeSet:
+     id: 20210416120000
+     author: raboczi
+     changes:
+       - modifyDataType:
+           columnName: version_number
+           newDataType: VARCHAR(100)
+           tableName: process_model_version
+
+ - changeSet:
+     id: 20210505030600
+     author: mtomar
+     changes:
+       - createTable:
+           tableName: job
+           columns:
+             - column:
+                 name: id
+                 type: BIGINT
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_job_id
+             - column:
+                 constraints:
+                   nullable: false
+                   unique: true
+                 name: dag_id
+                 type: VARCHAR(100)
+                 remarks: 'Dag id for creating and mapping to DAG'
+             - column:
+                 name: final_transform_query
+                 type: VARCHAR(1000)
+             - column:
+                 name: schedule
+                 type: VARCHAR(50)
+             - column:
+                 name: log_name
+                 type: VARCHAR(100)
+             - column:
+                 name: apromore_workspace_directory
+                 type: VARCHAR(200)
+             - column:
+                 name: username
+                 type: VARCHAR(100)
+             - column:
+                 name: bucket_name
+                 type: VARCHAR(50)
+             - column:
+                 name: key
+                 type: VARCHAR(200)
+             - column:
+                 name: url
+                 type: VARCHAR(200)
+             - column:
+                 name: pipeline_name
+                 type: VARCHAR(200)
+
+       - createTable:
+           tableName: dag_connection
+           columns:
+             - column:
+                 name: id
+                 type: BIGINT
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_dag_conn_id
+             - column:
+                 name: connection_id
+                 type: VARCHAR(100)
+             - column:
+                 name: table_name
+                 type: VARCHAR(100)
+             - column:
+                 name: query
+                 type: VARCHAR(500)
+             - column:
+                 name: bucket_name
+                 type: VARCHAR(50)
+             - column:
+                 name: key
+                 type: VARCHAR(200)
+             - column:
+                 name: url
+                 type: VARCHAR(200)
+             - column:
+                 name: job_id
+                 type: BIGINT
+                 constraints:
+                   nullable: false
+                   referencedTableName: job
+                   referencedColumnNames: id
+                   foreignKeyName: fk_dag_conn_job_idk
+                   deleteCascade: true
+
+       - createTable:
+           tableName: static_log
+           columns:
+             - column:
+                 name: id
+                 type: BIGINT
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_static_log_id
+             - column:
+                 name: parquet_origin
+                 type: BOOLEAN
+             - column:
+                 name: table_name
+                 type: VARCHAR(100)
+             - column:
+                 name: s3_location
+                 type: VARCHAR(200)
+             - column:
+                 name: schema_info
+                 type: VARCHAR(100)
+             - column:
+                 name: job_id
+                 type: BIGINT
+                 constraints:
+                   nullable: false
+                   referencedTableName: job
+                   referencedColumnNames: id
+                   foreignKeyName: fk_static_log_job_idk
+                   deleteCascade: true
+
+ - changeSet:
+     id: 20212705120000
+     author: mtomar
+     changes:
+       - modifyDataType:
+           columnName: schema_info
+           newDataType: VARCHAR(5000)
+           tableName: static_log
+
+ - changeSet:
+     id: 20212007102000
+     author: micg
+     changes:
+       - addColumn:
+           tableName: group
+           columns:
+             - column:
+                 name: group_from_sso_idp
+                 type: boolean
+                 defaultValue: false
+ - changeSet:
+     id: 20211108094500
+     author: janeh
+     changes:
+       - modifyDataType:
+           columnName: bucket_name
+           newDataType: VARCHAR(63)
+           tableName: job
+       - modifyDataType:
+           columnName: bucket_name
+           newDataType: VARCHAR(63)
+           tableName: dag_connection
+
+ - changeSet:
+    id: 20211708040900
+    author: nolantellis
+    changes:
+     - dropForeignKeyConstraint:
+        baseTableName:  log
+        constraintName:  fk_log_calendar
+
+     - addForeignKeyConstraint:
+        baseColumnNames: calendar_id
+        baseTableName: log
+        constraintName: fk_log_calendar
+        onDelete:  SET NULL
+        onUpdate:  CASCADE
+        referencedColumnNames: id
+        referencedTableName: custom_calendar
+
+ - changeSet:
+     id: 20212308030600
+     author: mtomar
+     changes:
+       - createTable:
+           tableName: db_connector
+           columns:
+             - column:
+                 name: id
+                 type: BIGINT
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_db_conn_id
+             - column:
+                 constraints:
+                   nullable: false
+                   unique: true
+                 name: connection_key
+                 type: VARCHAR(100)
+                 remarks: 'Connection key of db'
+             - column:
+                 name: created
+                 type: BOOLEAN
+             - column:
+                 name: username
+                 type: VARCHAR(64)
+             - column:
+                 name: password
+                 type: VARCHAR(64)
+             - column:
+                 name: url
+                 type: VARCHAR(200)
+             - column:
+                 name: database_schema
+                 type: VARCHAR(64)
+             - column:
+                 name: port
+                 type: VARCHAR(5)
+
+ - changeSet:
+     id: 20212408060250
+     author: mtomar
+     changes:
+       - addColumn:
+           tableName: job
+           columns:
+             - column:
+                 name: error
+                 type: BOOLEAN
+                 defaultValue: false
+             - column:
+                 name: schedule_version_number
+                 type: INT
+                 defaultValue: 0
+             - column:
+                 name: paused
+                 type: BOOLEAN
+
+ - changeSet:
+     id: 20211709060393
+     author: mtomar
+     changes:
+       -  dropColumn:
+            tableName:  job
+            columns:
+              - column:
+                  name: final_transform_query
+       - dropTable:
+           cascadeConstraints: true
+           tableName: dag_connection
+       - dropTable:
+           cascadeConstraints: true
+           tableName: static_log
+
+ - changeSet:
+     id: 20210917130000
+     author: raboczi
+     changes:
+       - addColumn:
+           tableName: membership
+           columns:
+             - column:
+                 name: password_hashing_algorithm
+                 type: VARCHAR(20)
+                 defaultValue: "MD5-UNSALTED"
+       - modifyDataType:
+           tableName: membership
+           columnName: password
+           newDataType: VARCHAR(128)
+
+ - changeSet:
+     id: 20212309015793
+     author: mtomar
+     changes:
+       - addColumn:
+           tableName: job
+           columns:
+             - column:
+                 name: time_zone_id
+                 type: VARCHAR(40)
+
+ - changeSet:
+     id: 20210922110000
+     author: raboczi
+     changes:
+       - addColumn:
+           tableName: process_model_version
+           columns:
+             - column:
+                 name: storage_id
+                 type: BIGINT
+                 constraints:
+                     nullable: true
+                 defaultValue: null
+       - addForeignKeyConstraint:
+           baseColumnNames: storage_id
+           baseTableName: process_model_version
+           constraintName: fk_process_model_version_storage
+           deferrable: false
+           initiallyDeferred: false
+           referencedColumnNames: id
+           referencedTableName: storage
+           validate: true
+
+
+ - changeSet:
+     id: 20211005014993
+     author: mtomar
+     changes:
+       - addColumn:
+           tableName: job
+           columns:
+             - column:
+                 name: is_draft
+                 type: BOOLEAN
+                 defaultValue: false
+
+ - changeSet:
+     id: 20211111090900
+     author: frankm
+     changes:
+       - sql:
+           dbms: '!h2, mysql'
+           splitStatements: true
+           sql: ALTER TABLE `storage` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci; ALTER TABLE storage MODIFY `key` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+           stripComments: false
+
+ - changeSet:
+     id: 20211222091500
+     author: janeh
+     changes:
+       - createTable:
+           tableName: process_publish
+           columns:
+             - column:
+                 name: publishid
+                 type: VARCHAR(36)
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_publish_id
+             - column:
+                 name: published
+                 type: BOOLEAN
+             - column:
+                 name: processid
+                 type: INT
+                 constraints:
+                   nullable: false
+                   referencedTableName: process
+                   referencedColumnNames: id
+                   foreignKeyName: fk_publish_process_idk
+                   deleteCascade: true
+
+ - changeSet:
+     id: 20220131091400
+     author: frankm
+     changes:
+        - addColumn:
+            tableName: process_model_version
+            columns:
+               - column:
+                  name: creator
+                  type: INT
+
+ - changeSet:
+     id: 20220215092400
+     author: janeh
+     changes:
+       - addColumn:
+           tableName: custom_calendar
+           columns:
+             - column:
+                 name: owner
+                 type: INT
+                 constraints:
+                   nullable: true
+                 defaultValue: null
+       - addForeignKeyConstraint:
+           baseColumnNames: owner
+           baseTableName: custom_calendar
+           constraintName: fk_calendar_owner
+           onDelete:  CASCADE
+           onUpdate:  CASCADE
+           referencedColumnNames: id
+           referencedTableName: user
+
+ - changeSet:
+     id: 20220221101400
+     author: frankm
+     changes:
+        - addForeignKeyConstraint:
+           baseColumnNames: creator
+           baseTableName: process_model_version
+           constraintName: fk_pmv_creator
+           onDelete:  SET NULL
+           onUpdate:  CASCADE
+           referencedColumnNames: id
+           referencedTableName: user
+
+ - changeSet:
+     id: 20220316131800
+     author: mtomar
+     changes:
+       - createTable:
+           tableName: predictor
+           columns:
+             - column:
+                 name: id
+                 type: BIGINT
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_predictor_id
+             - column:
+                 constraints:
+                   nullable: false
+                 name: log_id
+                 type: INT
+                 remarks: 'Training Log id'
+             - column:
+                 name: name
+                 type: VARCHAR(200)
+             - column:
+                 name: prediction_type
+                 type: VARCHAR(25)
+             - column:
+                 name: target_attribute
+                 type: VARCHAR(200)
+             - column:
+                 name: ppm_status
+                 type: VARCHAR(15)
+
+ - changeSet:
+     id: 20220330104900
+     author: mtomar
+     changes:
+       - modifyDataType:
+           tableName: predictor
+           columnName: id
+           newDataType: INT
+       - addAutoIncrement:
+           tableName: predictor
+           columnName: id
+           columnDataType: INT
+       - addColumn:
+           tableName: predictor
+           columns:
+             - column:
+                 name: ppm_schema
+                 type: JSON
+                 constraints:
+                   nullable: false
+       - dropColumn:
+           tableName: predictor
+           columns:
+             - column:
+                 name: log_id
+
+       - createTable:
+           tableName: prediction
+           columns:
+             - column:
+                 name: id
+                 type: INT
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_prediction_id
+             - column:
+                 name: table_name
+                 type: VARCHAR(100)
+             - column:
+                 name: status
+                 type: VARCHAR(15)
+
+       - createTable:
+           tableName: prediction_predictor
+           columns:
+             - column:
+                 name: prediction_id
+                 type: INT
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+             - column:
+                 name: predictor_id
+                 type: INT
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+ - changeSet:
+     id: 20220502115800
+     author: janeh
+     comment: "add subprocess process link table"
+     changes:
+       - createTable:
+           tableName: subprocess_process
+           columns:
+             - column:
+                 name: id
+                 type: BIGINT
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_subprocess_process_id
+             - column:
+                 name: subprocess_parent_id
+                 type: INT
+                 constraints:
+                   nullable: false
+             - column:
+                 name: subprocess_id
+                 type: VARCHAR(64)
+                 constraints:
+                   nullable: false
+             - column:
+                 name: linked_process_id
+                 type: INT
+                 constraints:
+                   nullable: false
+             - column:
+                 name: user_id
+                 type: INT
+                 constraints:
+                   nullable: false
+
+       - addForeignKeyConstraint:
+           baseColumnNames: subprocess_parent_id
+           baseTableName: subprocess_process
+           constraintName: fk_subprocess_parent_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           referencedColumnNames: id
+           referencedTableName: process
+           validate: true
+
+       - addForeignKeyConstraint:
+           baseColumnNames: linked_process_id
+           baseTableName: subprocess_process
+           constraintName: fk_subprocess_process_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: process
+           validate: true
+
+       - addForeignKeyConstraint:
+           baseColumnNames: user_id
+           baseTableName: subprocess_process
+           constraintName: fk_subprocess_user_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           referencedColumnNames: id
+           referencedTableName: user
+           validate: true
+ - changeSet:
+     id: 2022050362100
+     author: mtomar
+     changes:
+       - addColumn:
+           tableName: predictor
+           columns:
+             - column:
+                 name: log_id
+                 type: INT
+                 constraints:
+                   nullable: false
+
+
+
+ - changeSet:
+     id: 20220505171700
+     author: janeh
+     comment: "remove the user association from subprocess_process table"
+     changes:
+       - dropForeignKeyConstraint:
+           baseTableName: subprocess_process
+           constraintName: fk_subprocess_user_id
+       - dropColumn:
+           tableName: subprocess_process
+           columns:
+             - column:
+                 name: user_id
+
+ - changeSet:
+     id: 20220510114700
+     author: mtomar
+     changes:
+       - addColumn:
+           tableName: predictor
+           columns:
+             - column:
+                 name: validation
+                 type: JSON
+       - addColumn:
+           tableName: predictor
+           columns:
+             - column:
+                 name: explanation
+                 type: JSON
+       - addColumn:
+           tableName: predictor
+           columns:
+             - column:
+                 name: feature_encoding_type
+                 type: VARCHAR(25)
+
+ - changeSet:
+     id: 20220511163000
+     author: lahirumahanama
+     changes:
+       - addColumn:
+           tableName: log
+           columns:
+             - column:
+                 name: hive_table_name
+                 type: varchar(255)
+
+ - changeSet:
+     id: 20220523145001
+     author: lahirumahanama
+     changes:
+       - dropColumn:
+           tableName: log
+           columns:
+             - column:
+                name: hive_table_name
+
+ - changeSet:
+     id: 20220606090000
+     author: lahirumahanama
+     changes:
+       - createTable:
+           tableName: attribute_type
+           columns:
+             - column:
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_attribute_type_id
+                 name: id
+                 type: BIGINT
+             - column:
+                 constraints:
+                   nullable: true
+                 name: type
+                 type: VARCHAR(40)
+                 remarks: 'attribute type name'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: created_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The creation timestamp of this record'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: updated_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The updated timestamp of this record'
+
+       - createTable:
+           tableName: data_type
+           columns:
+             - column:
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_data_type_id
+                 name: id
+                 type: BIGINT
+             - column:
+                 constraints:
+                   nullable: true
+                 name: type
+                 type: VARCHAR(40)
+                 remarks: 'data type name'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: created_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The creation timestamp of this record'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: updated_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The updated timestamp of this record'
+
+       - createTable:
+           tableName: logical_log_attribute
+           columns:
+             - column:
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_logical_log_attribute_id
+                 name: id
+                 type: BIGINT
+             - column:
+                 constraints:
+                   nullable: false
+                 name: event_log_id
+                 type: INT
+                 remarks: 'FK Log Id'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: attribute_index
+                 type: INT
+                 remarks: 'Index of an attribute in the log'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: logical_name
+                 type: VARCHAR(255)
+                 remarks: 'Logical name of an attribute'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: attribute_type_id
+                 type: BIGINT
+                 remarks: 'FK Attribute Type Id'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: data_type_id
+                 type: BIGINT
+                 remarks: 'FK Data Type Id'
+             - column:
+                 constraints:
+                   nullable: true
+                 name: date_format
+                 type: VARCHAR(64)
+                 remarks: 'Date format for date type attributes'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: is_masked
+                 type: BOOLEAN
+                 remarks: 'Data masked indicator'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: created_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The creation timestamp of this record'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: updated_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The updated timestamp of this record'
+       - addForeignKeyConstraint:
+           baseColumnNames: event_log_id
+           baseTableName: logical_log_attribute
+           constraintName: FK_logical_log_attribute_event_log_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: log
+           validate: true
+       - addForeignKeyConstraint:
+           baseColumnNames: attribute_type_id
+           baseTableName: logical_log_attribute
+           constraintName: FK_logical_log_attribute_attribute_type_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: attribute_type
+           validate: true
+       - addForeignKeyConstraint:
+           baseColumnNames: data_type_id
+           baseTableName: logical_log_attribute
+           constraintName: FK_logical_log_attribute_data_type_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: data_type
+           validate: true
+
+       - createTable:
+           tableName: physical_log_attribute
+           columns:
+             - column:
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_physical_log_attribute_id
+                 name: id
+                 type: BIGINT
+             - column:
+                 constraints:
+                   nullable: false
+                 name: logical_attribute_id
+                 type: BIGINT
+                 remarks: 'FK logical attribute Id'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: physical_name
+                 type: VARCHAR(255)
+                 remarks: 'Physical name of an attribute in parquet'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: created_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The creation timestamp of this record'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: updated_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The updated timestamp of this record'
+       - addForeignKeyConstraint:
+           baseColumnNames: logical_attribute_id
+           baseTableName: physical_log_attribute
+           constraintName: FK_physical_log_attribute_logical_attribute_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: logical_log_attribute
+           validate: true
+
+       - createTable:
+           tableName: physical_log
+           columns:
+             - column:
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_physical_log_id
+                 name: id
+                 type: BIGINT
+             - column:
+                 constraints:
+                   nullable: false
+                 name: catalogue_table_name
+                 type: VARCHAR(255)
+                 remarks: 'The table name stored in hive'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: file_location
+                 type: VARCHAR(255)
+                 remarks: 'Absolute path of the corresponding parquet files'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: created_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The creation timestamp of this record'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: updated_timestamp
+                 type: TIMESTAMP
+                 remarks: 'The updated timestamp of this record'
+
+       - createTable:
+           tableName: log_physical_log
+           columns:
+             - column:
+                 autoIncrement: true
+                 constraints:
+                   nullable: false
+                   primaryKey: true
+                   primaryKeyName: pk_log_physical_log_id
+                 name: id
+                 type: BIGINT
+             - column:
+                 constraints:
+                   nullable: false
+                 name: log_id
+                 type: INT
+                 remarks: 'FK Log Id'
+             - column:
+                 constraints:
+                   nullable: false
+                 name: physical_log_id
+                 type: BIGINT
+                 remarks: 'FK Physical Log Id'
+       - addForeignKeyConstraint:
+           baseColumnNames: log_id
+           baseTableName: log_physical_log
+           constraintName: FK_log_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: log
+           validate: true
+       - addForeignKeyConstraint:
+           baseColumnNames: physical_log_id
+           baseTableName: log_physical_log
+           constraintName: FK_physical_log_id
+           deferrable: false
+           initiallyDeferred: false
+           onDelete: CASCADE
+           onUpdate: CASCADE
+           referencedColumnNames: id
+           referencedTableName: physical_log
+           validate: true
+
+ - changeSet:
+     id: 20220610090000
+     author: lahirumahanama
+     changes:
+       - addColumn:
+           tableName: logical_log_attribute
+           columns:
+             - column:
+                 name: is_perspective
+                 type: BOOLEAN
+                 constraints:
+                   nullable: false
+                 remarks: 'Indicator as to whether the attribute can be used as a perspective'
+
+ - changeSet:
+     id: 20220622090000
+     author: frankm
+     preConditions:
+       - onFail: MARK_RAN
+       - dbms:
+           type: 'h2'
+       - tableExists:
+           tableName: storage
+     changes:
+       - dropTable:
+           cascadeConstraints:  true
+           tableName: storage
+
+ - changeSet:
+     id: 20220622100000
+     author: frankm
+     preConditions:
+            - onFail: MARK_RAN
+            - not:
+                - tableExists:
+                    tableName: storage
+     changes:
+       - sql:
+           dbms: 'h2'
+           splitStatements: true
+           sql: CREATE TABLE IF NOT EXISTS storage (id bigint NOT NULL AUTO_INCREMENT, storage_path varchar(200) NOT NULL, prefix varchar(100) NOT NULL, "key" varchar(200) DEFAULT NULL, created varchar(100) NOT NULL,updated varchar(100) NOT NULL,PRIMARY KEY (id));
+           stripComments: false

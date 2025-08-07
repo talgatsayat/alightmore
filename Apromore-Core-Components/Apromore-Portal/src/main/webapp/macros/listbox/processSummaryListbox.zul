@@ -1,0 +1,39 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  Copyright (C) 2012 - 2017 Queensland University of Technology.
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<listbox id="processSummariesListbox" width="100%" vflex="1" span="true" autopaging="false" mold="default"
+         multiple="true" checkmark="false" sclass="ap-listbox-process ap-forced-scroll">
+  <listhead hflex="1" sizable="true" sclass="ap-listbox-process-head">
+    <listheader width="40px" visible="true" id="columnType"  />
+    <listheader label="Score"  visible="false" id="columnScore"/>
+    <listheader label="${labels.common_name_text}" id="columnName"  sclass="ap-head-left-align"  />                   <!-- name -->
+    <listheader label="${labels.common_id_text}" width="80px" align="center" id="columnId" /> <!-- id -->
+    <listheader label="Format" width="80px" align="center" visible="false"/>                 <!-- originalNativeType -->
+    <listheader label="Domain"  visible="false"/>                   <!-- domain -->
+    <listheader label="Rating" width="90px" align="center" visible="false"/> <!-- ranking -->
+    <listheader label="${labels.common_last_version_text}" id="columnLastVersion" width="120px" align="center"/> <!-- lastVersion -->
+    <listheader label="${labels.common_creation_text}"  width="170px" align="center" id="columnCreated"   />
+    <listheader label="${labels.common_last_update_text}" width="170px" align="center" id="columnLastUpdate"   /> <!-- lastVersion -->
+    <listheader label="${labels.common_owner_text}"  id="columnOwner"  sclass="ap-head-left-align"   />                   <!-- owner -->
+  </listhead>
+</listbox>

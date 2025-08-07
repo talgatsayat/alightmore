@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+
+
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:sws="http://www.springframework.org/schema/web-services" xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+            http://www.springframework.org/schema/web-services http://www.springframework.org/schema/web-services/web-services-2.0.xsd
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+    <bean id="config" class="org.apromore.common.ConfigBean">
+    </bean>
+
+    <context:component-scan base-package="org.apromore"/>
+
+    <bean id="simpleAuditedService" class="org.apromore.aop.SimpleAuditedService" />
+
+    <!-- ************************** WebServices ************************** -->
+
+    <sws:annotation-driven/>
+
+    <sws:dynamic-wsdl id="manager" portTypeName="manager" locationUri="http://localhost:80/Apromore/services/manager">
+        <sws:xsd location="classpath*:/manager.xsd"/>
+    </sws:dynamic-wsdl>
+
+    <sws:interceptors>
+        <bean class="org.springframework.ws.server.endpoint.interceptor.PayloadLoggingInterceptor"/>
+        <bean class="org.springframework.ws.soap.server.endpoint.interceptor.SoapEnvelopeLoggingInterceptor" p:logRequest="true" p:logResponse="true"/>
+        <bean id="validatingInterceptor" class="org.springframework.ws.soap.server.endpoint.interceptor.PayloadValidatingInterceptor" p:schemas-ref="schemasList" p:validateRequest="true" p:validateResponse="true"/>
+    </sws:interceptors>
+
+    <!-- JAXB marshelling -->
+    <bean id="marshallingMethodProcessor" class="org.springframework.ws.server.endpoint.adapter.method.MarshallingPayloadMethodProcessor"
+          p:marshaller-ref="jaxb2Marshaller" p:unmarshaller-ref="jaxb2Marshaller"/>
+
+    <bean id="defaultMethodEndpointAdapter" class="org.springframework.ws.server.endpoint.adapter.DefaultMethodEndpointAdapter">
+        <property name="methodArgumentResolvers">
+            <list>
+                <ref bean="marshallingMethodProcessor"/>
+            </list>
+        </property>
+        <property name="methodReturnValueHandlers">
+            <list>
+                <ref bean="marshallingMethodProcessor"/>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="jaxb2Marshaller" class="org.springframework.oxm.jaxb.Jaxb2Marshaller">
+        <property name="schemas" ref="schemasList"/>
+        <property name="contextPaths">
+            <list>
+                <value>org.apromore.model</value>
+            </list>
+        </property>
+    </bean>
+
+    <util:list id="schemasList">
+        <value>classpath*:/manager.xsd</value>
+    </util:list>
+
+    <bean id="messageFactory" class="org.springframework.ws.soap.saaj.SaajSoapMessageFactory"/>
+    <bean id="messageReceiver" class="org.springframework.ws.soap.server.SoapMessageDispatcher"/>
+
+    <bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl"/>
+
+    <util:set id="eventLogPlugins">
+    </util:set>
+
+    <util:set id="processPlugins">
+    </util:set>
+
+    <!-- Just test the provider outside of OSGi -->
+    <bean id="pluginProvider" class="org.apromore.plugin.provider.impl.PluginProviderImpl"/>
+    <bean id="apmLogService" class="org.apromore.apmlog.impl.APMLogServiceImpl"/>
+    <bean id="eventAdmin" class="org.apromore.stub.EventAdminStub"/>
+</beans>

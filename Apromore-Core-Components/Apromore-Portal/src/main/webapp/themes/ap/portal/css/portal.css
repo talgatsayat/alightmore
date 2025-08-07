@@ -1,0 +1,886 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+
+/* List */
+
+.ap-portal .z-listhead > th.z-listheader:nth-last-child(2) {
+  border-right: none !important;
+}
+
+.ap-portal-menu-actions {
+  background-color: var(--ap-c-action-bg-normal);
+  box-shadow: var(--ap-box-shadow);
+  border: 0 !important;
+  z-index: 40000;
+}
+
+.ap-portal-menu-actions .z-paging {
+  padding: 4px 10px;
+}
+
+.ap-forced-scroll .z-listbox-body {
+  overflow-x: hidden !important;
+}
+
+
+.ap-portal-layout > div > .z-west,
+.ap-portal-layout > div > .z-center {
+  border: none !important;
+}
+
+.ap-portal-layout > div > .z-west-splitter {
+  border-right: 1px solid #f0f0f0 !important;
+  box-shadow: 3px 0 3px 0px rgba(200, 200, 200, 0.1);
+  background-color: transparent;
+}
+
+.ap-portal .z-west-body .z-borderlayout .z-north,
+.ap-portal .z-west-body .z-borderlayout .z-south,
+.ap-portal .z-west-body .z-borderlayout .z-center,
+.ap-portal .z-west-body .z-borderlayout .z-south-splitter {
+  width: 100% !important;
+  border: none !important;
+}
+
+.ap-portal .z-west-body .z-borderlayout {
+  width: 100% !important;
+}
+
+.ap-portal .z-listheader-content {
+  padding: 4px 7px;
+}
+
+
+.ap-portal-layout .z-west-icon.z-icon-caret-left {
+  left: -6px;
+}
+
+.ap-portal-layout .z-west-icon.z-icon-ellipsis-v {
+  left: -4px;
+}
+
+.ap-portal-layout .z-south-icon.z-icon-caret-down {
+  top: -4px;
+}
+
+.ap-portal-layout .z-south-icon.z-icon-ellipsis-h {
+  top: -4px;
+}
+
+.ap-portal-right-section {
+  background-color: var(--ap-c-bg-lighter) !important;
+}
+
+.ap-portal-right-section .z-center-body {
+  width: 100% !important;
+}
+
+.ap-portal-menu-actions .z-paging-input,
+.ap-portal-menu-actions .z-paging-text {
+  font-family: var(--ap-font-base) !important;
+  font-size: 16px;
+}
+
+.ap-portal-menu-actions .z-paging-text {
+  margin-right: 4px;
+}
+
+.ap-portal-menu-actions .z-paging-button {
+  padding-top: 3px;
+}
+
+.ap-portal-menu-actions .z-paging-input {
+  text-align: right;
+  width: 32px;
+  height: 22px;
+  padding: 0 4px;
+  margin: 0;
+}
+
+.ap-portal-menu-actions .z-paging ul > li {
+  margin: 0;
+}
+
+.ap-portal-right-section .z-tabbox,
+.ap-portal-right-section .z-tabs {
+  background-color: transparent !important;
+}
+
+.ap-portal-menu .z-menubar {
+  background-color: var(--ap-c-menu-bg-normal) !important;
+  border: 0;
+  box-shadow: var(--ap-box-shadow);
+  padding-left: 8px;
+}
+
+/* Hack for main menu due to ZK 9.6 hover bug */
+
+.ap-portal-menu .z-menu-hover .z-menu-content,
+.ap-portal-menu .z-menu-content:focus {
+    background-color: transparent;
+}
+
+.ap-portal-menu .z-menu:hover .z-menu-content {
+    background-color: var(--ap-c-menu-bg-hover);
+}
+
+/*
+.ap-portal-menu .z-menubar > ul {
+  display: flex;
+  flex-direction: row;
+}
+
+.ap-portal-menu .z-menubar > ul > li {
+  flex: 0 0 auto;
+}
+*/
+
+
+.ap-portal-right-section .z-tabbox {
+  /*border: 1px solid transparent !important;*/
+  border: none;
+}
+
+/*.ap-portal-right-content .z-tabs {*/
+/*  background-color: var(--ap-c-tab-bg-normal) !important;*/
+/*}*/
+
+/*.ap-radio-c input[checked="checked"] + .z-radio-content {*/
+/*  color: var(--ap-c-tab-text-selected);*/
+/*  border-bottom: 2px solid var(--ap-c-tab-bar-selected);*/
+/*}*/
+
+
+.ap-portal-right-section .z-tabpanel,
+.ap-portal-right-section .z-window {
+  padding: 0;
+}
+
+.ap-portal-right-section .z-tab {
+  background-color: transparent !important;
+}
+
+.ap-portal-right-section .z-center-body {
+  background-color: transparent !important;
+}
+
+.ap-portal-layout .z-west-splitter,
+.ap-portal-layout .z-south-splitter {
+  background-color: transparent;
+}
+
+.ap-portal-layout .z-west-splitter:hover,
+.ap-portal-layout .z-south-splitter:hover {
+  background-color: #f9fcff;
+}
+
+.ap-portal-left-section .z-west-header,
+.ap-portal-left-section .z-south-header {
+  padding-left: 10px;
+}
+
+.ap-portal-left-section .z-borderlayout-icon.z-icon-angle-double-left {
+    top: 4px;
+}
+
+.ap-portal-right-section .z-tab-content li {
+  padding-bottom: 0 !important;
+}
+
+.ap-listbox-process {
+  height: 100% !important;
+  padding: 0;
+  margin: 0;
+  border: none !important;
+  /*border-radius: 6px;*/
+}
+
+.ap-container-search {
+  background-color: transparent;
+}
+
+.ap-container-search .z-combobox {
+  display: inline-block;
+  margin: 0 !important;
+  height: 21px;
+  vertical-align: top;
+  line-height: 18px;
+}
+
+.ap-container-search .ap-search-combo {
+  height: 21px;
+  /*
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+   */
+  background-color: transparent;
+  border-radius: 3px;
+  margin-top: 1px;
+}
+
+.ap-container-search .ap-search-combo .ap-search-part-icon,
+.ap-container-search .ap-search-combo .ap-search-part-clear {
+  display: inline-block;
+  height: 21px;
+  line-height: 21px;
+  vertical-align: middle;
+  background-color: white;
+  margin: 0;
+  box-sizing: border-box;
+  color: grey;
+  font-size: 16px !important;
+  padding: 1px 4px;
+  cursor: pointer;
+}
+
+.ap-container-search .ap-search-combo .ap-search-part-icon {
+  border-radius: 3px 0 0 3px;
+}
+
+.ap-container-search .ap-search-combo table {
+  border-radius: 3px;
+}
+
+.ap-container-search .ap-search-combo .ap-search-part-clear {
+  position: relative;
+  top: 0;
+  right: 39px;
+  padding: 1px 0;
+  border-radius: 0 3px 3px 0;
+  cursor: pointer;
+  overflow: visible;
+}
+
+.ap-container-search .z-combobox-input {
+  height: 21px;
+  color: grey !important;
+  font-family: var(--ap-font-base);
+  font-size: 14px !important;
+  padding-right: 40px;
+  border-radius: 0 4px 4px 0!important;
+}
+
+.ap-container-search .z-combobox-button {
+  height: 21px;
+  min-height:21px;
+  padding: 0 2px !important;
+}
+
+.ap-container-search .z-combobox-button,
+.ap-container-search .z-combobox-input {
+  border: 1px solid white !important;
+}
+
+.ap-container-search .z-combobox-button {
+  border-left: none;
+}
+
+.ap-container-search .z-combobox-input {
+  border-right: none;
+}
+
+.ap-container-search .z-combobox-input::-moz-selection,
+.ap-container-search .z-combobox-input::selection {
+    color: white !important;
+    background-color: #a0a0a0 !important;
+}
+
+/*
+.ap-container-search .z-combobox-input:focus {
+  border-color: var(--ap-c-grey-minor);
+}
+
+.ap-container-search .z-combobox-input:focus + .z-combobox-button {
+  border-color: var(--ap-c-grey-minor);
+}*/
+
+.ap-container-search .z-comboitem-selected {
+  color: white;
+  background-color: var(--ap-c-widget);
+}
+
+.ap-container-search button img {
+  width: 24px;
+  height: 24px;
+}
+
+.ap-navigation {
+  background-color: white;
+  border: 1px solid #f0f0f0 !important;
+  border-radius: 7px;
+}
+
+.ap-nav-header {
+  padding: 5px;
+  background-color: #f8f8f8;
+}
+
+.ap-portal-action-buttons td {
+  vertical-align: middle;
+}
+
+.ap-process-detail {
+  border-radius: 7px;
+  border: 0;
+}
+
+.ap-process-detail .z-listbox-header {
+  border: 1px solid #D9D9D9;
+  border-bottom: 0;
+  border-top-left-radius: 7px;
+  border-top-right-radius: 7px;
+}
+
+.ap-process-detail .z-listbox-body {
+  border: 1px solid #D9D9D9;
+  border-top: 0;
+  border-bottom-left-radius: 7px;
+  border-bottom-right-radius: 7px;
+}
+
+.ap-portal-right-section .z-menubar ul li.ap-about-menu {
+  position: absolute;
+  right: 5px;
+  top: 2px;
+  z-index: var(--ap-z-user-menu);
+}
+
+.ap-user-menu {
+  position: fixed;
+  right: 30px;
+  top: 1px;
+  z-index: var(--ap-z-user-menu);
+  background-color: transparent;
+  width: 270px;
+  border: none;
+  height: 30px;
+}
+
+.ap-portal .ap-header-actions {
+  top: 3px;
+  right: 5px;
+}
+
+.ap-user-menu li {
+  float: right;
+  width: 100%;
+}
+
+.ap-user-menu .z-menu-content:hover {
+  background-color: transparent;
+}
+
+.ap-user-menu .z-menu-text {
+  text-align: right;
+  color: black !important;
+  filter: var(--ap-filter-ico-normal-light) !important;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+  padding-right: 3px;
+}
+
+.ap-user-menu:hover .z-menu-text {
+  background-color: transparent !important;
+  color: black !important;
+  filter: var(--ap-filter-ico-white) !important;
+}
+
+.ap-user-menu .z-menu-selected .z-menu-text {
+  color: black !important;
+  filter: var(--ap-filter-ico-white) !important;
+  background-color: transparent !important;
+}
+
+.ap-user-menu .z-menu-selected .z-menu-content {
+  background-color: transparent !important;
+}
+
+.ap-user-menu .z-menu-icon {
+  background-image: url('../../common/img/icons/user-circle.svg') !important;
+  width: 26px !important;
+  --icon-height: 26px;
+  --bg-height: 20px;
+  box-sizing: border-box !important;
+  height: var(--icon-height) !important;
+  border: none !important;
+  background-size: auto var(--bg-height) !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  background-origin: padding-box !important;
+  background-color: transparent;
+  border-radius: 3px !important;
+  padding: 0 !important;
+  margin: 0 0 0 0 !important;
+  cursor: pointer;
+  top: -2px;
+  filter: var(--ap-filter-ico-normal-light);
+}
+
+.ap-user-menu:hover .z-menu-icon {
+  background-color: transparent !important;
+  filter: var(--ap-filter-ico-white) !important;
+}
+
+.ap-user-menu .z-menu-content:hover,
+.ap-user-menu .z-menu-content:active,
+.ap-user-menu .z-menu-content:focus,
+.ap-user-menu .z-menu-hover .z-menu-content {
+    background-color: transparent;
+}
+
+.ap-user-menu .z-icon-caret-down:before {
+    display: none;
+}
+
+/* Misc */
+
+.ap-portal-right-section .z-menubar .z-menuseparator {
+  display: none;
+}
+
+.ap-container-search {
+  text-align: right;
+}
+
+.ap-portal-paging {
+  margin: 0;
+}
+
+.ap-portal-action-buttons {
+  margin-top: 4px;
+}
+
+.ap-portal-action-buttons table td {
+  padding: 0 1px 0 1px;
+}
+
+.ap-portal-action-buttons .z-button:active {
+  background-color: transparent;
+}
+
+.ap-portal-action-buttons .z-button:focus {
+  background-color: transparent;
+}
+
+.ap-portal-action-buttons .z-button:hover {
+  background-color: var(--ap-c-action-bg-hover);
+}
+
+.ap-portal-action-buttons .z-button.ap-btn-on {
+  background-color: var(--ap-c-action-bg-hover);
+  filter: none !important;
+}
+
+.ap-wrapper-process .z-window-content {
+  height: 100% !important;
+}
+
+.ap-listbox-process .z-listbox-header,
+.ap-listbox-process .z-listbox-body {
+  width: 100% !important;
+}
+
+.ap-listbox-process button[class^="ap-star-"] {
+  width: 15px;
+  padding: 0;
+  border: 0;
+  cursor: default;
+  background-color: transparent !important;
+}
+
+.ap-listbox-process button[class^="ap-star-"]:after {
+  width: 15px;
+  height: 14px;
+  font-size: 14px;
+  font-family: FontAwesome;
+}
+
+.ap-listbox-process .z-listcell-content {
+  padding: 6px 5px 4px 5px;
+}
+
+.ap-listbox-process .ap-star-1 {
+  color: var(--ap-c-orange-light-3);
+}
+
+.ap-listbox-process .ap-star-2 {
+  color: var(--ap-c-orange-light-2);
+}
+
+.ap-listbox-process .ap-star-3 {
+  color: var(--ap-c-orange-light-1);
+}
+
+.ap-listbox-process .ap-star-4 {
+  color: var(--ap-c-orange);
+}
+
+.ap-listbox-process .ap-star-5 {
+  color: var(--ap-c-orange-dark-1);
+}
+
+.ap-listbox-process .ap-star-full:after {
+  content:"\f005";
+}
+
+.ap-listbox-process .ap-star-half:after {
+  content: "\f089";
+}
+
+.ap-listbox-process .ap-star-none:after {
+  content:"\f005";
+  color: var(--ap-c-grey-light-5) !important;
+}
+
+.ap-process-detail-wrapper .z-window {
+  background-color: transparent !important;
+}
+
+.ap-left-layout .z-south-splitter-button .z-icon-ellipsis-h:nth-child(1) {
+  left: 0 !important;
+}
+
+.ap-left-layout .z-south-splitter-button .z-icon-ellipsis-h:nth-child(3) {
+  left: 20px !important;
+}
+
+.ap-about-window .z-window-content {
+  padding: 0;
+}
+
+.ap-about-window .z-tabbox {
+  border: none;
+  border-radius: 0;
+  background: transparent;
+}
+
+.ap-about-window .z-listbox {
+  border: none;
+  background: rgba(255, 255, 255, 1);
+}
+
+.ap-about-window .z-tabs {
+  background-color: rgba(255, 255, 255, 0.8);
+}
+
+.ap-about-window .z-tab {
+  background-color: transparent;
+}
+
+.ap-about-window .ap-about-details {
+  padding: 20px;
+  color: white;
+}
+
+.ap-about-window .z-a {
+  color: white;
+  font-size: 14px;
+}
+
+.ap-about-window .ap-about-logo {
+  margin: 5px 0 20px 0;
+}
+
+.ap-about-window .ap-edition .z-label {
+  font-family: var(--ap-font-brand);
+  color: var(--ap-c-orange-light-2);
+  font-size: 27px;
+  margin-bottom: 10px;
+}
+
+.ap-about-window .z-listbox-body::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 7px;
+}
+
+.ap-about-window .z-listbox-body::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: var(--ap-c-scroll);
+}
+
+img[src="img/icon/bpmn-22x22.png"] {
+  background-image: url('../../common/img/icons/bpmn-model.svg') !important;
+  width: 26px !important;
+}
+
+.z-menuitem-image {
+  filter: var(--ap-filter-ico-normal-dark);
+}
+
+/* hack for trash icon in menu */
+.z-menuitem-text img[src='portalPluginResource/File/Delete/trash.svg'] {
+  margin-left: -2px !important;
+  margin-right: 10px !important;
+}
+
+.ap-importer-filename {
+  color: var(--ap-c-text-heading) !important;
+}
+
+.ap-portal-crumb {
+  margin: 0 6px;
+  cursor: pointer;
+}
+
+.ap-portal-crumb .ap-icon-home-solid {
+  display: inline-block;
+  background-size: 14px 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  vertical-align: top;
+}
+
+.ap-portal-crumb a {
+  text-decoration: none !important;
+  color: var(--ap-c-widget);
+}
+
+.ap-portal-crumb a:hover {
+  color: var(--ap-c-widget-hover);
+}
+
+.ap-portal-tabbox .z-tabs-content .z-tab:not(:first-child) {
+  padding: 4px 16px 1px 8px !important;
+}
+
+.ap-portal-tabbox .z-tabs-content .z-tab:not(:first-child) .z-tab-button {
+  right: 3px;
+  top: 1px;
+}
+
+/* List view */
+
+.ap-listbox-process .z-listbox-body .z-listitem {
+  height: 40px !important;
+}
+
+/* Tiles view */
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body table {
+  display: block;
+  height: 100%;
+  width:100% !important;
+  background-color: #f9f9f9;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body table tbody {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 3px;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem {
+  display: block;
+  width: 200px !important;
+  /*min-width: 200px !important;*/
+  height: 80px !important;
+  flex: 0 0 auto;
+  background-color: white;
+  margin: 4px;
+  padding: 7px;
+  border-radius: 5px !important;
+  border: 1px solid #d0d0d0;
+  position: relative;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem.ap-item-folder {
+  /*background-color: #e0e0e0;*/
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td {
+  display: inline-block;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td .z-listcell-content {
+  min-height: auto !important;
+  line-height: 16px;
+  padding: 0;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(3) {
+  display: block;
+  border: none;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem td.z-listcell,
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem:hover td.z-listcell {
+  border: 0 !important;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem:hover {
+  background-color: var(--ap-c-grid-row-bg-selected) !important;
+  border: 1px solid #d0d0d0 !important;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem.z-listitem-selected {
+  background-color: var(--ap-c-grid-row-bg-selected) !important;
+  border: 2px solid #c0c0c0 !important;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(3) > .z-listcell-content {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 2px;
+  padding-bottom: 5px;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(2),
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(4),
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(5),
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(6),
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(7),
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(9)
+{
+  display: none;
+}
+
+/* version */
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(8) {
+  display: block;
+  position: absolute;
+  top: 7px;
+  right: 9px;
+}
+
+/* date */
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(10) {
+  display: inline-block;
+  position: absolute;
+  bottom: 7px;
+  left: 9px;
+}
+
+/* owner */
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(11) {
+  display: block;
+  position: absolute;
+  bottom: 7px;
+  right: 9px;
+}
+
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(11) div {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 90px;
+  text-align: right;
+}
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(8) div,
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(10) div,
+.ap-listbox-process.ap-tiles-view .z-listbox-body .z-listitem > td:nth-child(11) div {
+  font-size: 12px;
+  color: var(--ap-c-text-minor) ;
+}
+
+/*
+
+.ap-listbox-process .z-listbox-body .z-listitem > td:nth-child(8) div,
+.ap-listbox-process .z-listbox-body .z-listitem > td:nth-child(9) div,
+.ap-listbox-process .z-listbox-body .z-listitem > td:nth-child(10) div {
+  display: inline-block;
+  margin-right: 4px;
+  color: var(--ap-c-text-minor) !important;
+}
+
+.ap-listbox-process .z-listbox-body .z-listitem > td:nth-child(8) > div:not(:empty):after,
+.ap-listbox-process .z-listbox-body .z-listitem > td:nth-child(9) > div:not(:empty):after {
+  padding-left: 3px;
+  content: '/';
+  color: var(--ap-c-text-light) !important;
+}*/
+
+/* lang chooser */
+.ap-lang-chooser {
+    position: fixed;
+    top: 37px;
+    right: 2px;
+    font-size: 12px;
+}
+
+.ap-lang-chooser .z-comboitem-image {
+    vertical-align: bottom;
+    line-height: 14px;
+    margin-top: 0px;
+}
+
+.ap-lang-chooser .z-comboitem-image img {
+    width: 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.ap-lang-chooser .z-comboitem-text {
+    vertical-align: bottom;
+}
+
+.ap-lang-chooser-icon {
+    position: fixed;
+    top: 36px;
+    right: 267px;
+}
+
+.ap-portal .z-button.ap-icon {
+    background-color: transparent;
+}
+.ap-listbox-process-head .ap-head-left-align > .z-listheader-content {
+	text-align: left !important;
+}
+.ap-disable-selection {
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+.ap-item-cut-selected .z-label , .ap-item-cut-selected .z-listcell-content {
+     opacity: 0.4;
+     filter: alpha(opacity=40);
+}
+.z-menu-image {
+    filter: var(--ap-filter-ico-normal-dark);
+}
+.inner-submenu .z-menuitem-image{
+    filter:none;
+}
+.ap-tree-leaf-node > .z-treecell > .z-treecell-content > .z-tree-icon > .z-icon-caret-right:before {
+    content: "" !important;
+}
+.ap-tree-leaf-node > .z-treecell > .z-treecell-content >  .z-tree-icon > .z-icon-caret-down:before {
+	content: "" !important;
+}
+
+.z-menupopup .z-menu-image,
+.z-menupopup .z-menuitem-image {
+    height: 18px !important;
+    width: 22px !important;
+    max-width: 22px !important;
+    object-fit: contain;
+    margin-right: 6px;
+}
+
+.ap-portal-left-section .z-south-splitter {
+    cursor: ns-resize;
+}

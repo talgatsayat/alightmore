@@ -1,0 +1,55 @@
+#
+# #%L
+# This file is part of "Apromore Core".
+# %%
+# Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+# %%
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Lesser Public License for more details.
+#
+# You should have received a copy of the GNU General Lesser Public
+# License along with this program.  If not, see
+# <http://www.gnu.org/licenses/lgpl-3.0.html>.
+# #L%
+#
+
+databaseChangeLog:
+   - include:
+       file: db/migration/changeLog-Schema-init.yaml
+
+   - changeSet:
+       id: 1599618934768-128  
+       author: init-data
+       context: MYSQL
+       changes:  
+          - sqlFile:    
+              encoding: UTF-8
+              path: sql/db-data-mysql.sql
+              relativeToChangelogFile: true
+              splitStatements: false  
+              stripComments: true
+
+   - changeSet:  
+       id:  1599618934768-129  
+       author: init-data
+       context: H2
+       changes:  
+          - sqlFile:    
+              encoding: UTF-8
+              path: sql/db-data-h2.sql
+              relativeToChangelogFile: true
+              splitStatements: false  
+              stripComments: true
+        
+   - include:
+      file: db/migration/changeLog-Schema.yaml
+
+   - include:
+      file: db/migration/changeLog-Data.yaml

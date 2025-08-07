@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<config>
+    <!-- List of plugins. One plugin is one class. -->
+	<plugins>
+		<plugin source="toolbar.js" name="Toolbar" />
+		<plugin source="undo.js" name="Undo" />
+		<plugin source="apromoreSave.js" name="ApromoreSave"/>
+        <plugin source="export.js" name="Export"/>
+		<plugin source="pdf.js" name="File"/>
+		<plugin source="view.js" name="View"/>
+		<plugin source="share.js" name="Share"/>
+		<plugin source="simulateModel.js" name="SimulateModel"/>
+		<plugin source="publishModel.js" name="PublishModel"/>
+		<plugin source="attachment.js" name="Attachment"/>
+	</plugins>
+</config>

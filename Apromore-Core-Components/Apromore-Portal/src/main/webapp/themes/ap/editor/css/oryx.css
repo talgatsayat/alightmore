@@ -1,0 +1,71 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+
+.x-panel-editor-north .x-toolbar {
+    box-sizing: border-box;
+    margin-top: var(--ap-header-height) !important;
+    background-image: none !important;
+    background-color: var(--ap-c-action-bg-normal) !important;
+    height: var(--ap-menu-height) !important;
+    padding: 3px 0 0 10px;
+    border: 0;
+    /*box-shadow: var(--ap-box-shadow);*/
+    z-index: var(--ap-z-editor-toolbar);
+}
+
+/* copy of ap-icon rule */
+.x-panel-editor-north .x-toolbar button {
+    --icon-height: 26px;
+    --bg-height: 20px;
+    box-sizing: border-box !important;
+    height: var(--icon-height) !important;
+    border: none !important;
+    background-size: auto var(--bg-height) !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-origin: padding-box !important;
+    background-color: transparent !important;
+    border-radius: 3px !important;
+    padding: 0 !important;
+    cursor: pointer;
+    filter: var(--ap-filter-ico-normal-dark);
+}
+
+.x-panel-editor-north .x-toolbar .x-btn-left,
+.x-panel-editor-north .x-toolbar .x-btn-right {
+    background: none !important;
+    width: 2px;
+}
+
+.x-panel-editor-north .x-toolbar .x-btn-left > *,
+.x-panel-editor-north .x-toolbar .x-btn-right > * {
+    display: none !important;
+}
+
+.x-panel-editor-north .x-toolbar .x-btn-center {
+    background: none !important;
+    border: none !important;
+    padding: 0 2px !important;
+    border-radius: 3px !important;
+    margin: 0 4px 0 4px !important;
+}

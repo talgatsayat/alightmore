@@ -1,0 +1,80 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+
+/*.ap-portal > .z-window-content {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: stretch;*/
+/*    justify-items: flex-start;*/
+/*}*/
+
+/*.ap-portal > .z-window-content .ap-header {*/
+/*    flex: 0 0 auto;*/
+/*}*/
+
+/*.ap-portal > .z-window-content .ap-portal-layout {*/
+/*    flex: 1 0 auto;*/
+/*}*/
+
+/*.ap-portal-layout {*/
+/*    margin-top: 40px !important;*/
+/*}*/
+
+/*.ap-portal-right-section .z-center-body {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: stretch;*/
+/*    justify-items: flex-start;*/
+/*}*/
+
+/*.ap-portal-right-content,*/
+/*.ap-portal-right-section .z-tabbox {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: stretch;*/
+/*    justify-items: flex-start;*/
+/*    flex: 1 0 auto !important;*/
+/*    height: auto !important;*/
+/*}*/
+
+/*.ap-portal-right-section .z-tabbox .z-tabpanels {*/
+/*    flex: 1 0 auto !important;*/
+/*    height: auto !important;*/
+/*}*/
+
+/*.ap-portal-right-content > div {*/
+/*    flex: 0 0 auto !important;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: stretch;*/
+/*    justify-items: flex-start;*/
+/*}*/
+
+/*.ap-portal-right-content > div:last-child {*/
+/*    flex: 1 0 auto !important;*/
+/*    height: auto !important;*/
+/*}*/
+
+/*.ap-portal-right-content {*/
+/*    flex: 0 0 auto !important;*/
+/*}*/

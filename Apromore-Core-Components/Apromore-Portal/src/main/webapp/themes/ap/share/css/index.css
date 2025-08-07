@@ -1,0 +1,73 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+.ap-share-detail > span {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.ap-share-detail .z-label {
+    margin-left: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    color: black;
+}
+
+.ap-share-detail .ap-icon {
+    display: inline-block;
+}
+
+.ap-share-detail .z-listcell-content {
+    padding: 2px 5px 2px 5px;
+}
+
+.ap-share-detail .z-span {
+    margin: 0 0 0 5px;
+}
+
+.ap-share-detail .z-image {
+    width: 20px;
+}
+
+.ap-share-related-deps .note {
+    margin-top: 3px;
+    background-color: var(--ap-c-maroon-light-5);
+    padding: 7px;
+    border-radius: 2px;
+}
+
+.ap-share-related-deps .body > span {
+    display: block;
+    margin: 7px 0;
+}
+
+.ap-share-associated .z-listitem .z-listcell {
+    cursor: default;
+}
+
+.ap-share-win .z-listitem:not([class*="selected"]):hover > .z-listcell {
+    background: transparent !important;
+}
+
+.ap-share-win .z-combobox-readonly>input {
+    background: white !important;
+}

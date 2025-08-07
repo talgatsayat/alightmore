@@ -1,0 +1,325 @@
+/**
+ * #%L
+ * This file is part of "Apromore Enterprise Edition".
+ * %%
+ * Copyright (C) 2024 Apromore Pty Ltd. All Rights Reserved.
+ * %%
+ * NOTICE:  All information contained herein is, and remains the
+ * property of Apromore Pty Ltd and its suppliers, if any.
+ * The intellectual and technical concepts contained herein are
+ * proprietary to Apromore Pty Ltd and its suppliers and may
+ * be covered by U.S. and Foreign Patents, patents in process,
+ * and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this
+ * material is strictly forbidden unless prior written permission
+ * is obtained from Apromore Pty Ltd.
+ * #L%
+ */
+
+ :root {
+    --ap10-main: #11748E;
+    --ap10-hover: #479CA5;
+    --ap10-press: #1B5471;
+    --ap10-disable: #CFE3E8;
+    --ap10-icon-gray: #8D9091;
+    --ap10-icon-dark: #212121;
+
+    /* radio */
+    --ap10-radio-border: #D3D4D4;
+    --ap10-radio-selected-circle: #11748E;
+    --ap10-radio-unselected-circle: #FFFFFF;
+    --ap10-radio-disabled-selected-circle: #9F9F9F;
+    --ap10-radio-disabled-unselected-circle: #F5F5F5;
+
+    /* checkbox */
+    --ap10-checkbox-border: #8D9091;
+
+    /* textbox; input */
+    --ap10-textbox-input: #525252;
+
+    --ap10-icon-color: #212121;
+    --ap10-icon-hover-bg-color: #EBEBEB;
+}
+
+svg text,
+svg tspan {
+    fill: #8D9091 !important;
+}
+
+.z-listhead .z-listheader-content {
+    display: block;
+}
+
+.z-toolbarbutton:focus {
+    background-color: #fff;
+}
+
+.z-toolbarbutton:hover,
+.z-toolbarbutton:active {
+    background-color: var(--ap10-icon-hover-bg-color);
+}
+
+.z-errorbox,
+.z-errorbox>.z-errorbox-icon {
+    color: #CA150C;
+}
+
+.z-datebox-input:focus,
+.z-datebox-input.z-datebox-hover,
+.z-datebox-input.z-datebox-hover+.z-datebox-button{
+    border-color: var(--ap10-main);
+}
+
+.z-datebox:hover .z-datebox-input,
+.z-datebox-open .z-datebox-button {
+    border-color: var(--ap10-main);
+}
+
+.z-datebox-button:hover {
+    border-color: var(--ap10-main);
+    background: #fff;
+}
+
+.z-calendar-selected {
+    background: var(--ap10-main);
+}
+
+.z-calendar-cell:hover {
+    background: var(--ap10-hover);
+}
+
+.z-listitem-checkable,
+.z-listheader-checkable,
+.z-checkbox input[type="checkbox"] {
+    color: var(--ap10-main);
+    border: 1px solid var(--ap10-checkbox-border);
+}
+
+.z-textbox,
+.z-decimalbox,
+.z-intbox,
+.z-longbox,
+.z-doublebox {
+    color: var(--ap10-textbox-input);
+}
+
+.z-paging-info {
+    font-size: 14px;
+}
+
+.z-listitem.z-listitem-selected > .z-listcell {
+    border-right: transparent;
+}
+
+.customCheckAllHeadTable .z-listheader-checkable {
+    display: none;
+}
+
+.ap-lfee .z-listheader,
+.ap-lfee .z-listhead-bar{
+    background: #ffffff;
+}
+
+.ap-lfee .z-comboitem,
+.ap-lfee .z-comboitem a,
+.ap-lfee .z-comboitem a:visited {
+    font-size: 14px;
+}
+
+.ap-lfee .z-menubar,
+.ap-lfee .z-menu-content:active,
+.ap-lfee .z-menu-content:focus,
+.ap-lfee .z-menuitem-content:active,
+.ap-lfee .z-menuitem-content:focus,
+.ap-lfee .z-menu-selected .z-menu-content,
+.ap-lfee .z-toolbarbutton-content:active,
+.ap-lfee .z-toolbarbutton-content:focus,
+.ap-lfee .z-toolbarbutton:hover,
+.ap-lfee .z-toolbarbutton:active,
+.ap-lfee .z-toolbarbutton:focus {
+    color: var(--ap-c-black);
+}
+
+.filteree-between-tables-ctnr .z-vlayout-inner {
+    padding-bottom: 0px !important;
+}
+
+.filteree-between-tables-ctnr .z-toolbarbutton,
+.filteree-between-tables-ctnr .z-hlayout-inner {
+    padding: 0px;
+}
+
+.filteree-between-tables-ctnr .z-checkbox, .filteree-between-tables-ctnr .z-checkbox-content,
+.filteree-between-tables-ctnr .z-radio, .filteree-between-tables-ctnr .z-radio-content {
+    margin:0px;
+}
+
+.filteree-searchbutton-ctnr input[type="checkbox"] {
+    display:none;
+}
+
+.filteree-searchbutton-ctnr input[type="checkbox"]:checked ~ .z-checkbox-content .icon-search {
+    color:#0DF;
+}
+
+.filteree-searchbutton-ctnr input[type="checkbox"]:hover ~ .z-checkbox-content .icon-search {
+    color:#0EF;
+}
+
+.filteree-searchbutton-ctnr input[type="checkbox"]:active ~ .z-checkbox-content .icon-search{
+    color:#09D;
+}
+
+.filteree-custom-table-header input[type="checkbox"][disabled],
+.filteree-custom-table-header input[type="checkbox"][disabled] + label + label {
+    cursor: default;
+    color: rgba(0, 0, 0,.4);
+    background-color: transparent;
+}
+
+.filteree-custom-table-header {
+    color: #212121;
+    padding: 5px 10px;
+}
+
+.filteree-custom-table-auxheader {
+    color: #212121;
+    padding: 5px 10px;
+}
+
+.filteree-custom-table-auxheader .z-toolbarbutton-content {
+    padding: 0px !important;
+}
+
+.filteree-icon-involved-table .z-toolbarbutton-content>i,
+.filteree-icon-involved-table .z-span {
+    font-size: 19px;
+}
+
+.filteree-icon-involved-table .z-listheader {
+    background: #fff;
+}
+
+.filterEeMain .z-auxheader {
+    border-left: unset;
+    border-bottom: unset;
+    padding: unset;
+    background-color: unset;
+    position: unset;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.filterEeMain .z-auxheader-bar {
+    border-left: unset;
+    border-bottom: unset;
+    padding: unset;
+    background-color: unset;
+    position: unset;
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 1px solid #cdcdcd;
+}
+
+.selectAllCheckboxContainer {
+    position:absolute;
+    z-index:+1;
+    top:0;
+    left:0;
+    padding-top: 5px;
+    padding-left: 4px;
+}
+
+.filterEditorTop {
+    padding: 10px 0;
+}
+
+.valueDetailWindow .z-caption-content .z-toolbarbutton .z-toolbarbutton-content i {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.valueDetailWindow .z-caption-content .z-toolbarbutton .z-toolbarbutton-content:hover i {
+    color: #fff;
+}
+
+.cbbtPerfAttrDurOpt .z-popup-content {
+    padding:0;
+}
+
+.filterEeMain .z-north,
+.filterEeMain .z-center {
+    border: 0;
+}
+
+.filterEeMain .z-radio input[type="radio"] {
+    margin: 0 5px 3px 0;
+}
+
+.filterEeMain .z-toolbarbutton-content {
+    padding-top:3px;
+}
+
+.filterEeMain .z-auxheader .filterIconCtnr {
+    padding-top: 5px !important;
+}
+
+.icon-filter-filled {
+    color: var(--ap10-icon-gray) !important;
+}
+
+.filterEeMain .z-checkbox .z-checkbox-content,
+.filterEeMain .z-radio .z-radio-content {
+    margin: 0;
+}
+
+.edge .z-button>i {
+    vertical-align: initial;
+}
+
+.cbFilterContainer {
+    position: absolute;
+    top: 2px;
+    right: 0;
+}
+
+.cbFilterContainer input[type="checkbox"] {
+    display:none;
+}
+
+.cbFilterContainer input[type="checkbox"] ~ .z-checkbox-content .icon-search {
+    font-size: 16px;
+}
+
+.cbFilterContainer input[type="checkbox"]:checked ~ .z-checkbox-content .icon-search {
+    color: var(--ap10-main);
+}
+
+.cbFilterContainer input[type="checkbox"]:hover ~ .z-checkbox-content .icon-search,
+.cbFilterContainer input[type="checkbox"]:focus ~ .z-checkbox-content .icon-search{
+    color: var(--ap10-hover);
+}
+
+.cbFilterContainer input[type="checkbox"]:active ~ .z-checkbox-content .icon-search{
+    color: var(--ap10-press);
+}
+
+.z-auxheader {
+    border-bottom: 1px solid #c7c7c7c;
+}
+
+.operatorSelectorPopup {
+    width:40px !important;
+}
+.operatorSelectorPopup .z-popup-content {
+    padding: 0px;
+}
+
+.bf-operator .z-combobutton-content {
+    height: 24px;
+    color: #000;
+}
+
+.ie .z-combobutton-content>i, .edge .z-combobutton-content>i {
+    vertical-align: initial;
+}

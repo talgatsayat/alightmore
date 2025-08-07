@@ -1,0 +1,32 @@
+group = 'org.apromore.plugin'
+version = '1.0.0'
+description = 'Log Filter Generic Portal Plugin'
+
+
+
+dependencies {
+    
+	implementation project(':Apromore-Extras:OpenXES')
+	implementation project(':Apromore-Extras:APMLogModule')
+	implementation project(':Apromore-Plugins:plugin-core:portal:api')
+	implementation project(':Apromore-Plugins:plugin-core:core:api')
+	
+    implementation project(':Apromore-Custom-Plugins:Generic-Portal-Plugin')
+    implementation project(':Apromore-Custom-Plugins:Log-Filter-Logic')
+    implementation project(':Apromore-Clients:portal-model')
+   
+
+   // Добавляем ZK UI фреймворк
+    implementation 'org.zkoss.zk:zk:9.6.0.2'
+    implementation 'org.zkoss.zk:zul:9.6.0.2'
+    implementation 'org.zkoss.common:zcommon:9.6.0.2'
+	
+	implementation project(':Apromore-Plugins:plugin-core:apmlog')
+    implementation project(':Apromore-Plugins:plugin-core:logfilter')
+    implementation project(':Apromore-Model')
+    implementation project(':Apromore-Service')
+    implementation project(':Apromore-Core-Components:Apromore-Manager')
+    implementation project(':Apromore-Zk')
+
+}
+

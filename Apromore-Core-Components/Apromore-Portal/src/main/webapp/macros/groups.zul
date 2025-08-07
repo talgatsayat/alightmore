@@ -1,0 +1,46 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  Copyright (C) 2014 - 2017 Queensland University of Technology.
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+<vlayout spacing="10px" vflex="true">
+    <style>
+        .z-listbox-autopaging .z-listcell-cnt {
+        height: 23px;
+        overflow: hidden;
+        }
+    </style>
+    <hlayout spacing="5px" style="padding: 5px;">
+        <textbox id="txtSearch" value="" width="200px" />
+        <button label="Search" id="btnSearch"/>
+        <button label="Clear" id="btnClear"/>
+        <button label="Save Selected" id="btnSave"/>
+    </hlayout>
+    <listbox id="lstGroups" vflex="true" span="true" visible="false" autopaging="true" mold="paging" multiple="true" checkmark="true">
+        <listhead sizable="true" >
+            <listheader hflex="min" label="" visible="true" />
+            <listheader hflex="min" label="Name" sort="auto(name)" />
+            <listheader hflex="min" label="Read" />
+            <listheader hflex="min" label="Write" />
+            <listheader hflex="min" label="Owner" />
+            <listheader hflex="min" label="ID" sort="auto(id)" visible="false" />
+        </listhead>
+    </listbox>
+</vlayout>

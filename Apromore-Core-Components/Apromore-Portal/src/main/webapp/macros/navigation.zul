@@ -1,0 +1,89 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  Copyright (C) 2011 - 2017 Queensland University of Technology.
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<window id="treeW" vflex="1" hflex="1" border="0" sclass="ap-navigation" style="padding:0">
+    <style>
+        .h-inline-block {
+        display: inline-block;
+        _display: inline;
+        }
+
+        .z-tree-icon {
+        vertical-align: 2px;
+        }
+
+        .z-toolbarbutton-content>img, .z-toolbarbutton-content>i {
+        margin-right: 2px;
+        max-height: 22px;
+        max-width: 22px;
+        font-size: 16px;
+        }
+        .z-valign-middle>.z-hlayout-inner {
+        vertical-align: -webkit-baseline-middle;
+        }
+
+        .z-treecol-content, .z-treecell-content, .z-treefooter-content {
+        line-height: 18px;
+        }
+
+        .z-tree {
+        background: #fff;
+        overflow: hidden;
+        zoom: 1;
+        border: unset;
+        }
+    </style>
+    <style>
+        .ap-nav-header .z-toolbarbutton span {
+            visibility: hidden !important;
+        }
+
+        .ap-nav-header .ap-icon-folder-expand-solid {
+            background-image: url('themes/ap/common/img/icons-2/folder-expand-solid.svg') !important;
+            width: 28.5px !important;
+            filter: none !important;
+        }
+
+        .ap-nav-header .ap-icon-folder-collapse-solid {
+            background-image: url('themes/ap/common/img/icons-2/folder-collapse-solid.svg') !important;
+            width: 26.390625px !important;
+            filter: none !important;
+        }
+
+        .ap-nav-header .z-toolbarbutton {
+            margin-left: 0 !important;
+        }
+    </style>
+    <div class="z-west-header" sclass="ap-nav-header" style="display: -webkit-flex; display: flex">
+        <label style="color: unset; padding-top: 5px; font-weight: bold; -webkit-flex: 1; flex: 1" value="${labels.portal_workspace_text}"/>
+        <toolbarbutton sclass="ap-icon ap-icon-folder-expand-solid" id="expand" tooltiptext="${labels.portal_folderExpand}"/>
+        <toolbarbutton sclass="ap-icon ap-icon-folder-collapse-solid" id="contract" tooltiptext="${labels.portal_folderCollapse}"/>
+    </div>
+    <vlayout style="overflow: auto" height="calc(100% - 36px)">
+        <tree id="tree" sclass="ap-folder-tree">
+            <treecols>
+                <treecol label=""/>
+            </treecols>
+        </tree>
+    </vlayout>
+</window>

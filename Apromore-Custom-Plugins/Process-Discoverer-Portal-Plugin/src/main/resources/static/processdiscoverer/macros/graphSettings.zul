@@ -1,0 +1,150 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<vlayout
+    id="graphSettings"
+    xmlns:ca="client/attribute"
+    xmlns:w="client"
+    xmlns:n="native"
+    sclass="ap-pd-graph-settings"
+    spacing="0">
+  <n:div class="section">${arg.pdLabels.compGraphSettings_text}</n:div>
+  <n:div class="spacer" style="height:2px;"></n:div>
+  <grid sclass="ap-grid"><!-- set vflex to occupy the rest of the area -->
+    <columns>
+      <column width="130px" visible="false"/>
+      <column width="78px"/>
+      <column hflex="1"
+              style="min-width: 250px"/>
+      <column width="45px"/>
+    </columns>
+    <rows>
+      <row>
+        <label></label>
+        <label></label>
+        <div width="100%" sclass="ap-pd-metric-container" align="center">
+          <hlayout spacing="0">
+            <div hflex="90" align="right">
+              <label width="88px" style="padding: 5px 5px 0 0;">${arg.pdLabels.graphSettingAbstractBy_text}</label>
+            </div>
+            <div hflex="130" align="left">
+              <combobox width="100%" style="max-width: 150px" id="metricSelector"
+                        readonly="true"
+                        sclass="ap-pd-metric-selector"
+                        value="${arg.pdLabels.metricCaseFreq_text}">
+                <comboitem value="metricCaseFreq"
+                           iconSclass="ap-icon ap-icon-tally"
+                           label="${arg.pdLabels.metricCaseFreq_text}"/>
+                <comboitem value="metricAvgDuration"
+                           iconSclass="ap-icon ap-icon-duration-avg"
+                           label="${arg.pdLabels.metricAvgDuration_text}"/>
+              </combobox>
+            </div>
+          </hlayout>
+        </div>
+        <span></span>
+      </row>
+      <row>
+        <label sclass="title"
+               style="padding-left: 5px;">Metric
+        </label>
+        <label sclass="title"><!--Ordering--></label>
+        <div width="100%"
+             sclass="ap-pd-chart-bi-legend" ca:title="Ordering">
+          <div
+              align="left">
+            <label id="orderingStart"
+                   value="${arg.pdLabels.graphSettingHigh_text}"/>
+          </div>
+          <div
+              align="right">
+            <label id="orderingEnd"
+                   value="${arg.pdLabels.graphSettingLow_text}"/>
+          </div>
+        </div>
+        <div align="center">
+          <button id="swapOrdering"
+                  tooltiptext="Invert ordering"
+                  w:onClick="Ap.pd.swapOrdering();"
+                  sclass="ap-pd-swap-ordering"
+                  iconSclass="z-icon-exchange">
+          </button>
+        </div>
+      </row>
+      <row>
+        <checkbox id="metricCaseFreq"
+                  label="${arg.pdLabels.metricCaseFreq_text}"
+                  checked="true"
+                  sclass="ap-state-on ap-pd-metric"
+                  iconSclass="ap-icon ap-icon-tally"
+        />
+        <label>${arg.pdLabels.graphSettingNodes_text}</label>
+        <slider id="nodeSlider"
+                mold="scale"
+                maxpos="100"
+                curpos="100"
+                hflex="1"/>
+        <intbox id="nodeInput"
+                value="100"
+                width="34px"/>
+      </row>
+      <row>
+        <checkbox id="metricAvgDuration"
+                  label="${arg.pdLabels.metricAvgDuration_text}"
+                  checked="false"
+                  sclass="ap-state-off ap-pd-metric"
+                  iconSclass="ap-icon ap-icon-duration-avg"
+        />
+        <label>${arg.pdLabels.graphSettingArcs_text}</label>
+        <slider id="arcSlider"
+                mold="scale"
+                maxpos="100"
+                curpos="10"
+                hflex="1"/>
+        <intbox id="arcInput"
+                value="10"
+                width="34px"/>
+      </row>
+      <row id="parallelismRow">
+        <!-- slot for case variant -->
+        <checkbox id="metricCaseVariant"
+                  label="${arg.pdLabels.metricCaseVariant_text}"
+                  sclass="ap-state-off ap-pd-metric ap-disabled"
+                  iconSclass="ap-icon ap-icon-random"
+                  disabled="true"
+                  visible="false"
+                  checked="false"/>
+        <label id="parallelismLabel"
+               sclass="ap-pd-parallel-label">${arg.pdLabels.graphSettingParallelism_text}
+        </label>
+        <slider id="parallelismSlider"
+                mold="scale"
+                maxpos="100"
+                curpos="40"
+                hflex="1"/>
+        <intbox id="parallelismInput"
+                value="40"
+                width="34px"/>
+      </row>
+    </rows>
+  </grid>
+</vlayout>

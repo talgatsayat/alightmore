@@ -1,0 +1,11 @@
+group = 'org.apromore.plugin'
+version = '1.0.0'
+description = 'Log Filter Logic'
+
+apply plugin: 'java'
+
+dependencies {
+    implementation project(':Apromore-Extras:OpenXES')
+    implementation project(':Apromore-Extras:APMLogModule')
+    implementation 'commons-lang:commons-lang:2.6'
+}

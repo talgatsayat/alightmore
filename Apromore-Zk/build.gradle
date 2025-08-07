@@ -1,0 +1,27 @@
+group = 'org.apromore.zk'
+version = '1.1'
+description = 'Apromore Zk'	
+
+ext {
+	zkVersion ='9.6.0.2'
+}
+
+dependencies {
+
+	implementation ('org.zkoss.zkspringboot:zkspringboot-starter:2.3.1')
+	{
+		exclude group: 'org.zkoss.zk', module: 'zkbind'
+	}
+	implementation project(':Apromore-Commons')
+
+	api "org.zkoss.common:zel:${zkVersion}"
+	api "org.zkoss.common:zcommon:${zkVersion}"
+	api "org.zkoss.common:zweb:${zkVersion}"
+	api "org.zkoss.theme:iceblue_c:${zkVersion}"
+	api "org.zkoss.zk:zhtml:${zkVersion}"
+	api "org.zkoss.zk:zkbind:${zkVersion}"
+	api "org.zkoss.zk:zk:${zkVersion}"
+	api "org.zkoss.zk:zkplus:${zkVersion}"
+	api "org.zkoss.zk:zul:${zkVersion}"
+	
+}

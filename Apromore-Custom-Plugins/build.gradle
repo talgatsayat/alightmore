@@ -1,0 +1,38 @@
+group = 'org.apromore.plugin'
+version = '7.21-SNAPSHOT'
+
+dependencies {
+
+	runtimeOnly project(':Apromore-Custom-Plugins:About-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Account-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Access-Control-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:File-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:CSVExporter-Logic')
+
+	runtimeOnly project(':Apromore-Custom-Plugins:Apromore-Editor')
+	runtimeOnly project(':Apromore-Custom-Plugins:Calendar-Portal')
+	runtimeOnly project(':Apromore-Custom-Plugins:Log-Importer-Logic')
+	runtimeOnly project(':Apromore-Custom-Plugins:Log-Importer-Portal')
+//	runtime project(':Apromore-Custom-Plugins:CSVExporter-Portal')
+	runtimeOnly project(':Apromore-Custom-Plugins:User-Admin-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:SplitMiner-Logic')
+
+//	runtime project(':Apromore-Custom-Plugins:Generic-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Log-Animation-Logic')
+//	runtimeOnly project(':Apromore-Custom-Plugins:Log-Animation-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Log-Animation-Portal-Plugin-API')
+	runtimeOnly project(':Apromore-Custom-Plugins:Log-Logic')
+	runtimeOnly project(':Apromore-Custom-Plugins:Log-Filter-Logic')
+	runtimeOnly project(':Apromore-Custom-Plugins:Log-Filter-Portal-Plugin-Generic')
+	runtimeOnly project(':Apromore-Core-Components:Apromore-BPMN-Editor:Apromore-BPMN-Editor-Portal')
+	
+	runtimeOnly project(':Apromore-Custom-Plugins:Merge-Logic')
+	runtimeOnly project(':Apromore-Custom-Plugins:Similarity-Search-Logic')
+	runtimeOnly project(':Apromore-Custom-Plugins:Process-Discoverer-Logic')
+	runtimeOnly project(':Apromore-Custom-Plugins:Merge-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Similarity-Search-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Process-Discoverer-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Process-Publisher-Portal-Plugin')
+	runtimeOnly project(':Apromore-Custom-Plugins:Process-Simulation-Info-Logic')
+	runtimeOnly project(':Apromore-Custom-Plugins:Parquet-Exporter-Plugin')
+}

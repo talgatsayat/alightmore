@@ -1,0 +1,509 @@
+/*-
+ * #%L
+ * This file is part of "Apromore Core".
+ * %%
+ * Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+ * %%
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Lesser Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Lesser Public
+ * License along with this program.  If not, see
+ * <http://www.gnu.org/licenses/lgpl-3.0.html>.
+ * #L%
+ */
+
+.x-panel-editor-north .x-toolbar .x-btn.disabled button,
+.x-panel-editor-north .x-toolbar .x-btn.x-btn-over.disabled button {
+    pointer-events: none;
+    filter: var(--ap-filter-ico-grey-minor) !important;
+}
+
+.x-panel-editor-north .x-toolbar .x-btn.disabled .x-btn-center,
+.x-panel-editor-north .x-toolbar .x-btn.x-btn-over.disabled .x-btn-center{
+    background-color: transparent !important;
+}
+
+.x-panel-editor-north .x-toolbar .x-btn-over .x-btn-center {
+    background-color: var(--ap-c-action-bg-hover) !important;
+}
+
+.x-panel-editor-north .x-toolbar .x-btn-over button {
+    filter: none !important;
+}
+
+.x-panel-editor-north .x-toolbar .ytb-sep {
+    background-image: none !important;
+    box-sizing: border-box;
+    display: inline-block;
+    margin: 0 3px;
+    width: 2px;
+    height: 22px;
+    border-right: 1px solid var(--ap-c-grey-minor);
+    border-left: 1px solid white;
+    vertical-align: middle;
+}
+
+.x-panel-editor-north .x-toolbar .x-btn-left,
+.x-panel-editor-north .x-toolbar .x-btn-right {
+    display: none;
+}
+
+.x-panel-editor-north > div > .x-panel-body {
+    box-sizing: border-box;
+    height: var(
+            --ap-menu-height
+    ) !important;
+}
+
+.ap-bpmneditor .z-window-header {
+    position: absolute;
+    top: 0;
+    left: calc(var(--ap-header-logo-width) + 90px);
+    padding: var(--ap-offset-doc-title) 0 0 10px;
+    font-family: var(--ap-font-base);
+    font-weight: normal;
+    font-size: 14px;
+    width: calc(100% - var(--ap-header-logo-width) - 400px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--ap-c-asset-title);
+    z-index: var(--ap-z-editor-window);
+}
+
+.ap-bpmneditor .z-window-header:before {
+    content: '>';
+    padding-right: 10px;
+}
+
+.x-panel-editor-center {
+    position: fixed;
+    top: calc(var(--ap-menu-height) + var(--ap-header-height)) !important;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.djs-popup, .djs-palette,
+.djs-direct-editing-content {
+    color: black;
+}
+
+.djs-context-pad .entry {
+    color: #101010;
+    vertical-align: bottom;
+}
+
+.ap-editor-set-color {
+    background-image: url('../img/palette.svg') !important;
+    background-size: auto 18px !important;
+    background-position: center 2px !important;
+    background-repeat: no-repeat !important;
+    background-origin: padding-box !important;
+    background-color: transparent;
+}
+
+/* Viewer only overrides */
+
+.access-type-viewer #ap-id-editor-save-btn,
+.access-type-viewer #ap-id-editor-save-as-btn,
+.access-type-viewer #ap-id-editor-share-btn,
+.access-type-viewer #ap-id-editor-undo-btn,
+.access-type-viewer #ap-id-editor-redo-btn,
+.access-type-viewer #ap-id-editor-simulation-btn,
+.access-type-viewer #ap-id-editor-export-bpmn-btn,
+.access-type-viewer #ap-id-editor-export-pdf-btn,
+.access-type-viewer #ap-id-editor-export-svg-btn,
+.access-type-viewer #ap-id-editor-simulate-model-btn,
+.access-type-viewer #ap-id-editor-publish-model-btn,
+.access-type-viewer .x-layout-collapsed-east,
+.access-type-viewer .ytb-sep {
+    /* For disable mode styling */
+    /*
+    opacity: 0.5;
+    pointer-events: none;
+    */
+    display: none !important;
+}
+
+.access-type-viewer.x-border-layout-ct {
+    background-color: white !important
+}
+
+.access-type-viewer .bjs-container .djs-shape .djs-hit,
+.access-type-viewer .bjs-container .djs-connection .djs-hit {
+    pointer-events: none !important;
+}
+
+.access-type-viewer .bjs-container .djs-palette {
+    display: none !important;
+}
+
+
+.access-type-viewer .x-panel-editor-center {
+    left: 0 !important;
+    width: auto !important;
+}
+
+
+.access-type-viewer .x-panel-editor-center .x-panel-body {
+    width: auto !important;
+}
+
+/* Property panel styles */
+
+.bpp-properties-panel button,
+.bpp-properties-panel input,
+.bpp-properties-panel select,
+.bpp-properties-panel textarea,
+.bpp-properties-panel [contenteditable] {
+  color: black !important;
+  background-color: white !important;
+}
+
+#js-properties-panel {
+  top: 10px;
+}
+
+#ap-editor-props-container > .x-panel-bwrap > .x-panel-body > .x-panel:first-child .x-panel-body {
+  z-index: 200;
+}
+
+#ap-editor-props-bar {
+  display: flex;
+  flex-direction: row;
+}
+
+#ap-editor-props-bar > div {
+  flex: 1 1 auto;
+  color: black;
+  background-color: #e0e0e0;
+  border-right: grey;
+  cursor: pointer;
+  text-align: center;
+  padding: 5px 0 6px 0;
+}
+
+#ap-editor-props-container .bpp-properties-tab.bpp-hidden {
+  display: none !important;
+}
+
+#ap-editor-props-container .bpp-properties-tab-link.bpp-hidden {
+  display: none !important;
+}
+
+#ap-editor-props-container .bpp-textfield .clear {
+  border: 1px solid #cccccc;
+  height: 24px;
+}
+
+/* Property panel simulation section */
+
+#ap-editor-props-container.simulation #ap-editor-props-simulation {
+  background-color: #f8f8f8;
+}
+
+#ap-editor-props-container.simulation .bpp-properties-tabs-links > .bpp-properties-tab-link.bpp-active {
+  display: inline-block;
+}
+
+#ap-editor-props-container.simulation .bpp-properties-tabs-links > .bpp-properties-tab-link:first-child,
+#ap-editor-props-container.simulation .bpp-properties-tabs-links > .bpp-properties-tab-link:nth-child(2) {
+  display: none;
+}
+
+#ap-editor-props-container.simulation .bpp-properties-tab.bpp-active {
+  display: block;
+}
+
+#ap-editor-props-container.simulation .bpp-properties-tab[data-tab='attachmentTab'],
+#ap-editor-props-container.simulation .bpp-properties-tab[data-tab='customTab'] {
+  display: none;
+}
+
+/* Property panel attachment section */
+
+#ap-editor-props-container.attachment .bpp-properties-tabs-links > .bpp-properties-tab-link {
+  display: none;
+}
+
+#ap-editor-props-container.attachment #ap-editor-props-attachment {
+  background-color: #f8f8f8;
+}
+
+#ap-editor-props-container.attachment .bpp-properties-tabs-links > .bpp-properties-tab-link:nth-child(2) {
+  display: inline-block;
+}
+
+#ap-editor-props-container.attachment .bpp-properties-tab {
+  display: none;
+}
+
+#ap-editor-props-container.attachment .bpp-properties-tab[data-tab='attachmentTab'] {
+  display: block;
+}
+
+/* Property panel extension section */
+
+#ap-editor-props-container.extension .bpp-properties-tabs-links > .bpp-properties-tab-link {
+  display: none;
+}
+
+#ap-editor-props-container.extension #ap-editor-props-extension {
+  background-color: #f8f8f8;
+}
+
+#ap-editor-props-container.extension .bpp-properties-tabs-links > .bpp-properties-tab-link:first-child {
+  display: inline-block;
+}
+
+#ap-editor-props-container.extension .bpp-properties-tab {
+  display: none;
+}
+
+#ap-editor-props-container.extension .bpp-properties-tab[data-tab='customTab'] {
+  display: block;
+}
+
+/* Property panel aux entries */
+
+#camunda-aux-icon-name,
+#camunda-aux-img-url {
+  display: none;
+}
+
+#ap-bpmn-icon-set-picker,
+#ap-bpmn-icon-picker {
+  color: #606060;
+  margin-top: 5px;
+}
+
+#ap-bpmn-icon-set-picker > div,
+#ap-bpmn-icon-picker > div {
+  margin-bottom: 5px;
+}
+
+#ap-bpmn-icon-set-picker i,
+#ap-bpmn-icon-picker i {
+  font-size: 14px;
+  width: 22px;
+  height: 22px;
+  box-sizing: border-box;
+  display: inline-block;
+  padding: 3px;
+  background-color: #f0f0f0;
+  border: 1px solid transparent;
+  margin-right: 5px;
+  vertical-align: bottom;
+  position: relative;
+}
+
+#ap-bpmn-icon-set-picker i.selected,
+#ap-bpmn-icon-picker i.selected {
+  border-color: #808080;
+  background-color: white;
+}
+
+#aux-img-picker-remove {
+  margin-left: 5px;
+}
+
+#ap-bpmn-img-picker .aux-img-preview {
+  margin-top: 5px;
+}
+
+#ap-bpmn-img-picker .aux-img-preview img {
+  width: 50%;
+}
+
+#ap-bpmn-icon-set .icon-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 5px;
+}
+
+#ap-bpmn-icon-set .icon-item input {
+  margin-right: 5px;
+  flex: 1 1 auto;
+  width: 120px;
+}
+
+#ap-bpmn-icon-set .icon-name {
+  box-sizing: border-box;
+  display: inline-block;
+  line-height: 24px;
+  vertical-align: bottom;
+  color: #606060;
+  border: 1px solid #cccccc;
+  width: 24px;
+  height: 24px;
+  text-align: center;
+  background-color: white;
+}
+
+#ap-bpmn-icon-set .remove {
+  margin-left: 5px;
+}
+
+#ap-bpmn-icon-set .remove,
+#ap-bpmn-icon-set .add {
+  border: 1px solid #cccccc;
+  border-radius: 2px;
+  padding: 3px 5px;
+  background-color: white;
+  display: inline-block;
+  color: black;
+  height: 24px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+/* Aux overlays */
+
+.aux-disabled .djs-overlay-aux {
+  display: none !important;
+}
+
+.djs-overlay-aux {
+  border: 1px solid transparent;
+}
+
+.djs-overlay-aux.empty {
+  display: none !important;
+}
+
+.djs-overlay-aux:hover {
+  border: 1px solid #c0c0c0;
+}
+
+.aux-wrapper {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.aux-wrapper .aux-image {
+  padding: 20px 4px 4px 4px;
+  flex: 1 0 auto;
+  min-width: 0;
+  min-height: 0;
+}
+
+.aux-wrapper .aux-bar {
+  width: 100%;
+  flex: 0 0 auto;
+  padding: 4px;
+  display: flex;
+  flex-direction: row;
+}
+
+.aux-wrapper .aux-image img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.aux-wrapper .aux-image a {
+  text-decoration: none !important;
+  display: inline-block;
+}
+
+.aux-wrapper .aux-image .caption {
+  margin-top: 4px;
+  color: black;
+}
+
+.aux-wrapper .aux-bar .aux-link {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.aux-wrapper .aux-bar .aux-icon {
+  flex: 0 0 auto;
+  font-size: 20px;
+  width: 22px;
+  display: inline-block;
+  margin-right: 8px;
+  color: #606060;
+  vertical-align: bottom;
+}
+
+.aux-wrapper .aux-icon-item {
+  display: flex;
+  flex-direction: row;
+  height: 26px;
+}
+
+.aux-wrapper .aux-icon-item .aux-icon {
+  flex: 0 0 auto;
+  font-size: 20px;
+  width: 22px;
+  display: inline-block;
+  margin-right: 8px;
+  color: #606060;
+  vertical-align: bottom;
+}
+
+.aux-wrapper .aux-icon-item .aux-icon-link {
+  flex: 1 1 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.aux-wrapper .aux-icon-item .aux-icon-link a {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+  display: inline-block;
+}
+
+.aux-wrapper .aux-footer {
+  padding: 4px;
+}
+
+.access-type-viewer .djs-overlay-aux {
+  pointer-events: none;
+}
+
+.access-type-viewer .djs-overlay-aux a {
+  pointer-events: auto;
+}
+
+#link-subprocess-details {
+    display: flex;
+    line-height: 24px;
+}
+
+#link-subprocess-details > * {
+    margin-right: 5px;
+}
+
+#link-subprocess-view {
+    max-width: 180px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#link-subprocess-view.link-subprocess-view-link:hover {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+}

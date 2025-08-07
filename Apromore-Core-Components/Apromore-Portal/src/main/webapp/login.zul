@@ -1,0 +1,310 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  Copyright (C) 2012 - 2017 Queensland University of Technology.
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+<?page title="${labels.brand_shortName}" contentType="text/html;charset=UTF-8"?>
+<?link rel="shortcut icon" href="~./themes/${labels.theme}/common/img/brand/favicon.ico" ?>
+<!--<?link rel="stylesheet" type="text/css" href="css/apromore.css" ?>-->
+<!--<?link rel="stylesheet" type="text/css" href="css/login.css" ?>-->
+<?link rel="stylesheet" type="text/css" href="css/bootstrap.css" ?>
+<?link rel="stylesheet" type="text/css" href="css/bootstrap-responsive.css" ?>
+<?link rel="stylesheet" type="text/css" href="css/font-awesome.css" ?>
+
+<?link rel="stylesheet" type="text/css" href='themes/${labels.theme}/common/css/index.css' ?>
+<?link rel="stylesheet" type="text/css" href='themes/ap/login/css/login.css'  ?>
+<?script type="text/javascript" src="themes/ap/common/js/index.js"?>
+
+<?script type="text/javascript" src="libs/jquery/3.5.1/jquery-3.5.1.min.js"?>
+<?script type="text/javascript" src="js/bootstrap.js"?>
+
+<?link rel="stylesheet" type="text/css" href='libs/intl-tel-input/css/intlTelInput.min.css'  ?>
+<?link rel="stylesheet" type="text/css" href='libs/country-select-js/css/countrySelect.min.css'  ?>
+<?script type="text/javascript" src="libs/intl-tel-input/js/intlTelInput.min.js" ?>
+<?script type="text/javascript" src="libs/country-select-js/js/countrySelect.min.js" ?>
+<?script type="text/javascript" src="themes/ap/login/js/login.js" ?>
+
+<zk xmlns:h="xhtml" xmlns:n="native" xmlns="http://www.zkoss.org/2005/zul">
+  <window id="login-main" border="none" sclass="ap-login ap-font-base"
+          apply="org.apromore.portal.dialogController.LoginController">
+    <h:script type="text/javascript">
+      if (zk.ie || zk.ie7 || zk.ie8) {
+      alert("Sorry, we don't support Internet Explorer! some features might not work correctly.");
+      }
+    </h:script>
+    <h:div id="wrapper" class="ap-wrapper">
+      <h:div class="ap-left-panel">
+        <html>
+          <div if="${param['error'] == '1'}" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="alert alert-error">
+              <button type="button" class="close" data-dismiss="alert">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_credInvalid_message}
+            </div>
+          </div>
+          <div if="${param['error'] == '2'}" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="alert alert-error">
+              <button type="button" class="close" data-dismiss="alert">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_timeout_message}
+            </div>
+          </div>
+          <div if="${param['error'] == '3'}" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="alert alert-error">
+              <button type="button" class="close" data-dismiss="alert">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_failed_message}
+            </div>
+          </div>
+          <div if="${param['error'] == '4'}" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="alert alert-error">
+              <button type="button" class="close" data-dismiss="alert">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_alreadyUsed_message}
+            </div>
+          </div>
+          <div if="${param['error'] == '5'}" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="alert alert-error">
+              <button type="button" class="close" data-dismiss="alert">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_no_login_permission_message}
+            </div>
+          </div>
+          <div if="${param['success'] == '1'}" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="alert alert-success">
+              <button type="button" class="close" data-dismiss="alert">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_newUserSuccess_message}
+            </div>
+          </div>
+          <div if="${param['success'] == '2'}" xmlns="http://www.w3.org/1999/xhtml">
+            <div class="alert alert-success">
+              <button type="button" class="close" data-dismiss="alert">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_passwordResetSuccess_message}
+            </div>
+          </div>
+          <div xmlns="http://www.w3.org/1999/xhtml" class="ap-force-comply" style="display: none;">
+            <div class="alert alert-warning">
+              <button type="button" class="close" onClick="Ap.login.checkComply(true);">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              ${labels.auth_needToAgree_message}
+            </div>
+          </div>
+          <div xmlns="http://www.w3.org/1999/xhtml" id="ap-login-message" style="display: none;">
+            <div class="alert alert-warning">
+              <button type="button" class="close" onClick="Ap.login.closeMessage(true);">&#xd7;</button>
+              <i class="icon-remove-circle"></i>
+              <span class="content"></span>
+            </div>
+          </div>
+        </html>
+        <h:div class="main">
+          <h:div class="tab-content overflow form-dark">
+            <h:div class="tab-pane fade in active" id="login">
+              <h:div class="ap-form">
+                <h:h4 class="ap-form-heading">
+                  ${labels.brand_login}
+                </h:h4>
+                <h:form method="post" action="/login" name="login_form" data-t="form-login">
+                  <h:fieldset>
+                    <h:div class="controls">
+                      <h:input type="text" name="username" data-t="username"
+                               placeholder="${labels.auth_username_hint}"/>
+                    </h:div>
+                    <h:div class="controls controls-row">
+                      <h:input type="password" name="password" data-t="password"
+                               placeholder="${labels.auth_password_hint}"/>
+
+                    </h:div>
+                    <h:div class="controls controls-row split">
+                      <h:a style="display:none;" class="forgot-link button" href="#forgot" data-toggle="tab">Forgot
+                        password?
+                      </h:a>
+                      <h:button class="signin-button button" type="submit" data-t="login">
+                        ${labels.auth_login_text}
+                      </h:button>
+                    </h:div>
+                    <div sclass="controls controls-row register" id="registerBtn">
+                      <h:a href="#register" class="register-button button link-button"
+                           data-toggle="tab">
+                        ${labels.auth_addAccount_text}
+                      </h:a>
+                    </div>
+                  </h:fieldset>
+                </h:form>
+              </h:div>
+            </h:div>
+            <h:div class="tab-pane fade" id="forgot">
+              <h:div class="ap-form">
+                <h:h4 class="ap-form-heading">
+                  Forgot your password?
+                </h:h4>
+                <h:form method="post" action="register/resetPassword" name="reset_form">
+                  <h:fieldset>
+                    <h:div class="controls">
+                      <h:input type="text" name="username"
+                               placeholder="Your email address"/>
+                    </h:div>
+                    <h:div class="controls">
+                      <h:button class="button reset-button" type="submit">
+                        Reset password
+                      </h:button>
+                    </h:div>
+                    <h:div class="controls ap-back-wrapper">
+                      <h:a href="#login" data-toggle="tab">
+                        <h:div class="ap-back"
+                               title="Back to login page"/>
+                        <h:span><!-- back to login page--></h:span>
+                      </h:a>
+                    </h:div>
+                  </h:fieldset>
+                </h:form>
+              </h:div>
+            </h:div>
+            <h:div class="tab-pane fade" id="register">
+              <h:div class="ap-form">
+                <h:h4 class="ap-form-heading">
+                  New User Registration
+                </h:h4>
+                <h:form method="post" action="register/newUserRegister" name="newuser_form" onSubmit="return Ap.login.onSubmit(event)">
+                  <h:fieldset>
+                    <h:legend>
+                      <h:span>Account information</h:span>
+                    </h:legend>
+                    <h:div class="controls">
+                      <h:input type="text" name="firstname"
+                               placeholder="First name*"/>
+                    </h:div>
+                    <h:div class="controls">
+                      <h:input type="text" name="surname"
+                               placeholder="Last name*"/>
+                    </h:div>
+                    <div sclass="controls" id="organization" visible="false">
+                      <h:input type="text" name="organization"
+                               placeholder="Organization"/>
+                    </div>
+                    <div sclass="controls" id="role" visible="false">
+                      <h:input type="text" name="role"
+                               placeholder="Role"/>
+                    </div>
+                    <div sclass="controls" id="country" visible="false">
+                      <h:input type="text" id="ap-new-user-country" name="country"
+                               placeholder="Country"/>
+                    </div>
+                    <div sclass="controls" id="phone" visible="false">
+                      <h:input type="tel" id="ap-new-user-phone" name="phone" value="+61"
+                               placeholder="Phone"/>
+                    </div>
+                    <h:div class="controls">
+                      <h:input type="text" name="email" id="ap-new-email" placeholder="Email address*"/>
+                    </h:div>
+                  </h:fieldset>
+                  <h:fieldset>
+                    <h:legend>
+                      <h:span>Username and Password</h:span>
+                    </h:legend>
+                    <h:div class="controls" style="position: relative;">
+                      <h:input type="text" name="username" id="ap-new-username"
+                               placeholder="Username*"/>
+                      <h:div class="ap-register-reuse-email">
+                        <h:input type="checkbox" id="ap-reuse-email" /><span>use email</span>
+                      </h:div>
+                    </h:div>
+                    <h:div class="controls">
+                      <h:input type="password" name="password"
+                               placeholder="Password*"/>
+                    </h:div>
+                    <h:div class="controls">
+                      <h:input type="password" name="confirmPassword"
+                               placeholder="Confirm password*"/>
+                    </h:div>
+                  </h:fieldset>
+                  <h:fieldset class="ap-comply">
+                    <div id="agree" visible="false">
+                      <h:input type="checkbox" id="ap-agree" />
+                      <h:span>
+                        ${labels.auth_complyAgree_text}
+                        <html id="tcAgree">
+                          <h:a href="${labels.brand_urlTandC}">${labels.brand_textTandC}</h:a>
+                        </html>
+                        <html id="andAgree">
+                          ${labels.auth_complyAnd_text}
+                        </html>
+                        <html id="ppAgree">
+                          <h:a href="${labels.brand_urlPrivacy}">${labels.brand_textPrivacy}</h:a>
+                        </html>
+                      </h:span>
+                    </div>
+                    <div id="subscribe" visible="false">
+                      <h:input type="checkbox" id="ap-subscribe" name="subscription" checked="true" value="subscribe"/>
+                      <h:span>${labels.auth_subscribe_hint}</h:span>
+                    </div>
+                  </h:fieldset>
+                  <h:fieldset>
+                    <h:div class="input-group">
+                      <h:button class="button register-submit-button" type="submit">
+                        Register
+                      </h:button>
+                    </h:div>
+                    <h:div class="input-group ap-back-wrapper">
+                      <h:a href="#login" data-toggle="tab">
+                        <h:div class="ap-back"
+                               title="${labels.auth_backToLogin_hint}"/>
+                        <h:span><!-- back to login page--></h:span>
+                      </h:a>
+                    </h:div>
+                  </h:fieldset>
+                </h:form>
+              </h:div>
+            </h:div>
+          </h:div>
+        </h:div>
+
+        <h:div class="left-footer">
+          <h:img class="emblem" src="~./themes/${labels.theme}/common/img/brand/emblem-white.svg"/>
+          <h:div class="ap-h-links">
+            <html id="tcLink">
+              <h:a href="${labels.brand_urlTandC}" target="_blank">${labels.brand_textTandC}</h:a>
+            </html>
+            <html id="ppLink">
+              <h:a href="${labels.brand_urlPrivacy}" target="_blank">${labels.brand_textPrivacy}</h:a>
+            </html>
+            <html>
+              <h:a href="${labels.brand_urlContact}" target="_blank">${labels.brand_contact}</h:a>
+            </html>
+          </h:div>
+        </h:div>
+        <h:div class="slant-separator">
+        </h:div>
+      </h:div>
+
+      <h:div class="ap-right-panel">
+        <h:div class="ap-logo ap-centered">
+
+          <h:a href="${labels.brand_urlMain}">
+            <image id="logoWithTag" src="~./themes/${labels.theme}/common/img/brand/logo-colour-with-tag.svg"/>
+
+          </h:a>
+        </h:div>
+      </h:div>
+    </h:div>
+  </window>
+</zk>

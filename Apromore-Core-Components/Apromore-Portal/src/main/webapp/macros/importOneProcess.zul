@@ -1,0 +1,53 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  Copyright (C) 2011 Marie Christine.
+  Copyright (C) 2012 - 2017 Queensland University of Technology.
+  Copyright (C) 2012 Felix Mannhardt.
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+  
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<!-- importOneProcessWindow window has ImportOneProcessController as a controller -->
+<!-- as many instances of this window might be created at once, components are
+	not given an id, instead, there are retrieve by their position by controller 
+	importOneProcessWindow -->
+<window position="center" title="${labels.portal_importModel_text}" visible="true" mode="modal"
+        sizable="true" width="600px">
+    <vbox vflex="1">
+        <grid sclass="ap-grid ap-form">
+            <columns sizable="true">
+                <column width="25%"></column>
+                <column width="35%"></column>
+                <column width="35%"></column>
+            </columns>
+            <rows>
+                <row spans="1,2">
+                    <label value="${labels.common_modelName_text}" width="100%"/>
+                    <textbox width="100%" constraint="${labels.common_nameConstraint_text}" />
+                </row>
+                <row spans="3" sclass="ap-window-footer-actions">
+                    <div id="div" align="center">
+                        <button label="${labels.common_ok_text}" iconSclass="z-icon-check-circle"></button>
+                        <button label="${labels.common_cancel_text}" iconSclass="z-icon-times-circle"></button>
+                    </div>
+                </row>
+            </rows>
+        </grid>
+    </vbox>
+</window>
