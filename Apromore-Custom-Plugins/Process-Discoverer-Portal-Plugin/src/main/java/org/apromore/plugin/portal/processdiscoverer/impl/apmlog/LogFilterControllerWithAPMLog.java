@@ -337,21 +337,44 @@ public class LogFilterControllerWithAPMLog extends LogFilterController implement
 
     @Override
     public void processResponse(LogFilterResponse logFilterResponse) {
-        PLog pLog = logFilterResponse.getPLog();
-        if (!pLog.getPTraces().isEmpty()) {
-            parent.getProcessAnalyst().setCurrentFilterCriteria(logFilterResponse.getCriteria());
-            try {
+        try {
+            System.out.println("🔧 Processing LogFilterResponse...");
+            System.out.println("🔧 LogFilterResponse: " + logFilterResponse);
+            System.out.println("🔧 Log ID: " + logFilterResponse.getLogId());
+            System.out.println("🔧 Log Name: " + logFilterResponse.getLogName());
+            
+            PLog pLog = logFilterResponse.getPLog();
+            System.out.println("🔧 PLog: " + pLog);
+            System.out.println("🔧 PLog traces count: " + (pLog != null ? pLog.getPTraces().size() : "null"));
+            
+            if (pLog != null && !pLog.getPTraces().isEmpty()) {
+                System.out.println("🔧 Setting current filter criteria...");
+                parent.getProcessAnalyst().setCurrentFilterCriteria(logFilterResponse.getCriteria());
+                
+                System.out.println("🔧 Updating log...");
                 analyst.updateLog(pLog, logFilterResponse.getApmLog());
+                
+                System.out.println("🔧 Updating UI...");
                 parent.updateUI(true);
+                
+                System.out.println("🔧 Setting post action filter criteria...");
                 compositeFilterAction.setPostActionFilterCriteria(analyst.copyCurrentFilterCriteria());
+                
+                System.out.println("🔧 Storing action...");
                 parent.getActionManager().storeAction(compositeFilterAction);
-            } catch (Exception e) {
-                e.printStackTrace();
-                Messagebox.show(getLabel("filterResponseError_message"), "Error",
-                        Messagebox.OK,
-                        Messagebox.ERROR);
+                
+                System.out.println("✅ LogFilterResponse processed successfully");
+            } else {
+                System.out.println("⚠️ PLog is null or empty, skipping processing");
             }
-
+        } catch (Exception e) {
+            System.out.println("❌ Error processing LogFilterResponse:");
+            System.out.println("❌ Exception type: " + e.getClass().getSimpleName());
+            System.out.println("❌ Exception message: " + e.getMessage());
+            e.printStackTrace();
+            Messagebox.show(getLabel("filterResponseError_message"), "Error",
+                    Messagebox.OK,
+                    Messagebox.ERROR);
         }
     }
 }

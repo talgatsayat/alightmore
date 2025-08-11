@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    #%L
+    This file is part of "Apromore Core".
+    %%
+    Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+    %%
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Lesser Public License for more details.
+
+    You should have received a copy of the GNU General Lesser Public
+    License along with this program.  If not, see
+    <http://www.gnu.org/licenses/lgpl-3.0.html>.
+    #L%
+
+-->
+<window id="advancedLogFilterWindow" title="Filter log: BRK_MONITORING_202507031108" border="normal" width="1400px" height="800px"
+        closable="true" position="center" sizable="true" apply="org.apromore.plugin.portal.logfilter.AdvancedLogFilterController">
+    
+    <style>
+        .filter-nav {
+            background: #f5f5f5;
+            border-right: 1px solid #ddd;
+            padding: 10px;
+        }
+        
+        .filter-nav-item {
+            display: block;
+            padding: 8px 12px;
+            margin: 2px 0;
+            background: #337ab7;
+            color: white;
+            border: 1px solid #2e6da4;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+        
+        .filter-nav-item.selected {
+            background: #2e6da4;
+            color: white;
+            border-color: #1e4a7a;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .filter-main {
+            padding: 20px;
+            background: white;
+        }
+        
+        .filter-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .values-grid {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .values-grid .z-listhead {
+            background: #f9f9f9;
+        }
+        
+        .controls-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            text-align: right;
+        }
+    </style>
+
+    <borderlayout>
+        <west width="250px" autoscroll="true" border="none" splittable="true">
+            <vlayout hflex="1" vflex="1" style="padding: 10px;">
+            <vbox spacing="5px" width="100%">
+                <!-- Log Information -->
+                <label value="Filter log" style="font-size: 16px; font-weight: bold; color: #2c5aa0; margin-bottom: 10px;"/>
+                
+                <div style="padding: 10px; background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; margin-bottom: 15px;">
+                    <vlayout spacing="5px">
+                        <hlayout>
+                            <label value="Log name:" style="font-weight: bold; width: 70px;"/>
+                            <label id="logNameLabel" value="Loading..." style="color: #333;"/>
+                        </hlayout>
+                        <hlayout>
+                            <label value="Events:" style="font-weight: bold; width: 70px;"/>
+                            <label id="eventCountLabel" value="Loading..." style="color: #666;"/>
+                        </hlayout>
+                        <hlayout>
+                            <label value="Cases:" style="font-weight: bold; width: 70px;"/>
+                            <label id="caseCountLabel" value="Loading..." style="color: #666;"/>
+                        </hlayout>
+                    </vlayout>
+                </div>
+                
+                <!-- Case Filters -->
+                <label value="Cases" style="font-weight: bold; color: #337ab7; margin-bottom: 5px;"/>
+                <button id="caseAttributeNav" label="Attribute" sclass="filter-nav-item selected" width="100%"/>
+                <button id="caseVariantNav" label="Case variant" sclass="filter-nav-item" width="100%"/>
+                <button id="caseIdNav" label="Case ID" sclass="filter-nav-item" width="100%"/>
+                <button id="timeframeNav" label="Timeframe" sclass="filter-nav-item" width="100%"/>
+                <button id="performanceNav" label="Performance" sclass="filter-nav-item" width="100%"/>
+                <button id="pathNav" label="Path" sclass="filter-nav-item" width="100%"/>
+                <button id="reworkNav" label="Rework" sclass="filter-nav-item" width="100%"/>
+                <button id="blocksNav" label="Blocks" sclass="filter-nav-item" width="100%"/>
+                
+                <separator height="20px"/>
+                
+                <!-- Event Filters -->
+                <label value="Event" style="font-weight: bold; color: #337ab7; margin-bottom: 5px;"/>
+                <button id="eventAttributeNav" label="Attribute" sclass="filter-nav-item" width="100%"/>
+                <button id="eventTimeframeNav" label="Timeframe" sclass="filter-nav-item" width="100%"/>
+                <button id="eventFrequencyNav" label="Frequency" sclass="filter-nav-item" width="100%"/>
+                <button id="eventPerformanceNav" label="Performance" sclass="filter-nav-item" width="100%"/>
+                <button id="eventPathNav" label="Path" sclass="filter-nav-item" width="100%"/>
+                <button id="eventBetweenNav" label="Between" sclass="filter-nav-item" width="100%"/>
+            </vbox>
+            </vlayout>
+        </west>
+        
+        <center autoscroll="true" border="none">
+            <div id="filterContentPanel" hflex="1" vflex="1" style="padding: 10px;">
+            
+            <!-- Case Attribute Filter (Default) -->
+            <div id="caseAttributePanel">
+                <div sclass="filter-header">
+                    <div>
+                        <label value="Cases" style="font-size: 18px; font-weight: bold; color: #333;"/>
+                        <div style="margin-top: 5px;">
+                            <radiogroup id="caseAttributeCondition">
+                                <radio label="Retain" value="retain" selected="true"/>
+                                <radio label="Remove" value="remove"/>
+                            </radiogroup>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <!-- Статистика удалена -->
+                    </div>
+                </div>
+        
+                <hlayout spacing="20px">
+                    <!-- Primary Attribute -->
+                    <vbox style="flex: 1;">
+                        <label value="Primary attribute" style="font-weight: bold; margin-bottom: 5px;"/>
+                        <radiogroup id="primaryAttributeType">
+                            <radio label="Event attribute" value="event" selected="true"/>
+                            <radio label="Case attribute" value="case"/>
+                        </radiogroup>
+                        <combobox id="primaryAttributeCombo" placeholder="Loading attributes..." width="100%" style="margin-top: 10px;"/>
+                    </vbox>
+                    
+                    <!-- Secondary Attribute -->
+                    <vbox style="flex: 1;">
+                        <hlayout>
+                            <checkbox id="useSecondaryAttribute" label="Secondary attribute"/>
+                        </hlayout>
+                        <radiogroup id="secondaryAttributeType" disabled="true">
+                            <radio label="Event attribute" value="event"/>
+                            <radio label="Case attribute" value="case"/>
+                        </radiogroup>
+                        <combobox id="secondaryAttributeCombo" disabled="true" width="100%" style="margin-top: 10px;"/>
+                    </vbox>
+                    
+                    <!-- Matching -->
+                    <vbox style="width: 150px;">
+                        <label value="Matching" style="font-weight: bold; margin-bottom: 5px;"/>
+                        <radiogroup id="matchingCondition">
+                            <radio label="Any value" value="any" selected="true"/>
+                            <radio label="All values" value="all"/>
+                        </radiogroup>
+                    </vbox>
+                </hlayout>
+                
+                <!-- Values Grid -->
+                <div style="margin-top: 20px;">
+                    <hlayout style="margin-bottom: 10px;">
+                        <textbox id="valueSearchBox" placeholder="Cases" style="flex: 1; margin-right: 10px;"/>
+                        <combobox width="120px">
+                            <comboitem label="Frequency"/>
+                            <comboitem label="Cases"/>
+                        </combobox>
+                    </hlayout>
+                    
+                    <listbox id="attributeValuesList" height="300px" sclass="values-grid" checkmark="true" multiple="true">
+                        <listhead>
+                            <listheader label="Value" width="60%"/>
+                            <listheader label="Cases" width="20%" align="right"/>
+                            <listheader label="Frequency" width="20%" align="right"/>
+                        </listhead>
+                        <listitem>
+                            <listcell label="Банковская экспертиза"/>
+                            <listcell label="6"/>
+                            <listcell label="1.4%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Договор конфиденциальности и неразглашения информации"/>
+                            <listcell label="413"/>
+                            <listcell label="96.5%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Договор конфиденциальности и неразглашения информации версия Заявителя"/>
+                            <listcell label="15"/>
+                            <listcell label="3.5%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Завершен"/>
+                            <listcell label="37"/>
+                            <listcell label="8.64%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Завершено"/>
+                            <listcell label="95"/>
+                            <listcell label="22.2%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Заключение договора о проведении БЭ"/>
+                            <listcell label="44"/>
+                            <listcell label="10.28%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Инициативный анализ"/>
+                            <listcell label="48"/>
+                            <listcell label="11.21%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="На исполнении"/>
+                            <listcell label="16"/>
+                            <listcell label="3.74%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Рассмотрение Бизнес-Предложения"/>
+                            <listcell label="370"/>
+                            <listcell label="86.45%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Рассмотрение заявки"/>
+                            <listcell label="415"/>
+                            <listcell label="96.96%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Решение по проекту А-060"/>
+                            <listcell label="240"/>
+                            <listcell label="56.07%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Формирование заключение А-050"/>
+                            <listcell label="300"/>
+                            <listcell label="70.09%"/>
+                        </listitem>
+                        <listitem>
+                            <listcell label="Формирование заключения А-030"/>
+                            <listcell label="40"/>
+                            <listcell label="9.35%"/>
+                        </listitem>
+                    </listbox>
+                    
+                    <hlayout style="margin-top: 10px; justify-content: space-between;">
+                        <label id="pageInfo" value="Страница 1" style="color: #666;"/>
+                        <hlayout spacing="5px">
+                                                    <button id="firstPageBtn" label="◄◄" disabled="true" 
+                                style="min-width: 30px;"/>
+                        <button id="prevPageBtn" label="◄" disabled="true" 
+                                style="min-width: 30px;"/>
+                        <label id="pageLabel" value="1 / 1" style="min-width: 50px; text-align: center;"/>
+                        <button id="nextPageBtn" label="►" 
+                                style="min-width: 30px;"/>
+                        <button id="lastPageBtn" label="►►" 
+                                style="min-width: 30px;"/>
+                        </hlayout>
+                        <label id="totalInfo" value="1 - 100 / 0" style="color: #666;"/>
+                    </hlayout>
+                    
+                    <!-- Apply Filters Button удален -->
+                </div>
+            </div>
+            
+            <!-- Case ID Filter Panel -->
+            <div id="caseIdPanel" visible="false">
+                <div sclass="filter-header">
+                    <div>
+                        <label value="Cases" style="font-size: 18px; font-weight: bold; color: #333;"/>
+                        <div style="margin-top: 5px;">
+                            <radiogroup id="caseIdCondition">
+                                <radio label="Retain" value="retain" selected="true"/>
+                                <radio label="Remove" value="remove"/>
+                            </radiogroup>
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <!-- Статистика удалена -->
+                    </div>
+                </div>
+                
+                <vlayout style="margin-bottom: 20px;">
+                    <hlayout style="margin-bottom: 10px;">
+                        <label value="Case ID" style="font-weight: bold; margin-right: 20px;"/>
+                        <textbox placeholder="Activity instances" style="flex: 1; margin-right: 10px;"/>
+                    </hlayout>
+                </vlayout>
+                
+                <listbox id="caseIdValuesList" height="400px" sclass="values-grid" checkmark="true" multiple="true">
+                    <listhead>
+                        <listheader label="Case ID"/>
+                        <listheader label="Activity instances" width="150px" align="right"/>
+                    </listhead>
+                    <listitem>
+                        <listcell label="000740000728240226002"/>
+                        <listcell label="12"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="000740000728240718001"/>
+                        <listcell label="5"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="001040000352123011100"/>
+                        <listcell label="5"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="001240000575323012000"/>
+                        <listcell label="3"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="001240000575323022100"/>
+                        <listcell label="5"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="001240000575323031300"/>
+                        <listcell label="10"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="010440000393121207001"/>
+                        <listcell label="5"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="010440000393123011400"/>
+                        <listcell label="5"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="010440000393124051500"/>
+                        <listcell label="9"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="010940000373721061700"/>
+                        <listcell label="3"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="010940000373721062400"/>
+                        <listcell label="3"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="010940000373721072700"/>
+                        <listcell label="5"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="011400002300240124002"/>
+                        <listcell label="2"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="011400002300240531001"/>
+                        <listcell label="3"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="020140000244212020201"/>
+                        <listcell label="3"/>
+                    </listitem>
+                    <listitem>
+                        <listcell label="020140000238623100500"/>
+                        <listcell label="2"/>
+                    </listitem>
+                </listbox>
+                
+                <hlayout style="margin-top: 10px; justify-content: space-between;">
+                    <label id="caseIdPageInfo" value="Страница 1" style="color: #666;"/>
+                    <hlayout spacing="5px">
+                        <button id="caseIdFirstPageBtn" label="◄◄" disabled="true" 
+                                style="min-width: 30px;"/>
+                        <button id="caseIdPrevPageBtn" label="◄" disabled="true" 
+                                style="min-width: 30px;"/>
+                        <label id="caseIdPageLabel" value="1 / 1" style="min-width: 50px; text-align: center;"/>
+                        <button id="caseIdNextPageBtn" label="►" 
+                                style="min-width: 30px;"/>
+                        <button id="caseIdLastPageBtn" label="►►" 
+                                style="min-width: 30px;"/>
+                    </hlayout>
+                    <label id="caseIdTotalInfo" value="1 - 100 / 0" style="color: #666;"/>
+                </hlayout>
+                
+                <!-- Apply Filters Button удален -->
+            </div>
+            
+            <!-- Other filter panels will be hidden by default -->
+            <div id="caseVariantPanel" visible="false">
+                <label value="Case Variant Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+            </div>
+            
+            <div id="timeframePanel" visible="false">
+                <label value="Timeframe Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+            </div>
+            
+            <div id="performancePanel" visible="false">
+                <label value="Performance Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+            </div>
+            
+            <div id="pathPanel" visible="false">
+                <label value="Path Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+            </div>
+            
+            <div id="reworkPanel" visible="false">
+                <label value="Rework Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+            </div>
+            
+            <div id="blocksPanel" visible="false">
+                <label value="Blocks Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+            </div>
+        
+            </div>
+        </center>
+        
+        <south height="60px" border="none">
+            <div sclass="controls-section" style="padding: 15px; border-top: 1px solid #eee; background: #f8f9fa;">
+                <hlayout spacing="10px" style="justify-content: flex-end;">
+                    <button id="cancelBtn" label="Cancel"/>
+                    <button id="applyFiltersBtn" label="Apply Filters" style="background-color: #337ab7; color: white; font-weight: bold;"/>
+                </hlayout>
+            </div>
+        </south>
+    </borderlayout>
+    
+</window> 

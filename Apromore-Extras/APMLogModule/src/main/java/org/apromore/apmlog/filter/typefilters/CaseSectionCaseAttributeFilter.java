@@ -57,8 +57,15 @@ public class CaseSectionCaseAttributeFilter {
             }
 
             int immutableIndex = trace.getImmutableIndex();
-            BitSet bitSet = (BitSet) logFilterRule.getPrimaryValues().iterator().next().getObjectVal();
-            return bitSet.get(immutableIndex);
+            Object objectVal = logFilterRule.getPrimaryValues().iterator().next().getObjectVal();
+            if (objectVal instanceof BitSet) {
+                BitSet bitSet = (BitSet) objectVal;
+                return bitSet.get(immutableIndex);
+            } else {
+                // Fallback: проверяем customAttributes
+                Set<String> cIds = logFilterRule.getPrimaryValues().iterator().next().getCustomAttributes().keySet();
+                return cIds.contains(trace.getCaseId());
+            }
         }
         if (!trace.getAttributes().containsKey(attributeKey))
             return false;

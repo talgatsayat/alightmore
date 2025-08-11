@@ -37,7 +37,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @PropertySource(value = {"classpath:git.properties"})
 @PropertySource(value = "classpath:i18n.properties", encoding = "UTF-8")
 @EnableWebMvc
-@ComponentScan(basePackages = "org.apromore.portal")
+@ComponentScan(basePackages = {"org.apromore.portal", "org.apromore.plugin.portal.logfilter"})
 public class PortalWebConfig {
 
   @Autowired

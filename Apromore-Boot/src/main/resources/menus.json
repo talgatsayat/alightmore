@@ -65,7 +65,7 @@
               "id": "org.apromore.plugin.portal.file.EditSelectionPlugin"
             },
             {
-              "id": "org.apromore.plugin.portal.logfilter.LogFilterStandardPlugin"
+              "id": "directPortalLogFilterPlugin"
             }
           ]
         },

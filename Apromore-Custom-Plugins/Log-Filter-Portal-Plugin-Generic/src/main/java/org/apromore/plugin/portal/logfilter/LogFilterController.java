@@ -35,6 +35,7 @@ import org.apromore.apmlog.filter.APMLogFilter;
 import org.apromore.apmlog.filter.APMLogFilterPackage;
 import org.apromore.apmlog.filter.rules.LogFilterRule;
 import org.apromore.apmlog.xes.XLogToImmutableLog;
+import org.apromore.apmlog.exceptions.EmptyInputException;
 import org.apromore.logfilter.LogFilterService;
 import org.apromore.logfilter.criteria.LogFilterCriterion;
 import org.apromore.logfilter.criteria.factory.LogFilterCriterionFactory;
@@ -281,15 +282,23 @@ public class LogFilterController {
         filterSelectorW.doModal();
     }
 
-    private void save() {
+        private void save() {
         try {
         	//XLog filteredLog = this.logFilterService.filter(this.log, criteria);
         	List<LogFilterRule> filterRules = logFilterCriterionFactory.convertFilterCriteriaToFilterRules(criteria);
         	// Create APMLog from XLog using the proper service
         	APMLog apmLog = XLogToImmutableLog.convertXLog("ProcessLog", this.log);
-            APMLogFilter apmLogFilter = new APMLogFilter(apmLog);
+                     	APMLogFilter apmLogFilter = new APMLogFilter(apmLog);
         	apmLogFilter.filter(filterRules);
-            APMLog output = apmLogFilter.getApmLog();
+            
+            APMLog output;
+            try {
+                output = apmLogFilter.getAPMLog();
+            } catch (EmptyInputException e) {
+                Messagebox.show("Отфильтрованный лог пуст. Используйте другие критерии фильтрации.", "Предупреждение", Messagebox.OK, Messagebox.EXCLAMATION);
+                return;
+            }
+            
         	if (output.getTraces().isEmpty()) {
         		Messagebox.show("The log is empty after applying all filter criteria! Please use different criteria.");
         	}
@@ -499,7 +508,14 @@ public class LogFilterController {
             APMLog apmLog = XLogToImmutableLog.convertXLog("ProcessLog", this.log);
             APMLogFilter apmLogFilter = new APMLogFilter(apmLog);
             apmLogFilter.filter(filterRules);
-                    APMLog output = apmLogFilter.getApmLog();
+            
+            APMLog output;
+            try {
+                output = apmLogFilter.getAPMLog();
+            } catch (EmptyInputException e) {
+                Messagebox.show("Отфильтрованный лог пуст. Используйте другие критерии фильтрации.", "Предупреждение", Messagebox.OK, Messagebox.EXCLAMATION);
+                return;
+            }
         
         if (output.getTraces().isEmpty()) {
             Messagebox.show("Лог пуст после применения всех критериев фильтрации! Используйте другие критерии.", "Предупреждение", Messagebox.OK, Messagebox.ERROR);

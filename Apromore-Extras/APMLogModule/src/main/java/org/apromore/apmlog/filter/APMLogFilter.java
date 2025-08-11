@@ -322,7 +322,7 @@ public class APMLogFilter {
 
         if (rule.getPrimaryValues() == null || rule.getPrimaryValues().isEmpty()) return false;
 
-        Set<String> values = (Set<String>) rule.getPrimaryValues().iterator().next().getObjectVal();
+        Set<String> values = rule.getPrimaryValues().iterator().next().getStringSetValue();
 
         List<ActivityInstance> validActs = LogStatsAnalyzer.getValidActivitiesOf(pTrace).stream()
                 .filter(x -> toKeepByEventAttr(x, key, values, rule.getChoice() == Choice.RETAIN))

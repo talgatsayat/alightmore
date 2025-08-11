@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @OpenAPIDefinition(servers = {@Server(url = "/", description = "Default Server URL")})
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = {"org.apromore", "org.apromore.plugin.portal.logfilter"})
 @EnableWebMvc
 public class ApromoreCoreBootApplication {
 

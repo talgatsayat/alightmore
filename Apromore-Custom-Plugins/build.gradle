@@ -23,7 +23,7 @@ dependencies {
 	runtimeOnly project(':Apromore-Custom-Plugins:Log-Animation-Portal-Plugin-API')
 	runtimeOnly project(':Apromore-Custom-Plugins:Log-Logic')
 	runtimeOnly project(':Apromore-Custom-Plugins:Log-Filter-Logic')
-	runtimeOnly project(':Apromore-Custom-Plugins:Log-Filter-Portal-Plugin-Generic')
+	implementation project(':Apromore-Custom-Plugins:Log-Filter-Portal-Plugin-Generic')
 	runtimeOnly project(':Apromore-Core-Components:Apromore-BPMN-Editor:Apromore-BPMN-Editor-Portal')
 	
 	runtimeOnly project(':Apromore-Custom-Plugins:Merge-Logic')

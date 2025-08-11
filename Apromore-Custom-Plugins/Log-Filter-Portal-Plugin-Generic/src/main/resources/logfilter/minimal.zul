@@ -1,0 +1,140 @@
+<!--
+  #%L
+  This file is part of "Apromore Core".
+  %%
+  Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+  %%
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as
+  published by the Free Software Foundation, either version 3 of the
+  License, or (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Lesser Public License for more details.
+
+  You should have received a copy of the GNU General Lesser Public
+  License along with this program.  If not, see
+  <http://www.gnu.org/licenses/lgpl-3.0.html>.
+  #L%
+  -->
+
+<window id="minimalFilterWindow" 
+        title="Минимальная фильтрация логов"
+        width="600px" 
+        height="400px" 
+        closable="true"
+        sizable="true"
+        position="center">
+        
+    <style>
+        .filter-section {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .filter-button {
+            margin: 5px;
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 200px;
+        }
+        
+        .filter-button:hover {
+            background: #0056b3;
+        }
+        
+        .action-button {
+            margin: 5px;
+            padding: 8px 16px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .close-button {
+            margin: 5px;
+            padding: 8px 16px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+    
+    <vbox spacing="10px" style="padding: 20px;" width="100%">
+        
+        <!-- Заголовок -->
+        <div style="text-align: center;">
+            <label value="🔍 Фильтрация логов" style="font-weight: bold; font-size: 18px; color: #007bff;"/>
+        </div>
+        
+        <!-- Описание -->
+        <div class="filter-section">
+            <label value="Выберите тип фильтра для применения к логу:" style="font-size: 14px;"/>
+        </div>
+        
+        <!-- Простые фильтры -->
+        <div class="filter-section">
+            <label value="Доступные фильтры:" style="font-weight: bold; margin-bottom: 10px;"/>
+            <vbox spacing="8px" style="margin-top: 10px;">
+                <button label="📊 Атрибутный фильтр" class="filter-button"/>
+                <button label="🔄 Фильтр вариантов случаев" class="filter-button"/>
+                <button label="⏱️ Временной фильтр" class="filter-button"/>
+                <button label="📈 Фильтр производительности" class="filter-button"/>
+                <button label="🎯 Частотный фильтр" class="filter-button"/>
+                <button label="🔀 Фильтр путей" class="filter-button"/>
+            </vbox>
+        </div>
+        
+        <!-- Активные фильтры -->
+        <div class="filter-section">
+            <label value="Активные фильтры:" style="font-weight: bold;"/>
+            <listbox height="80px" style="margin-top: 5px;">
+                <listhead>
+                    <listheader label="Тип" width="150px"/>
+                    <listheader label="Описание"/>
+                    <listheader label="Статус" width="100px"/>
+                </listhead>
+                <listitem>
+                    <listcell label="Пример"/>
+                    <listcell label="Демонстрационный фильтр"/>
+                    <listcell label="Готов"/>
+                </listitem>
+            </listbox>
+        </div>
+        
+        <!-- Кнопки действий -->
+        <div style="text-align: center; margin-top: 20px;">
+            <hbox align="center" style="margin: 0 auto;">
+                <button id="applyButton" 
+                        label="✅ Применить фильтры" 
+                        class="action-button"/>
+                <button label="🗑️ Очистить все" 
+                        class="action-button"/>
+                <button id="okButton" 
+                        label="❌ Закрыть" 
+                        class="close-button"/>
+            </hbox>
+        </div>
+        
+        <!-- Информация -->
+        <div style="text-align: center; margin-top: 15px;">
+            <label value="Статус: Плагин фильтрации готов к работе" 
+                   style="font-size: 12px; color: #28a745;"/>
+        </div>
+        
+    </vbox>
+    
+</window>
