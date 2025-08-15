@@ -558,11 +558,171 @@ public class LogImporterController extends SelectorComposer<Window> implements C
             Labels.getLabel("csvImporter_title_text", "Log Importer") + " - " + media.getName();
         window.setTitle(title);
 
+        // Handle problematic columns that might be incorrectly detected as timestamps
+        handleProblematicColumns();
+
         setDropDownLists();
         setDataTypeDropDownLists();
         setCSVGrid();
         renderGridContent();
         setPopUpFormatBox();
+    }
+
+    /**
+     * Handle columns that might be incorrectly detected as timestamps.
+     * This helps prevent issues with mixed-data columns like the status column in the user's case.
+     */
+    private void handleProblematicColumns() {
+        for (int pos = 0; pos < logMetaData.getHeader().size(); pos++) {
+            String header = logMetaData.getHeader().get(pos);
+            
+            // Check if this column might be problematic
+            if (isProblematicColumn(header, pos)) {
+                // Override timestamp detection for this column
+                metaDataUtilities.overrideTimestampDetection(pos, false, null);
+            }
+            
+            // For timestamp-related columns, check if they should be treated as timestamps
+            // Only override if they're not already properly configured
+            if (isTimestampRelatedColumn(header) && 
+                !logMetaData.getOtherTimestamps().containsKey(pos) &&
+                pos != logMetaData.getStartTimestampPos() &&
+                pos != logMetaData.getEndTimestampPos()) {
+                
+                // Check if this column contains valid timestamp data
+                if (containsValidTimestampData(pos)) {
+                    // This column should be treated as a timestamp
+                    // Don't override - let the system handle it naturally
+                } else {
+                    // This column has timestamp-like header but invalid data
+                    // Override to prevent timestamp processing
+                    metaDataUtilities.overrideTimestampDetection(pos, false, null);
+                }
+            }
+        }
+    }
+
+    /**
+     * Determine if a column might be problematic for timestamp detection.
+     * @param header the column header
+     * @param pos the column position
+     * @return true if the column should not be treated as a timestamp
+     */
+    private boolean isProblematicColumn(String header, int pos) {
+        if (header == null) return false;
+        
+        String lowerHeader = header.toLowerCase();
+        
+        // Columns that often contain mixed data and shouldn't be timestamps
+        if (lowerHeader.contains("status") || 
+            lowerHeader.contains("state") || 
+            lowerHeader.contains("type") ||
+            lowerHeader.contains("category") ||
+            lowerHeader.contains("priority") ||
+            lowerHeader.contains("severity")) {
+            return true;
+        }
+        
+        // Check if this column is already in event attributes or case attributes
+        // If so, it shouldn't be treated as a timestamp
+        if (logMetaData.getEventAttributesPos().contains(pos) || 
+            logMetaData.getCaseAttributesPos().contains(pos)) {
+            return true;
+        }
+        
+        return false;
+    }
+
+    /**
+     * Determine if a column is likely timestamp-related and might have format issues.
+     * @param header the column header
+     * @return true if the column is likely timestamp-related
+     */
+    private boolean isTimestampRelatedColumn(String header) {
+        if (header == null) return false;
+        
+        String lowerHeader = header.toLowerCase();
+        
+        // Columns that are likely timestamp-related
+        return lowerHeader.contains("date") || 
+               lowerHeader.contains("time") || 
+               lowerHeader.contains("timestamp") ||
+               lowerHeader.contains("created") ||
+               lowerHeader.contains("updated") ||
+               lowerHeader.contains("start") ||
+               lowerHeader.contains("end") ||
+               lowerHeader.contains("begin") ||
+               lowerHeader.contains("finish");
+    }
+
+    /**
+     * Check if a column contains valid timestamp data.
+     * @param pos the column position
+     * @return true if the column contains valid timestamp data
+     */
+    private boolean containsValidTimestampData(int pos) {
+        if (sampleLog == null || sampleLog.isEmpty()) {
+            return false;
+        }
+        
+        int validTimestampCount = 0;
+        int totalNonEmptyCount = 0;
+        
+        for (List<String> line : sampleLog) {
+            if (pos < line.size() && line.get(pos) != null && !line.get(pos).trim().isEmpty()) {
+                totalNonEmptyCount++;
+                String value = line.get(pos).trim();
+                
+                // Check if this value looks like a valid timestamp
+                if (isValidTimestampValue(value)) {
+                    validTimestampCount++;
+                }
+            }
+        }
+        
+        // If more than 70% of non-empty values are valid timestamps, consider it a timestamp column
+        return totalNonEmptyCount > 0 && (double) validTimestampCount / totalNonEmptyCount > 0.7;
+    }
+    
+    /**
+     * Check if a single value looks like a valid timestamp.
+     * @param value the value to check
+     * @return true if the value looks like a valid timestamp
+     */
+    private boolean isValidTimestampValue(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return false;
+        }
+        
+        // Check for common timestamp patterns
+        String trimmedValue = value.trim();
+        
+        // ISO format: 2020-12-11T14:49:08.000
+        if (trimmedValue.matches("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?")) {
+            return true;
+        }
+        
+        // ISO format without T: 2020-12-11 14:49:08.000
+        if (trimmedValue.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}(\\.\\d{3})?")) {
+            return true;
+        }
+        
+        // Standard format: 15.06.2022 12:53:35
+        if (trimmedValue.matches("\\d{1,2}\\.\\d{1,2}\\.\\d{4} \\d{1,2}:\\d{2}:\\d{2}")) {
+            return true;
+        }
+        
+        // Date only: 2020-12-11
+        if (trimmedValue.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return true;
+        }
+        
+        // Time only: 14:49:08
+        if (trimmedValue.matches("\\d{1,2}:\\d{2}:\\d{2}")) {
+            return true;
+        }
+        
+        return false;
     }
 
     private void setCSVGrid() {
@@ -875,14 +1035,20 @@ public class LogImporterController extends SelectorComposer<Window> implements C
         switch (selected) {
             case INTEGER_TYPE_LABEL:
                 logMetaData.getIntegerAttributesPos().add(colPos);
+                // Override timestamp detection to ensure this column is not treated as a timestamp
+                metaDataUtilities.overrideTimestampDetection(colPos, false, null);
                 unassignOtherTimestamp(colPos, attributeTypeSelected, maskBtn);
                 break;
             case REAL_TYPE_LABEL:
                 logMetaData.getDoubleAttributesPos().add(colPos);
+                // Override timestamp detection to ensure this column is not treated as a timestamp
+                metaDataUtilities.overrideTimestampDetection(colPos, false, null);
                 unassignOtherTimestamp(colPos, attributeTypeSelected, maskBtn);
                 break;
             case STRING_TYPE_LABEL:
                 logMetaData.getStringAttributesPos().add(colPos);
+                // Override timestamp detection to ensure this column is not treated as a timestamp
+                metaDataUtilities.overrideTimestampDetection(colPos, false, null);
                 unassignOtherTimestamp(colPos, attributeTypeSelected, maskBtn);
                 break;
             case TIMESTAMP_TYPE_LABEL:
@@ -893,6 +1059,8 @@ public class LogImporterController extends SelectorComposer<Window> implements C
                     logMetaData.getEventAttributesPos().remove(Integer.valueOf(colPos));
                 }
                 logMetaData.getTimestampAttributesPos().add(colPos);
+                // Override timestamp detection to ensure this column is treated as a timestamp
+                metaDataUtilities.overrideTimestampDetection(colPos, true, null);
                 hideCheckbox(maskBtn);
                 break;
             default:
@@ -996,6 +1164,9 @@ public class LogImporterController extends SelectorComposer<Window> implements C
                         resetUniqueAttribute(logMetaData.getCaseIdPos(), colPos, CASE_ID_LABEL);
                         logMetaData.setCaseIdPos(colPos);
                         logMetaData = metaDataUtilities.resetCaseAndEventAttributes(logMetaData, sampleLog);
+                        
+                        // Clear all timestamp overrides to start fresh
+                        metaDataUtilities.clearTimestampOverrides();
 
                         Listbox lb = (Listbox) window.getFellow(String.valueOf(0));
                         int eventAttributeIndex =
@@ -1005,6 +1176,9 @@ public class LogImporterController extends SelectorComposer<Window> implements C
                         for (int caseAttriPos : logMetaData.getCaseAttributesPos()) {
                             lb = (Listbox) window.getFellow(String.valueOf(caseAttriPos));
                             lb.setSelectedIndex(caseAttributeIndex);
+                            
+                            // Explicitly override timestamp detection to ensure these columns are not treated as timestamps
+                            metaDataUtilities.overrideTimestampDetection(caseAttriPos, false, null);
                         }
 
                         lb.getSelectedItem().setStyle("background: #f00 !important;");
@@ -1012,6 +1186,9 @@ public class LogImporterController extends SelectorComposer<Window> implements C
                         for (int eventAttriPos : logMetaData.getEventAttributesPos()) {
                             lb = (Listbox) window.getFellow(String.valueOf(eventAttriPos));
                             lb.setSelectedIndex(eventAttributeIndex);
+                            
+                            // Explicitly override timestamp detection to ensure these columns are not treated as timestamps
+                            metaDataUtilities.overrideTimestampDetection(eventAttriPos, false, null);
                         }
 
                         String message =
@@ -1049,23 +1226,45 @@ public class LogImporterController extends SelectorComposer<Window> implements C
                         } else {
                             logMetaData.getCaseAttributesPos().add(colPos);
                         }
+                        
+                        // Explicitly override timestamp detection to ensure this column is not treated as a timestamp
+                        metaDataUtilities.overrideTimestampDetection(colPos, false, null);
+                        
                         resetDatatypeDropDownList(colPos);
                         break;
+                    
                     case EVENT_ATTRIBUTE_LABEL:
+                        if (logMetaData.getOtherTimestamps().containsKey(colPos)) {
+                            logMetaData.getOtherTimestamps().remove(colPos);
+                        }
+                        
+                        // Explicitly override timestamp detection to ensure this column is not treated as a timestamp
+                        metaDataUtilities.overrideTimestampDetection(colPos, false, null);
+    
                         if (TIMESTAMP_TYPE_LABEL.equals(dataTypeSelected)) {
                             timestampSelected(colPos, OTHER_TIMESTAMP_LABEL);
                         } else {
                             logMetaData.getEventAttributesPos().add(colPos);
                         }
                         resetDatatypeDropDownList(colPos);
+                        showCheckbox(maskBtns.stream().filter(cb -> cb.getId().equals(MASK_CHECKBOX_ID + colPos)).findFirst().orElse(null));
                         break;
+
                     case IGNORE_LABEL:
                         logMetaData.getIgnoredPos().add(colPos);
+                        
+                        // Explicitly override timestamp detection to ensure this column is not treated as a timestamp
+                        metaDataUtilities.overrideTimestampDetection(colPos, false, null);
+                        
                         resetDatatypeDropDownList(colPos);
                         break;
                     case PERSPECTIVE_LABEL:
                         logMetaData.getEventAttributesPos().add(colPos);
                         logMetaData.getPerspectivePos().add(colPos);
+                        
+                        // Explicitly override timestamp detection to ensure this column is not treated as a timestamp
+                        metaDataUtilities.overrideTimestampDetection(colPos, false, null);
+                        
                         resetDatatypeDropDownList(colPos);
                         break;
                     default:
@@ -1115,6 +1314,9 @@ public class LogImporterController extends SelectorComposer<Window> implements C
             Listbox oldBox = dropDownLists.get(oldColPos);
             oldBox.setSelectedIndex(eventAttributeIndex);
             logMetaData.getEventAttributesPos().add(oldColPos);
+            
+            // Explicitly override timestamp detection to ensure this column is not treated as a timestamp
+            metaDataUtilities.overrideTimestampDetection(oldColPos, false, null);
 
             // Enable data type dropdown list for old unique attribute column
             Listbox oldDataTypeListBox = (Listbox) window.getFellow(DATA_TYPE_ID_PREFIX + oldColPos);
@@ -1178,6 +1380,21 @@ public class LogImporterController extends SelectorComposer<Window> implements C
     }
 
     private void timestampSelected(int colPos, String selected) {
+        // Check if this column is actually meant to be an event attribute
+        Listbox attributeTypeListBox = (Listbox) window.getFellow(Integer.toString(colPos));
+        String attributeTypeSelected = attributeTypeListBox.getSelectedItem().getValue();
+        
+        // If the column is explicitly selected as an event attribute, don't process it as a timestamp
+        if (EVENT_ATTRIBUTE_LABEL.equals(attributeTypeSelected)) {
+            // Remove from timestamp processing and treat as event attribute
+            if (logMetaData.getOtherTimestamps().containsKey(colPos)) {
+                logMetaData.getOtherTimestamps().remove(colPos);
+            }
+            logMetaData.getEventAttributesPos().add(colPos);
+            setPopUpLabel(colPos, Parsed.FAILED, null);
+            return;
+        }
+        
         showFormatBtn(formatBtns[colPos]);
         String possibleFormat = getPopUpFormatText(colPos);
         if (possibleFormat != null && !possibleFormat.isEmpty()
@@ -1383,6 +1600,8 @@ public class LogImporterController extends SelectorComposer<Window> implements C
         Set<String> invColList = new HashSet<String>();
         Set<String> igColList = new HashSet<String>();
         Set<Integer> invTimestampPos = new HashSet<>();
+        Set<String> problematicColumns = new HashSet<>();
+        Set<String> timestampColumns = new HashSet<>();
 
         for (LogErrorReport error : errorReport) {
             if (error.getHeader() != null && !error.getHeader().isEmpty()) {
@@ -1391,11 +1610,39 @@ public class LogImporterController extends SelectorComposer<Window> implements C
                     igColList.add(error.getHeader());
                     invTimestampPos.add(error.getColumnIndex());
                 }
+                
+                // Identify potentially problematic columns
+                if (isProblematicColumn(error.getHeader(), error.getColumnIndex())) {
+                    problematicColumns.add(error.getHeader());
+                }
+                
+                // Identify timestamp-related columns that might have format issues
+                if (isTimestampRelatedColumn(error.getHeader())) {
+                    timestampColumns.add(error.getHeader());
+                }
             }
         }
+        
         if (!invColList.isEmpty()) {
-            columnList
-                .setValue(getLabel("the_following_columns_include_errors") + columnList(invColList));
+            String columnListText = getLabel("the_following_columns_include_errors") + columnList(invColList);
+            
+            // Add helpful guidance for problematic columns
+            if (!problematicColumns.isEmpty()) {
+                columnListText += "\n\n" + getLabel("problematic_columns_guidance") + ":\n";
+                for (String col : problematicColumns) {
+                    columnListText += "- " + col + " (consider setting as Event Attribute)\n";
+                }
+            }
+            
+            // Add specific guidance for timestamp columns
+            if (!timestampColumns.isEmpty()) {
+                columnListText += "\n\n" + getLabel("timestamp_columns_guidance") + ":\n";
+                for (String col : timestampColumns) {
+                    columnListText += "- " + col + " (check timestamp format or set as Event Attribute)\n";
+                }
+            }
+            
+            columnList.setValue(columnListText);
         }
 
         if (!igColList.isEmpty()) {

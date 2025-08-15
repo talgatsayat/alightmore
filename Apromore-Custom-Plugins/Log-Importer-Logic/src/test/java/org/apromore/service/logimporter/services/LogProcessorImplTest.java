@@ -141,6 +141,34 @@ class LogProcessorImplTest {
         });
     }
 
+    @Test
+    void should_handle_empty_values_in_other_timestamps_gracefully() throws InvalidLogMetadataException {
+        // given
+        List<String> line = List.of("case_1", "Activity_1", "2011/02/16 14:31:00.000", 
+            "2011/02/16 15:23:00.000", "Frodo Baggins", "Ring bearer", "", "");
+        List<String> header = List.of("CaseId", "Activity", "StartTimestamp", "EndTimestamp", 
+            "Resource", "Role", "date_accept", "date_arrival");
+
+        LogMetaData logMetaData = getLogMetadata(header);
+        // Add other timestamps with empty values
+        logMetaData.getOtherTimestamps().put(6, "yyyy-MM-dd'T'HH:mm:ss.SSS"); // date_accept
+        logMetaData.getOtherTimestamps().put(7, "yyyy-MM-dd'T'HH:mm:ss.SSS"); // date_arrival
+
+        int lineIndex = 0;
+        List<LogErrorReport> logErrorReport = new ArrayList<>();
+
+        // when
+        LogEventModel logEventModel = logProcessor.processLog(line, header, logMetaData, lineIndex, logErrorReport);
+
+        // then
+        // Should be valid because empty values in other timestamps are skipped
+        assertTrue(logEventModel.isValid());
+        assertEquals(0, logErrorReport.size());
+        
+        // Other timestamps should be empty since the values were empty
+        assertTrue(logEventModel.getOtherTimestamps().isEmpty());
+    }
+
     private LogMetaData getLogMetadata(List<String> header) {
         LogMetaData logMetaData = new LogMetaData(header);
         logMetaData.setCaseIdPos(0);

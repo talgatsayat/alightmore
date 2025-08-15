@@ -671,11 +671,28 @@ public class PDAnalyst {
         List<PTrace> pTraces = pLog.getCustomPTraceList();
 
         LogBitMap logBitMap = new LogBitMap(aLog.getOriginalTraces().size());
-        logBitMap.setTraceBitSet(pLog.getValidTraceIndexBS(), pTraces.size());
+        // Ensure bitset length matches the original number of traces, not just the filtered set
+        logBitMap.setTraceBitSet(pLog.getValidTraceIndexBS(), aLog.getOriginalTraces().size());
 
-        for (int i = 0; i < pTraces.size(); i++) {
-            logBitMap.addEventBitSet(pTraces.get(i).getValidEventIndexBS(),
-                aLog.getOriginalTraceFromIndex(i).getOriginalEvents().size());
+        // Create a map from immutable index to PTrace for efficient lookup
+        Map<Integer, PTrace> immutableIndexToPTrace = new HashMap<>();
+        for (PTrace pTrace : pTraces) {
+            immutableIndexToPTrace.put(pTrace.getImmutableIndex(), pTrace);
+        }
+
+        // Iterate through all original traces and set event bitsets based on valid traces
+        for (int i = 0; i < aLog.getOriginalTraces().size(); i++) {
+            PTrace pTrace = immutableIndexToPTrace.get(i);
+            if (pTrace != null) {
+                // This trace is valid, use its event bitset
+                logBitMap.addEventBitSet(pTrace.getValidEventIndexBS(),
+                    aLog.getOriginalTraceFromIndex(i).getOriginalEvents().size());
+            } else {
+                // This trace is not valid, add an empty bitset (all events filtered out)
+                BitSet emptyBitSet = new BitSet(aLog.getOriginalTraceFromIndex(i).getOriginalEvents().size());
+                logBitMap.addEventBitSet(emptyBitSet,
+                    aLog.getOriginalTraceFromIndex(i).getOriginalEvents().size());
+            }
         }
         aLog.updateLogStatus(logBitMap);
         attLog.refresh();

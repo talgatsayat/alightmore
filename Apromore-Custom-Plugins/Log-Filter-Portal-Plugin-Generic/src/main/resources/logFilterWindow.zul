@@ -22,7 +22,7 @@
 
 -->
 <window id="logFilterWindow" title="Filter log: BRK_MONITORING_202507031108" border="normal" width="1400px" height="800px"
-        closable="true" position="center" sizable="true" apply="org.apromore.plugin.portal.logfilter.AdvancedLogFilterController">
+        closable="true" position="center" sizable="true" mode="modal" apply="org.apromore.plugin.portal.logfilter.AdvancedLogFilterController">
     
     <style>
         .filter-nav {
@@ -81,6 +81,162 @@
         }
     </style>
 
+    <hlayout width="100%" style="padding:6px 8px; border-bottom:1px solid #e5e8eb; background:#f5f7f9;">
+        <button id="filterTopLeftBtn" label="←" tooltiptext="Back" mold="trendy" width="28px" height="24px" style="margin-right:6px;"/>
+        <label value="Filter log" style="font-weight:600; color:#365;"/>
+    </hlayout>
+
+    <style>
+        /* Timeframe Filter Styles */
+        .timeframe-container {
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .containment-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            margin: 0 auto 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .containment-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .containment-icon.selected {
+            background: #337ab7 !important;
+            box-shadow: 0 2px 8px rgba(51, 122, 183, 0.4);
+        }
+
+        .containment-icon.inactive {
+            background: #ccc;
+        }
+
+        .time-chart-container {
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .time-slider {
+            height: 20px;
+            background: #e9ecef;
+            border-radius: 10px;
+            position: relative;
+            cursor: pointer;
+            margin: 15px 0;
+        }
+
+        .slider-track {
+            height: 100%;
+            background: #337ab7;
+            border-radius: 10px;
+            position: absolute;
+            left: 0%;
+            right: 0%;
+        }
+
+        .slider-handle {
+            width: 20px;
+            height: 20px;
+            background: #337ab7;
+            border-radius: 50%;
+            position: absolute;
+            top: 0%;
+            cursor: ew-resize;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease;
+        }
+
+        .slider-handle:hover {
+            transform: scale(1.2);
+        }
+
+        .slider-handle-left {
+            left: 0%;
+        }
+
+        .slider-handle-right {
+            right: 0%;
+        }
+
+        .time-range-display {
+            text-align: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .time-label {
+            font-weight: bold;
+            color: #333;
+            margin: 0 5px;
+        }
+
+        .time-separator {
+            color: #666;
+            margin: 0 10px;
+        }
+
+        .expand-button {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .expand-button:hover {
+            background: #f0f0f0;
+            border-radius: 4px;
+        }
+
+        .checkbox-container {
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .combobox-container {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .intervals-button {
+            background-color: #337ab7;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .intervals-button:hover {
+            background-color: #286090;
+        }
+    </style>
+
     <borderlayout>
         <west width="250px" autoscroll="true" border="none" splittable="true">
             <vlayout hflex="1" vflex="1" style="padding: 10px;">
@@ -131,7 +287,7 @@
         </west>
         
         <center autoscroll="true" border="none">
-            <div id="filterContentPanel" hflex="1" vflex="1" style="padding: 10px;">
+            <div id="filterContentPanel" hflex="1" vflex="1" style="padding: 10px; overflow:auto;">
             
             <!-- Case Attribute Filter (Default) -->
             <div id="caseAttributePanel">
@@ -144,9 +300,6 @@
                                 <radio label="Remove" value="remove"/>
                             </radiogroup>
                         </div>
-                    </div>
-                    <div style="text-align: right;">
-                        <!-- Статистика удалена -->
                     </div>
         </div>
         
@@ -402,12 +555,158 @@
                 <label value="Case Variant Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
             </div>
             
+            <!-- Timeframe Filter Panel -->
             <div id="timeframePanel" visible="false">
-                <label value="Timeframe Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+                <div style="padding: 20px;">
+                    <h3 style="color: #333; margin-bottom: 20px;">Timeframe Filter</h3>
+                    
+                    <!-- Retain/Remove Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <label value="Action:" style="font-weight: bold; color: #333; margin-bottom: 10px; display: block;"/>
+                        <radiogroup id="timeframeCondition">
+                            <radio label="Retain" value="retain" selected="true"/>
+                            <radio label="Remove" value="remove"/>
+                        </radiogroup>
+                    </div>
+                    
+                    <!-- Containment Type Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <label value="Containment Type" style="display:block;font-weight: bold; color: #333; margin-bottom: 10px;"/>
+                        <hlayout spacing="20px" style="align-items: center;">
+                            <div style="text-align: center;">
+                                <div id="startInIcon" sclass="containment-icon selected" style="width: 30px; height: 30px; border: 2px solid #337ab7; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #337ab7; cursor: pointer;">[</div>
+                                <label value="Start in" style="font-size: 12px; color: #666;"/>
+                            </div>
+                            <div style="text-align: center;">
+                                <div id="endInIcon" sclass="containment-icon inactive" style="width: 30px; height: 30px; border: 2px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #ccc; cursor: pointer;">]</div>
+                                <label value="End in" style="font-size: 12px; color: #666;"/>
+                            </div>
+                            <div style="text-align: center;">
+                                <div id="containedInIcon" sclass="containment-icon inactive" style="width: 30px; height: 30px; border: 2px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #ccc; cursor: pointer;">⊂</div>
+                                <label value="Contained in" style="font-size: 12px; color: #666;"/>
+                            </div>
+                            <div style="text-align: center;">
+                                <div id="activeInIcon" sclass="containment-icon inactive" style="width: 30px; height: 30px; border: 2px solid #ccc; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #ccc; cursor: pointer;">∩</div>
+                                <label value="Active in" style="font-size: 12px; color: #666;"/>
+                            </div>
+                        </hlayout>
+                    </div>
+                    
+                    <!-- Time Range Selection -->
+                    <div style="margin-bottom: 20px;">
+                        <label value="Time Range:" style="font-weight: bold; color: #333; margin-bottom: 10px; display: block;"/>
+                        <hlayout spacing="10px" style="align-items: center;">
+                            <label value="From:" style="color: #666;"/>
+                            <datebox id="fromDate" format="yyyy-MM-dd" style="width: 150px;"/>
+                            <label value="To:" style="color: #666; margin-left: 10px;"/>
+                            <datebox id="toDate" format="yyyy-MM-dd" style="width: 150px;"/>
+                        </hlayout>
+                    </div>
+                    
+                    <!-- Predefined Timeframes -->
+                    <div style="margin-bottom: 10px;">
+                        <checkbox id="usePredefinedTimeframes" label="Predefined timeframes"/>
+                        <hlayout id="predefinedTimeframesLayout" visible="false" spacing="10px" style="margin-top: 8px;">
+                            <combobox id="predefinedTimeframeType" placeholder="Select type" width="140px">
+                                <comboitem label="Year"/>
+                                <comboitem label="Semester"/>
+                                <comboitem label="Quarter"/>
+                                <comboitem label="Month"/>
+                                <comboitem label="Week"/>
+                            </combobox>
+                            <button id="intervalsBtn" label="Intervals" sclass="intervals-button"/>
+                        </hlayout>
+                    </div>
+                    
+                    <!-- Log Info Display -->
+                    <div style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 4px; border: 1px solid #ddd;">
+                        <label value="Event Log Information" style="font-weight: bold; color: #1976d2; font-size: 14px; margin-bottom: 10px; display: block;"/>
+                        <label id="timeRangeDisplay" value="Loading time range..." style="color: #333; font-size: 12px; display: block;"/>
+                        <label id="caseCountDisplay" value="Loading case count..." style="color: #666; font-size: 11px; margin-top: 5px; display: block;"/>
+                    </div>
+                    
+                    <!-- Apply Filters Button -->
+                    <div style="margin-top: 20px; text-align: right;">
+                        <button id="applyFiltersBtnTimeframe" label="Apply Filters" style="background-color: #337ab7; color: white; font-weight: bold;"/>
+                    </div>
+                </div>
             </div>
             
             <div id="performancePanel" visible="false">
-                <label value="Performance Filter - Coming Soon" style="font-size: 18px; color: #666;"/>
+                <div sclass="filter-header">
+                    <div>
+                        <label value="Performance" style="font-size: 18px; font-weight: bold; color: #333;"/>
+                        <div style="margin-top: 5px;">
+                            <radiogroup id="performanceCondition">
+                                <radio label="Retain" value="retain" selected="true"/>
+                                <radio label="Remove" value="remove"/>
+                            </radiogroup>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <label value="Performance measure" style="font-weight: bold; color: #333; margin-bottom: 8px; display: block;"/>
+                    <combobox id="performanceMeasure" width="240px" placeholder="Select measure">
+                        <comboitem label="Case duration"/>
+                        <comboitem label="Case length"/>
+                        <comboitem label="Processing time (average)"/>
+                        <comboitem label="Processing time (maximum)"/>
+                        <comboitem label="Processing time (total)"/>
+                        <comboitem label="Waiting time (average)"/>
+                        <comboitem label="Waiting time (maximum)"/>
+                        <comboitem label="Waiting time (total)"/>
+                        <comboitem label="Case utilization"/>
+                        <comboitem label="Node duration"/>
+                        <comboitem label="Arc duration"/>
+                    </combobox>
+                </div>
+
+                <div id="perfGteRow" style="margin-bottom: 10px;">
+                    <label value="Greater than or equal to" style="display:block; color:#666; margin-bottom:6px;"/>
+                    <hlayout spacing="8px">
+                        <intbox id="perfGteValue" width="100px"/>
+                        <combobox id="perfGteUnit" width="160px" placeholder="Unit">
+                            <comboitem label="Years"/>
+                            <comboitem label="Months"/>
+                            <comboitem label="Weeks"/>
+                            <comboitem label="Days"/>
+                            <comboitem label="Hours"/>
+                            <comboitem label="Minutes"/>
+                            <comboitem label="Seconds"/>
+                        </combobox>
+                    </hlayout>
+                </div>
+
+                <div id="perfLteRow" style="margin-bottom: 20px;">
+                    <label value="Less than or equal to" style="display:block; color:#666; margin-bottom:6px;"/>
+                    <hlayout spacing="8px">
+                        <intbox id="perfLteValue" width="100px"/>
+                        <combobox id="perfLteUnit" width="160px" placeholder="Unit">
+                            <comboitem label="Years"/>
+                            <comboitem label="Months"/>
+                            <comboitem label="Weeks"/>
+                            <comboitem label="Days"/>
+                            <comboitem label="Hours"/>
+                            <comboitem label="Minutes"/>
+                            <comboitem label="Seconds"/>
+                        </combobox>
+                    </hlayout>
+                </div>
+
+                <div id="perfLenRow" visible="false" style="margin-bottom: 20px;">
+                    <label value="Case length" style="display:block; color:#666; margin-bottom:6px;"/>
+                    <hlayout spacing="8px">
+                        <label value="From"/>
+                        <intbox id="perfLenFrom" width="100px"/>
+                        <label value="To"/>
+                        <intbox id="perfLenTo" width="100px"/>
+                    </hlayout>
+                </div>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <button id="applyFiltersBtnPerformance" label="Apply Filters" style="background-color: #337ab7; color: white; font-weight: bold;"/>
+                </div>
             </div>
             
             <div id="pathPanel" visible="false">
@@ -426,12 +725,10 @@
         </center>
         
         <south height="60px" border="none">
-            <div sclass="controls-section" style="padding: 15px; border-top: 1px solid #eee; background: #f8f9fa;">
-                <hlayout spacing="10px" style="justify-content: flex-end;">
-                    <button id="cancelBtn" label="Cancel"/>
-                    <button id="applyFiltersBtn" label="Apply Filters" style="background-color: #337ab7; color: white; font-weight: bold;"/>
-                </hlayout>
-            </div>
+            <hbox width="100%" pack="end" sclass="controls-section" style="padding: 12px 16px; border-top: 1px solid #eee; background: #f8f9fa;">
+                <button id="cancelBtn" label="Cancel"/>
+                <button id="applyFiltersBtn" label="Apply Filters" style="margin-left:10px; background-color: #337ab7; color: white; font-weight: bold;"/>
+            </hbox>
         </south>
     </borderlayout>
     

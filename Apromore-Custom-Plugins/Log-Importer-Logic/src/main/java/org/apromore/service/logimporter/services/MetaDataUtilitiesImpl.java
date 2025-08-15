@@ -35,9 +35,11 @@ import static org.apromore.service.logimporter.dateparser.DateUtil.parseToTimest
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -50,11 +52,13 @@ import org.apromore.service.logimporter.utilities.NameComparator;
 public class MetaDataUtilitiesImpl implements MetaDataUtilities {
     private List<List<String>> lines;
     private LogMetaData logMetaData;
+    private Set<Integer> overriddenColumns = new HashSet<>();
 
     @Override
     public LogMetaData processMetaData(LogMetaData logMetaData, List<List<String>> lines) {
         this.logMetaData = logMetaData;
         this.lines = lines;
+        this.overriddenColumns.clear(); // Clear overrides for new processing
 
         setUniqueAttributes();
         setOtherTimestamps();
@@ -164,6 +168,11 @@ public class MetaDataUtilitiesImpl implements MetaDataUtilities {
 
     private void setOtherTimestamps() {
         for (int pos = 0; pos < logMetaData.getHeader().size(); pos++) {
+            // Skip if this column has been manually overridden to not be a timestamp
+            if (overriddenColumns.contains(pos)) {
+                continue;
+            }
+            
             if (isNotUniqueAttribute(pos) && couldBeTimestamp(pos) && isTimestamp(pos, this.lines)) {
                 logMetaData.getOtherTimestamps().put(pos, detectDateTimeFormat(pos));
             }
@@ -325,5 +334,38 @@ public class MetaDataUtilitiesImpl implements MetaDataUtilities {
 
 
 
+    }
+
+    /**
+     * Manually override timestamp detection for a specific column.
+     * This is useful when users explicitly choose column types in the UI.
+     * 
+     * @param colPos the column position to override
+     * @param isTimestamp whether the column should be treated as a timestamp
+     * @param format the date format if it's a timestamp, null otherwise
+     */
+    public void overrideTimestampDetection(int colPos, boolean isTimestamp, String format) {
+        // Mark this column as overridden
+        overriddenColumns.add(colPos);
+        
+        if (isTimestamp) {
+            if (format != null) {
+                logMetaData.getOtherTimestamps().put(colPos, format);
+            } else {
+                logMetaData.getOtherTimestamps().put(colPos, detectDateTimeFormat(colPos));
+            }
+        } else {
+            // Remove from timestamp processing
+            logMetaData.getOtherTimestamps().remove(colPos);
+        }
+    }
+    
+    /**
+     * Clear all manual timestamp detection overrides.
+     * This is useful when resetting the configuration.
+     */
+    public void clearTimestampOverrides() {
+        logMetaData.getOtherTimestamps().clear();
+        overriddenColumns.clear();
     }
 }

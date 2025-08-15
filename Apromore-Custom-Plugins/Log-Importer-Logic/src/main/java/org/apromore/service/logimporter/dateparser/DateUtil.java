@@ -106,6 +106,24 @@ public class DateUtil extends DatePatterns {
             return null;
         }
 
+        // Special handling for ISO formats to avoid lowercase conversion
+        if (dateFormat.equals("yyyy-MM-dd'T'HH:mm:ss.SSS") && dateString.contains("T")) {
+            Date date;
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);
+            simpleDateFormat.setLenient(false);
+            if (timeZone != null) {
+                simpleDateFormat.setTimeZone(timeZone);
+            }
+
+            try {
+                date = simpleDateFormat.parse(dateString); // Use original dateString for ISO
+                Calendar calendar = toCalendar(date);
+                return new Timestamp(calendar.getTimeInMillis());
+            } catch (ParseException e) {
+                // If ISO parsing fails, fall back to normal processing
+            }
+        }
+
         removeUnwantedChartsFromDate(dateString);
         Date date;
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(dateFormat);

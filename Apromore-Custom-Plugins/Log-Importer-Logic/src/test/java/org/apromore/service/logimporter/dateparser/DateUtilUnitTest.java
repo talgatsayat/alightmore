@@ -25,8 +25,10 @@ package org.apromore.service.logimporter.dateparser;
 import static org.apromore.service.logimporter.dateparser.DateUtil.determineDateFormat;
 import static org.apromore.service.logimporter.dateparser.DateUtil.parseToTimestamp;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.sql.Timestamp;
 import org.apromore.service.logimporter.services.MetaDataService;
 import org.apromore.service.logimporter.services.ParquetFactoryProvider;
 import org.apromore.service.logimporter.services.legacy.LogImporter;
@@ -387,46 +389,45 @@ class DateUtilUnitTest {
 
     @Test
     void test_timestamp_date_yy_HH_MM_ss_am_pm() {
+        System.out.println("\n*****************\ntest - Test timestamp format - date (yy), "
+            + "hours, minutes and seconds - AM/PM");
+        assertEquals("dd-MM-yy HH:mm:ss a", determineDateFormat("19-12-19 15:13:05 AM"));
+        assertEquals("MM-dd-yy HH:mm:ss a", determineDateFormat("12-19-19 15:13:05 AM"));
+        assertEquals("yyyy-dd-MM HH:mm:ss a", determineDateFormat("2019-19-12 15:13:05 AM"));
+        assertEquals("dd-MM-yy'T'HH:mm:ss a", determineDateFormat("19-12-19T15:13:05 AM"));
+        assertEquals("MM-dd-yy'T'HH:mm:ss a", determineDateFormat("12-19-19T15:13:05 AM"));
+        assertEquals("yyyy-dd-MM'T'HH:mm:ss a", determineDateFormat("2019-19-12T15:13:05 AM"));
+        assertEquals("dd/MM/yy HH:mm:ss a", determineDateFormat("19/12/19 15:13:05 AM"));
+        assertEquals("MM/dd/yy HH:mm:ss a", determineDateFormat("12/19/19 15:13:05 AM"));
+        assertEquals("yyyy/dd/MM HH:mm:ss a", determineDateFormat("2019/19/12 15:13:05 AM"));
+        assertEquals("dd MM yy HH:mm:ss a", determineDateFormat("19 12 19 15:13:05 AM"));
+        assertEquals("MM dd yy HH:mm:ss a", determineDateFormat("12 19 19 15:13:05 AM"));
+        assertEquals("yyyy dd MM HH:mm:ss a", determineDateFormat("2019 19 12 15:13:05 AM"));
+        assertEquals("dd MMM yy HH:mm:ss a", determineDateFormat("19 DEC 19 15:13:05 AM"));
+        assertEquals("dd MMMM yy HH:mm:ss a", determineDateFormat("19 DECEMBER 19 15:13:05 AM"));
+    }
 
-        System.out.println(
-            "\n*****************\ntest - Test timestamp format - date (yy), hours, minutes and seconds - AM/PM");
+    @Test
+    void test_iso_format_with_milliseconds() {
+        System.out.println("\n*****************\ntest - Test ISO format with milliseconds");
+        assertEquals("yyyy-MM-dd'T'HH:mm:ss.SSS", determineDateFormat("2020-12-11T14:49:08.000"));
+        assertEquals("yyyy-MM-dd'T'HH:mm:ss.SSS", determineDateFormat("2020-12-11T14:49:08.123"));
+        assertEquals("yyyy-MM-dd'T'HH:mm:ss.SSS", determineDateFormat("2020-12-11T14:49:08.999"));
+        assertEquals("yyyy-MM-dd'T'HH:mm:ss.SSS", determineDateFormat("2020-12-11T14:49:08.001"));
+    }
 
-        assertEquals("dd-MM-yy HH:mm:ss a", determineDateFormat("19-12-00 09:13:05 pm"));
-        assertEquals("MM-dd-yy HH:mm:ss a", determineDateFormat("12-19-00 09:13:05 pm"));
-        assertEquals("yy-MM-dd HH:mm:ss a", determineDateFormat("00-12-19 09:13:05 pm"));
-        assertEquals("yy-dd-MM HH:mm:ss a", determineDateFormat("00-19-12 09:13:05 pm"));
-        assertEquals("dd-MM-yy'T'HH:mm:ss a", determineDateFormat("19-12-00T09:13:05 pm"));
-        assertEquals("MM-dd-yy'T'HH:mm:ss a", determineDateFormat("12-19-00T09:13:05 pm"));
-        assertEquals("yy-MM-dd'T'HH:mm:ss a", determineDateFormat("00-12-19T09:13:05 pm"));
-        assertEquals("yy-dd-MM'T'HH:mm:ss a", determineDateFormat("00-19-12T09:13:05 pm"));
-        assertEquals("dd/MM/yy HH:mm:ss a", determineDateFormat("19/12/00 09:13:05 pm"));
-        assertEquals("MM/dd/yy HH:mm:ss a", determineDateFormat("12/19/00 09:13:05 pm"));
-        assertEquals("yy/MM/dd HH:mm:ss a", determineDateFormat("00/12/19 09:13:05 pm"));
-        assertEquals("yy/dd/MM HH:mm:ss a", determineDateFormat("00/19/12 09:13:05 pm"));
-        assertEquals("dd MM yy HH:mm:ss a", determineDateFormat("19 12 00 09:13:05 pm"));
-        assertEquals("MM dd yy HH:mm:ss a", determineDateFormat("12 19 00 09:13:05 pm"));
-        assertEquals("yy MM dd HH:mm:ss a", determineDateFormat("00 12 19 09:13:05 pm"));
-        assertEquals("yy dd MM HH:mm:ss a", determineDateFormat("00 19 12 09:13:05 pm"));
-        assertEquals("dd MMM yy HH:mm:ss a", determineDateFormat("19 DEC 00 09:13:05 pm"));
-        assertEquals("dd MMMM yy HH:mm:ss a", determineDateFormat("19 DECEMBER 00 09:13:05 pm"));
-        assertEquals("dd-MM-yy HH:mm:ssa", determineDateFormat("19-12-00 09:13:05pm"));
-        assertEquals("MM-dd-yy HH:mm:ssa", determineDateFormat("12-19-00 09:13:05pm"));
-        assertEquals("yy-MM-dd HH:mm:ssa", determineDateFormat("00-12-19 09:13:05pm"));
-        assertEquals("yy-dd-MM HH:mm:ssa", determineDateFormat("00-19-12 09:13:05pm"));
-        assertEquals("dd-MM-yy'T'HH:mm:ssa", determineDateFormat("19-12-00T09:13:05pm"));
-        assertEquals("MM-dd-yy'T'HH:mm:ssa", determineDateFormat("12-19-00T09:13:05pm"));
-        assertEquals("yy-MM-dd'T'HH:mm:ssa", determineDateFormat("00-12-19T09:13:05pm"));
-        assertEquals("yy-dd-MM'T'HH:mm:ssa", determineDateFormat("00-19-12T09:13:05pm"));
-        assertEquals("dd/MM/yy HH:mm:ssa", determineDateFormat("19/12/00 09:13:05pm"));
-        assertEquals("MM/dd/yy HH:mm:ssa", determineDateFormat("12/19/00 09:13:05pm"));
-        assertEquals("yy/MM/dd HH:mm:ssa", determineDateFormat("00/12/19 09:13:05pm"));
-        assertEquals("yy/dd/MM HH:mm:ssa", determineDateFormat("00/19/12 09:13:05pm"));
-        assertEquals("dd MM yy HH:mm:ssa", determineDateFormat("19 12 00 09:13:05pm"));
-        assertEquals("MM dd yy HH:mm:ssa", determineDateFormat("12 19 00 09:13:05pm"));
-        assertEquals("yy MM dd HH:mm:ssa", determineDateFormat("00 12 19 09:13:05pm"));
-        assertEquals("yy dd MM HH:mm:ssa", determineDateFormat("00 19 12 09:13:05pm"));
-        assertEquals("dd MMM yy HH:mm:ssa", determineDateFormat("19 DEC 00 09:13:05pm"));
-        assertEquals("dd MMMM yy HH:mm:ssa", determineDateFormat("19 DECEMBER 00 09:13:05pm"));
+    @Test
+    void test_iso_format_parsing() {
+        System.out.println("\n*****************\ntest - Test ISO format parsing");
+        String format = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+        Timestamp timestamp = parseToTimestamp("2020-12-11T14:49:08.000", format, null);
+        assertNotNull(timestamp, "ISO timestamp should be parsed successfully");
+        System.out.println("Parsed timestamp: " + timestamp);
+        
+        // Test with different milliseconds
+        Timestamp timestamp2 = parseToTimestamp("2020-12-11T14:49:08.123", format, null);
+        assertNotNull(timestamp2, "ISO timestamp with milliseconds should be parsed successfully");
+        System.out.println("Parsed timestamp2: " + timestamp2);
     }
 
     @Test

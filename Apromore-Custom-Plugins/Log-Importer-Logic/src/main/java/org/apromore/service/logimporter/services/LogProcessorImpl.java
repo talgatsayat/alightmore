@@ -142,7 +142,14 @@ public class LogProcessorImpl implements LogProcessor {
         final HashMap<String, Timestamp> timestampAttributeMap) {
         if (!otherTimestamps.isEmpty()) {
             for (Map.Entry<Integer, String> otherTimestamp : otherTimestamps.entrySet()) {
-                Timestamp tempTimestamp = parseTimestampValue(line.get(otherTimestamp.getKey()),
+                String value = line.get(otherTimestamp.getKey());
+                
+                // Skip empty or null values - they are not invalid, just missing
+                if (value == null || value.trim().isEmpty()) {
+                    continue;
+                }
+                
+                Timestamp tempTimestamp = parseTimestampValue(value,
                     otherTimestamp.getValue(), timeZone);
                 if (tempTimestamp != null) {
                     timestampAttributeMap.put(header.get(otherTimestamp.getKey()), tempTimestamp);

@@ -88,8 +88,15 @@ public class LogProcessorParquetImpl implements LogProcessorParquet {
         // Other timestamps
         if (!sample.getOtherTimestamps().isEmpty()) {
             for (Map.Entry<Integer, String> otherTimestamp : sample.getOtherTimestamps().entrySet()) {
+                String value = line[otherTimestamp.getKey()];
+                
+                // Skip empty or null values - they are not invalid, just missing
+                if (value == null || value.trim().isEmpty()) {
+                    continue;
+                }
+                
                 Timestamp tempTimestamp =
-                    parseTimestampValue(line[otherTimestamp.getKey()], otherTimestamp.getValue(), sample.getTimeZone());
+                    parseTimestampValue(value, otherTimestamp.getValue(), sample.getTimeZone());
                 if (tempTimestamp != null) {
                     line[otherTimestamp.getKey()] = tempTimestamp.toString();
                 } else {

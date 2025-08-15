@@ -137,19 +137,24 @@ public abstract class AbstractLogImporter implements LogImporter {
                                   final XFactory xfactory, XConceptExtension concept) {
 
         String caseId = logEventModel.getCaseID().trim();
+        XTrace xtrace; // Declare xtrace here so it's accessible throughout the method
 
         if (tracesHistory.isEmpty() || !tracesHistory.containsKey(caseId)) {
-            XTrace xtrace = xfactory.createTrace();
+            xtrace = xfactory.createTrace(); // Assign to the declared xtrace
             concept.assignName(xtrace, caseId);
             assignEventsToTrace(logEventModel, xtrace);
             assignMyCaseAttributes(logEventModel.getCaseAttributes(), xtrace);
             tracesHistory.put(caseId, xtrace);
         } else {
-            XTrace xtrace = tracesHistory.get(caseId);
+            xtrace = tracesHistory.get(caseId); // Assign to the declared xtrace
             assignEventsToTrace(logEventModel, xtrace);
             assignMyCaseAttributes(logEventModel.getCaseAttributes(), xtrace);
         }
+
+        // Note: assignEventsToTrace already creates and adds the proper events with 
+        // lifecycle transitions and timestamps. No need to create additional events manually.
     }
+
 
     protected void sortAndFeedLog(final TreeMap<String, XTrace> tracesHistory, final XLog xlog) {
         tracesHistory.forEach(

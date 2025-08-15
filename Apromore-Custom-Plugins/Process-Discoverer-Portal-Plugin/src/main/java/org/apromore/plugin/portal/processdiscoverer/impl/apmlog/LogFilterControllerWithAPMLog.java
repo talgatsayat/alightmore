@@ -338,6 +338,19 @@ public class LogFilterControllerWithAPMLog extends LogFilterController implement
     @Override
     public void processResponse(LogFilterResponse logFilterResponse) {
         try {
+                // Before updating PD views, ensure no stale filter log window remains
+                try {
+                    org.zkoss.zk.ui.Desktop desktop = org.zkoss.zk.ui.Executions.getCurrent().getDesktop();
+                    if (desktop != null) {
+                        for (org.zkoss.zk.ui.Page page : desktop.getPages()) {
+                            org.zkoss.zk.ui.Component old = page.getFellowIfAny("logFilterWindow");
+                            if (old != null) {
+                                try { old.detach(); } catch (Exception ignored) {}
+                            }
+                        }
+                    }
+                } catch (Exception ignore) {}
+
             System.out.println("🔧 Processing LogFilterResponse...");
             System.out.println("🔧 LogFilterResponse: " + logFilterResponse);
             System.out.println("🔧 Log ID: " + logFilterResponse.getLogId());
@@ -346,8 +359,20 @@ public class LogFilterControllerWithAPMLog extends LogFilterController implement
             PLog pLog = logFilterResponse.getPLog();
             System.out.println("🔧 PLog: " + pLog);
             System.out.println("🔧 PLog traces count: " + (pLog != null ? pLog.getPTraces().size() : "null"));
-            
-            if (pLog != null && !pLog.getPTraces().isEmpty()) {
+
+            // If no PLog provided, rebuild it locally using apmLog + criteria
+            if (pLog == null || pLog.getPTraces() == null || pLog.getPTraces().isEmpty()) {
+                System.out.println("ℹ️ PLog not provided, rebuilding from APMLog and rules...");
+                org.apromore.apmlog.APMLog base = logFilterResponse.getApmLog();
+                java.util.List<org.apromore.apmlog.filter.rules.LogFilterRule> rules = logFilterResponse.getCriteria();
+                if (base != null && rules != null && !rules.isEmpty()) {
+                    org.apromore.apmlog.filter.APMLogFilter filter = new org.apromore.apmlog.filter.APMLogFilter(base);
+                    filter.filter(rules);
+                    pLog = filter.getPLog();
+                }
+            }
+
+            if (pLog != null && pLog.getPTraces() != null && !pLog.getPTraces().isEmpty()) {
                 System.out.println("🔧 Setting current filter criteria...");
                 parent.getProcessAnalyst().setCurrentFilterCriteria(logFilterResponse.getCriteria());
                 
@@ -365,7 +390,7 @@ public class LogFilterControllerWithAPMLog extends LogFilterController implement
                 
                 System.out.println("✅ LogFilterResponse processed successfully");
             } else {
-                System.out.println("⚠️ PLog is null or empty, skipping processing");
+                System.out.println("⚠️ Unable to construct PLog; skipping processing");
             }
         } catch (Exception e) {
             System.out.println("❌ Error processing LogFilterResponse:");

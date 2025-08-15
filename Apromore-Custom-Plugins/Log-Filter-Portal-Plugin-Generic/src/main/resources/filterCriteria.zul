@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    #%L
+    This file is part of "Apromore Core".
+    %%
+    Copyright (C) 2018 - 2022 Apromore Pty Ltd.
+    %%
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as
+    published by the Free Software Foundation, either version 3 of the
+    License, or (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Lesser Public License for more details.
+
+    You should have received a copy of the GNU General Lesser Public
+    License along with this program.  If not, see
+    <http://www.gnu.org/licenses/lgpl-3.0.html>.
+
+    #L%
+-->
+
+<window id="criteriaWindow" title="Filter Criteria" width="800px" height="500px" 
+        apply="org.apromore.plugin.portal.logfilter.CriteriaWindowController"
+        mode="modal" closable="true" maximizable="true" sizable="true">
+    
+    <style>
+        .criteria-toolbar { 
+            background: #f8f9fa; 
+            border-bottom: 1px solid #e5e8eb; 
+            padding: 8px; 
+        }
+        .criteria-plus { 
+            background: #007bff; 
+            color: white; 
+            border: none; 
+            border-radius: 4px; 
+            padding: 4px 8px; 
+            font-weight: bold; 
+        }
+        .log-stats-section { 
+            width: 250px; 
+            background: #f8f9fa; 
+            border-right: 1px solid #e5e8eb; 
+            padding: 16px; 
+        }
+        .log-stats-title { 
+            font-weight: 600; 
+            color: #345; 
+            margin-bottom: 16px; 
+            font-size: 14px; 
+        }
+        .log-stats-item { 
+            margin-bottom: 16px; 
+            padding: 8px; 
+            background: white; 
+            border-radius: 4px; 
+            border: 1px solid #e5e8eb; 
+        }
+        .log-stats-header { 
+            font-weight: 600; 
+            color: #345; 
+            font-size: 12px; 
+            margin-bottom: 4px; 
+        }
+        .log-stats-chart { 
+            text-align: center; 
+            margin: 8px 0; 
+        }
+        .log-stats-percent { 
+            font-weight: 600; 
+            color: #007bff; 
+            font-size: 16px; 
+            text-align: center; 
+        }
+        .log-stats-numbers { 
+            text-align: center; 
+            font-size: 12px; 
+        }
+        .log-stats-filtered { color: #007bff; font-weight: 600; }
+        .log-stats-total { color: #999; }
+        .criteria-table { 
+            padding: 16px; 
+        }
+    </style>
+
+    <vlayout width="100%" height="100%">
+        <hlayout sclass="criteria-toolbar" width="100%">
+            <button id="criteriaAddButton" sclass="criteria-plus" label="+" tooltiptext="Add filter"/>
+            <label value="Filter log" style="margin-left:8px; color:#345; font-weight:600;"/>
+        </hlayout>
+
+        <hlayout vflex="1" hflex="1" spacing="0">
+            <!-- Log Statistics Panel -->
+            <vlayout sclass="log-stats-section">
+                <label sclass="log-stats-title" value="Log Statistics"/>
+                
+                <!-- Cases -->
+                <div sclass="log-stats-item">
+                    <label sclass="log-stats-header" value="Cases"/>
+                    <div sclass="log-stats-chart">
+                        <label value="📊" style="font-size: 24px;"/>
+                    </div>
+                    <label id="criteriaCasePercent" sclass="log-stats-percent" value="100%"/>
+                    <div sclass="log-stats-numbers">
+                        <label id="criteriaCaseFiltered" sclass="log-stats-filtered" value="0"/>
+                        <label value=" / "/>
+                        <label id="criteriaCaseTotal" sclass="log-stats-total" value="0"/>
+                    </div>
+                </div>
+                
+                <!-- Variants -->
+                <div sclass="log-stats-item">
+                    <label sclass="log-stats-header" value="Case Variants"/>
+                    <div sclass="log-stats-chart">
+                        <label value="🎯" style="font-size: 24px;"/>
+                    </div>
+                    <label id="criteriaVariantPercent" sclass="log-stats-percent" value="100%"/>
+                    <div sclass="log-stats-numbers">
+                        <label id="criteriaVariantFiltered" sclass="log-stats-filtered" value="0"/>
+                        <label value=" / "/>
+                        <label id="criteriaVariantTotal" sclass="log-stats-total" value="0"/>
+                    </div>
+                </div>
+                
+                <!-- Events -->
+                <div sclass="log-stats-item">
+                    <label sclass="log-stats-header" value="Activity Instances"/>
+                    <div sclass="log-stats-chart">
+                        <label value="⚡" style="font-size: 24px;"/>
+                    </div>
+                    <label id="criteriaEventPercent" sclass="log-stats-percent" value="100%"/>
+                    <div sclass="log-stats-numbers">
+                        <label id="criteriaEventFiltered" sclass="log-stats-filtered" value="0"/>
+                        <label value=" / "/>
+                        <label id="criteriaEventTotal" sclass="log-stats-total" value="0"/>
+                    </div>
+                </div>
+                
+                <!-- Activities -->
+                <div sclass="log-stats-item">
+                    <label sclass="log-stats-header" value="Activities"/>
+                    <div sclass="log-stats-chart">
+                        <label value="🎯" style="font-size: 24px;"/>
+                    </div>
+                    <label id="criteriaNodePercent" sclass="log-stats-percent" value="100%"/>
+                    <div sclass="log-stats-numbers">
+                        <label id="criteriaNodeFiltered" sclass="log-stats-filtered" value="0"/>
+                        <label value=" / "/>
+                        <label id="criteriaNodeTotal" sclass="log-stats-total" value="0"/>
+                    </div>
+                </div>
+            </vlayout>
+
+            <!-- Criteria Panel -->
+            <vlayout sclass="criteria-table" vflex="1" hflex="1">
+                <label value="Criteria" style="font-weight:600; margin-bottom:6px;"/>
+                <listbox id="criteriaList" vflex="1" hflex="1">
+                    <listhead>
+                        <listheader label="Filter criteria"/>
+                    </listhead>
+                </listbox>
+            </vlayout>
+        </hlayout>
+
+        <hbox style="padding:8px; border-top: 1px solid #e5e8eb;" pack="end" width="100%">
+            <button id="filterOkButton" label="Apply Filters" sclass="criteria-plus"/>
+            <button id="filterCancelButton" label="Close"/>
+        </hbox>
+    </vlayout>
+</window>

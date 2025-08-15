@@ -34,4 +34,20 @@ public interface MetaDataUtilities {
     boolean isTimestamp(int colPos, List<List<String>> lines);
 
     boolean isTimestamp(int colPos, String format, List<List<String>> lines);
+    
+    /**
+     * Manually override timestamp detection for a specific column.
+     * This is useful when users explicitly choose column types in the UI.
+     * 
+     * @param colPos the column position to override
+     * @param isTimestamp whether the column should be treated as a timestamp
+     * @param format the date format if it's a timestamp, null otherwise
+     */
+    void overrideTimestampDetection(int colPos, boolean isTimestamp, String format);
+    
+    /**
+     * Clear all manual timestamp detection overrides.
+     * This is useful when resetting the configuration.
+     */
+    void clearTimestampOverrides();
 }
