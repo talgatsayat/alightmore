@@ -41,7 +41,6 @@ public class CaseSectionCaseAttributeFilter {
 
     private static boolean conformRule(PTrace trace, LogFilterRule logFilterRule) {
         String attributeKey = logFilterRule.getKey();
-
         FilterType filterType = logFilterRule.getFilterType();
 
         if (logFilterRule.getPrimaryValues() == null || logFilterRule.getPrimaryValues().isEmpty()) {
@@ -67,11 +66,13 @@ public class CaseSectionCaseAttributeFilter {
                 return cIds.contains(trace.getCaseId());
             }
         }
-        if (!trace.getAttributes().containsKey(attributeKey))
+        if (!trace.getAttributes().containsKey(attributeKey)) {
             return false;
+        }
 
         String value = trace.getAttributes().get(attributeKey);
         Set<String> ruleVals = (Set<String>) logFilterRule.getPrimaryValues().iterator().next().getObjectVal();
+        
         return ruleVals.contains(value);
 
     }

@@ -142,7 +142,7 @@ public class LogFilterCriterionFactoryImpl implements LogFilterCriterionFactory 
                 rule.getChoice() == Choice.REMOVE ? Action.REMOVE : Action.RETAIN, 
                 rule.getInclusion() == Inclusion.ANY_VALUE ? Containment.CONTAIN_ANY : Containment.CONTAIN_ALL, 
                 rule.getSection() == Section.CASE ? Level.TRACE : Level.EVENT,
-                rule.getKey(),
+                getCriterionLabel(rule),
                 getCriterionAttribute(rule), 
                 getCriterionValueSet(rule));
     }
@@ -155,6 +155,24 @@ public class LogFilterCriterionFactoryImpl implements LogFilterCriterionFactory 
 	    }
 	    return criteria;
 	}
+    
+    private String getCriterionLabel(LogFilterRule rule) {
+        String label;
+        if (rule.getFilterType() == FilterType.CASE_CASE_ATTRIBUTE) {
+            label = "case:attribute";
+        }
+        else if (rule.getFilterType() == FilterType.CASE_EVENT_ATTRIBUTE) {
+            label = "case:event:attribute";
+        }
+        else if (rule.getFilterType() == FilterType.EVENT_EVENT_ATTRIBUTE) {
+            label = "event:attribute";
+        }
+        else {
+            label = rule.getKey();
+        }
+        
+        return label;
+    }
     
     private String getCriterionAttribute(LogFilterRule rule) {
     	if (rule.getFilterType()==FilterType.DIRECT_FOLLOW) {

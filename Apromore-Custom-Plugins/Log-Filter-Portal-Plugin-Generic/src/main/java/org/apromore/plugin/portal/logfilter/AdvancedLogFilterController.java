@@ -68,6 +68,11 @@ import java.util.Set;
 import java.util.Arrays;
 
 import java.util.*;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * Контроллер для стандартного окна фильтрации логов Apromore
@@ -261,10 +266,35 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
     @Listen("onChange = #primaryAttributeType")
     public void onPrimaryAttributeTypeChange() {
         try {
-            LOGGER.info("🔄 Изменен тип атрибута (Event/Case), перезагружаем значения...");
-            loadAttributeValuesForLog();
+            LOGGER.info("🔄 Изменен тип атрибута (Event/Case), перезагружаем атрибуты...");
+            
+            // Debug: Log the current selection
+            if (primaryAttributeType != null && primaryAttributeType.getSelectedItem() != null) {
+                String selectedType = primaryAttributeType.getSelectedItem().getValue();
+                LOGGER.info("🔧 Выбранный тип: {}", selectedType);
+            } else {
+                LOGGER.warn("⚠️ primaryAttributeType или selectedItem недоступен");
+            }
+            
+            loadAvailableAttributesFromLog(); // Reload attributes based on new type
+            loadAttributeValuesForLog(); // Reload values for the new attribute type
+            
+            LOGGER.info("✅ Перезагрузка атрибутов завершена");
         } catch (Exception e) {
             LOGGER.error("❌ Ошибка при изменении типа атрибута", e);
+        }
+    }
+    
+    /**
+     * Alternative event handler for radio button clicks
+     */
+    @Listen("onCheck = #primaryAttributeType radio")
+    public void onPrimaryAttributeTypeRadioClick() {
+        try {
+            LOGGER.info("🔄 Radio button clicked в primaryAttributeType");
+            onPrimaryAttributeTypeChange();
+        } catch (Exception e) {
+            LOGGER.error("❌ Ошибка при обработке клика radio button", e);
         }
     }
 
@@ -646,46 +676,113 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
             // Очищаем комбобокс
             primaryAttributeCombo.getItems().clear();
             
+            // Get the selected attribute type (Event vs Case)
+            String selectedAttributeType = "event"; // default to event
+            if (primaryAttributeType != null && primaryAttributeType.getSelectedItem() != null) {
+                selectedAttributeType = primaryAttributeType.getSelectedItem().getValue();
+            }
+            
+            LOGGER.info("🔧 Выбранный тип атрибута: {}", selectedAttributeType);
+            
             if (apmLog != null) {
                 LOGGER.info("🔧 APMLog доступен, количество трасс: {}", apmLog.getTraces().size());
                 
-                // Собираем все уникальные атрибуты из лога
+                // Собираем атрибуты в зависимости от выбранного типа
                 Set<String> availableAttributes = new HashSet<>();
                 
-                // Добавляем стандартные атрибуты, которые всегда присутствуют
-                availableAttributes.add("concept:name");
-                availableAttributes.add("concept:case:id");
-                LOGGER.info("🔧 Добавлены стандартные атрибуты: concept:name, concept:case:id");
-                
-                // Собираем атрибуты из трасс (case attributes)
-                int caseAttributeCount = 0;
-                for (ATrace trace : apmLog.getTraces()) {
-                    if (trace.getAttributes() != null) {
-                        caseAttributeCount += trace.getAttributes().size();
-                        availableAttributes.addAll(trace.getAttributes().keySet());
-                    }
-                }
-                LOGGER.info("🔧 Найдено {} case атрибутов в {} трассах", caseAttributeCount, apmLog.getTraces().size());
-                
-                // Собираем атрибуты из экземпляров активности (event attributes)
-                int eventAttributeCount = 0;
-                int totalActivityInstances = 0;
-                for (ATrace trace : apmLog.getTraces()) {
-                    totalActivityInstances += trace.getActivityInstances().size();
-                    for (ActivityInstance activityInstance : trace.getActivityInstances()) {
-                        if (activityInstance.getAttributes() != null) {
-                            eventAttributeCount += activityInstance.getAttributes().size();
-                            availableAttributes.addAll(activityInstance.getAttributes().keySet());
+                if ("event".equals(selectedAttributeType)) {
+                    // Собираем атрибуты из экземпляров активности (event attributes only)
+                    int eventAttributeCount = 0;
+                    int totalActivityInstances = 0;
+                    Set<String> standardAttributesFound = new HashSet<>();
+                    
+                    for (ATrace trace : apmLog.getTraces()) {
+                        totalActivityInstances += trace.getActivityInstances().size();
+                        for (ActivityInstance activityInstance : trace.getActivityInstances()) {
+                            if (activityInstance.getAttributes() != null) {
+                                eventAttributeCount += activityInstance.getAttributes().size();
+                                
+                                // Add event attributes only, exclude case attributes
+                                for (String attrKey : activityInstance.getAttributes().keySet()) {
+                                    // Skip concept:name since we have Activity as the user-friendly option
+                                    if (!"concept:name".equals(attrKey)) {
+                                        // Only add event-level attributes, not case attributes
+                                        if (!attrKey.equals("concept:case:id") && 
+                                            !attrKey.startsWith("case:")) {
+                                            availableAttributes.add(attrKey);
+                                        }
+                                    }
+                                }
+                                
+                                // Check if standard event attributes exist in this activity instance
+                                if (activityInstance.getAttributes().containsKey("concept:name")) {
+                                    standardAttributesFound.add("concept:name");
+                                }
+                                if (activityInstance.getAttributes().containsKey("org:resource")) {
+                                    standardAttributesFound.add("org:resource");
+                                }
+                                if (activityInstance.getAttributes().containsKey("lifecycle:transition")) {
+                                    standardAttributesFound.add("lifecycle:transition");
+                                }
+                                if (activityInstance.getAttributes().containsKey("time:timestamp")) {
+                                    standardAttributesFound.add("time:timestamp");
+                                }
+                            }
                         }
                     }
+                    
+                    // Always add Activity as the main option (maps to concept:name internally)
+                    availableAttributes.add("Activity");
+                    LOGGER.info("🔧 Добавлен основной атрибут для Event: Activity");
+                    
+                    // Only add standard attributes if they actually exist in the log
+                    if (standardAttributesFound.contains("org:resource")) {
+                        availableAttributes.add("org:resource");
+                        LOGGER.info("🔧 Добавлен стандартный атрибут: org:resource");
+                    }
+                    if (standardAttributesFound.contains("lifecycle:transition")) {
+                        availableAttributes.add("lifecycle:transition");
+                        LOGGER.info("🔧 Добавлен стандартный атрибут: lifecycle:transition");
+                    }
+                    if (standardAttributesFound.contains("time:timestamp")) {
+                        availableAttributes.add("time:timestamp");
+                        LOGGER.info("🔧 Добавлен стандартный атрибут: time:timestamp");
+                    }
+                    
+                    LOGGER.info("🔧 Найдено {} event атрибутов в {} экземплярах активности", eventAttributeCount, totalActivityInstances);
+                    LOGGER.info("🔧 Найдено стандартных атрибутов: {}", standardAttributesFound);
+                    
+                } else {
+                    // For Case attributes - only collect case-level attributes
+                    availableAttributes.add("concept:case:id");
+                    LOGGER.info("🔧 Добавлены стандартные case атрибуты");
+                    
+                    // Собираем атрибуты из трасс (case attributes only)
+                    int caseAttributeCount = 0;
+                    for (ATrace trace : apmLog.getTraces()) {
+                        if (trace.getAttributes() != null) {
+                            caseAttributeCount += trace.getAttributes().size();
+                            // Only add case-level attributes, not event attributes
+                            for (String attrKey : trace.getAttributes().keySet()) {
+                                // Filter out event attributes that might be stored at trace level
+                                if (!attrKey.startsWith("event:") && 
+                                    !attrKey.equals("concept:name") && 
+                                    !attrKey.equals("org:resource") && 
+                                    !attrKey.equals("lifecycle:transition") && 
+                                    !attrKey.equals("time:timestamp")) {
+                                    availableAttributes.add(attrKey);
+                                }
+                            }
+                        }
+                    }
+                    LOGGER.info("🔧 Найдено {} case атрибутов в {} трассах", caseAttributeCount, apmLog.getTraces().size());
                 }
-                LOGGER.info("🔧 Найдено {} event атрибутов в {} экземплярах активности", eventAttributeCount, totalActivityInstances);
                 
                 // Сортируем атрибуты для удобства
                 List<String> sortedAttributes = new ArrayList<>(availableAttributes);
                 Collections.sort(sortedAttributes);
                 
-                LOGGER.info("🔧 Всего уникальных атрибутов: {}", sortedAttributes.size());
+                LOGGER.info("🔧 Всего уникальных атрибутов для типа '{}': {}", selectedAttributeType, sortedAttributes.size());
                 LOGGER.info("🔧 Список атрибутов: {}", sortedAttributes);
                 
                 // Добавляем атрибуты в комбобокс
@@ -693,8 +790,18 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
                     primaryAttributeCombo.appendItem(attribute);
                 }
                 
-                // Устанавливаем первый атрибут как выбранный
-                if (sortedAttributes.size() > 0) {
+                // Устанавливаем Activity как выбранный по умолчанию для Event attributes
+                if ("event".equals(selectedAttributeType) && sortedAttributes.contains("Activity")) {
+                    // Find the index of "Activity" and select it
+                    for (int i = 0; i < primaryAttributeCombo.getItemCount(); i++) {
+                        if ("Activity".equals(primaryAttributeCombo.getItems().get(i).getValue())) {
+                            primaryAttributeCombo.setSelectedIndex(i);
+                            LOGGER.info("✅ Установлен Activity как выбранный по умолчанию");
+                            break;
+                        }
+                    }
+                } else if (sortedAttributes.size() > 0) {
+                    // Fallback to first attribute if Activity is not available
                     primaryAttributeCombo.setSelectedIndex(0);
                     LOGGER.info("✅ Установлен первый атрибут как выбранный: {}", sortedAttributes.get(0));
                 }
@@ -703,21 +810,26 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
                 
             } else {
                 LOGGER.warn("⚠️ APMLog недоступен, используем стандартные атрибуты");
-                // Fallback to standard attributes
-                primaryAttributeCombo.appendItem("concept:name");
-                primaryAttributeCombo.appendItem("concept:case:id");
-                primaryAttributeCombo.appendItem("org:resource");
-                primaryAttributeCombo.appendItem("lifecycle:transition");
-                primaryAttributeCombo.appendItem("time:timestamp");
+                // Fallback to standard attributes based on selected type
+                if ("event".equals(selectedAttributeType)) {
+                    primaryAttributeCombo.appendItem("Activity");
+                    // Note: Standard attributes are only added if they exist in the actual log data
+                } else {
+                    primaryAttributeCombo.appendItem("concept:case:id");
+                }
                 primaryAttributeCombo.setSelectedIndex(0);
-                LOGGER.info("✅ Добавлены стандартные атрибуты (fallback)");
+                LOGGER.info("✅ Добавлены стандартные атрибуты (fallback) для типа: {}", selectedAttributeType);
             }
             
         } catch (Exception e) {
             LOGGER.error("Ошибка при загрузке доступных атрибутов из лога: {}", logName, e);
             // Fallback to standard attributes
-            primaryAttributeCombo.appendItem("concept:name");
-            primaryAttributeCombo.appendItem("concept:case:id");
+            if (primaryAttributeType != null && primaryAttributeType.getSelectedItem() != null && 
+                "event".equals(primaryAttributeType.getSelectedItem().getValue())) {
+                primaryAttributeCombo.appendItem("Activity");
+            } else {
+                primaryAttributeCombo.appendItem("concept:case:id");
+            }
             primaryAttributeCombo.setSelectedIndex(0);
         }
     }
@@ -762,10 +874,13 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
                 // Получаем уникальные значения выбранного атрибута из APMLog
                 Map<String, Integer> attributeValueCounts = new HashMap<>();
                 
-                // Определяем тип атрибута (case или event)
-                boolean isCaseAttribute = selectedAttribute.equals("concept:case:id") || 
-                                       selectedAttribute.equals("concept:name") ||
-                                       selectedAttribute.startsWith("case:");
+                // Определяем тип атрибута (case или event) на основе выбранного типа в radio button
+                String selectedAttributeType = "event"; // default to event
+                if (primaryAttributeType != null && primaryAttributeType.getSelectedItem() != null) {
+                    selectedAttributeType = primaryAttributeType.getSelectedItem().getValue();
+                }
+                
+                boolean isCaseAttribute = "case".equals(selectedAttributeType);
                 
                 LOGGER.info("🔧 Тип атрибута: {}", isCaseAttribute ? "CASE" : "EVENT");
                 LOGGER.info("🔧 Количество трасс в логе: {}", apmLog.getTraces().size());
@@ -789,15 +904,38 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
                     LOGGER.info("🔧 Обрабатываем EVENT атрибуты...");
                     int totalActivityInstances = 0;
                     int foundEventValues = 0;
-                    for (ATrace trace : apmLog.getTraces()) {
-                        totalActivityInstances += trace.getActivityInstances().size();
-                        for (ActivityInstance activityInstance : trace.getActivityInstances()) {
-                            if (activityInstance.getAttributes() != null && 
-                                activityInstance.getAttributes().containsKey(selectedAttribute)) {
-                                String value = activityInstance.getAttributes().get(selectedAttribute).toString();
-                                if (value != null && !value.isEmpty()) {
-                                    attributeValueCounts.put(value, attributeValueCounts.getOrDefault(value, 0) + 1);
-                                    foundEventValues++;
+                    
+                    // Special handling for Activity attribute
+                    if (selectedAttribute.equals("Activity")) {
+                        LOGGER.info("🔧 Специальная обработка для атрибута Activity...");
+                        for (ATrace trace : apmLog.getTraces()) {
+                            totalActivityInstances += trace.getActivityInstances().size();
+                            Set<String> activitiesInTrace = new HashSet<>();
+                            for (ActivityInstance activityInstance : trace.getActivityInstances()) {
+                                String activityName = activityInstance.getName();
+                                if (activityName != null && !activityName.isEmpty()) {
+                                    activitiesInTrace.add(activityName);
+                                }
+                            }
+                            // Count each activity once per trace (case) for statistics
+                            for (String activityName : activitiesInTrace) {
+                                attributeValueCounts.put(activityName, attributeValueCounts.getOrDefault(activityName, 0) + 1);
+                                foundEventValues++;
+                            }
+                        }
+                        LOGGER.info("🔧 Найдено {} уникальных активностей (подсчитано по случаям)", attributeValueCounts.size());
+                    } else {
+                        // Regular event attributes
+                        for (ATrace trace : apmLog.getTraces()) {
+                            totalActivityInstances += trace.getActivityInstances().size();
+                            for (ActivityInstance activityInstance : trace.getActivityInstances()) {
+                                if (activityInstance.getAttributes() != null && 
+                                    activityInstance.getAttributes().containsKey(selectedAttribute)) {
+                                    String value = activityInstance.getAttributes().get(selectedAttribute).toString();
+                                    if (value != null && !value.isEmpty()) {
+                                        attributeValueCounts.put(value, attributeValueCounts.getOrDefault(value, 0) + 1);
+                                        foundEventValues++;
+                                    }
                                 }
                             }
                         }
@@ -849,19 +987,119 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
             if (attributeValuesList != null) {
                 LOGGER.debug("🔧 Создаем Listitem для значения: '{}', количество: {}, частота: {:.2f}%", value, cases, frequency);
                 
+                // Get the current selected attribute name for date formatting
+                String selectedAttribute = null;
+                if (primaryAttributeCombo != null && primaryAttributeCombo.getSelectedItem() != null) {
+                    selectedAttribute = (primaryAttributeCombo.getSelectedItem().getValue() != null) ? 
+                        String.valueOf(primaryAttributeCombo.getSelectedItem().getValue()) : 
+                        primaryAttributeCombo.getSelectedItem().getLabel();
+                }
+                
+                // Format the value if it's a date
+                String displayValue = formatDateValue(value, selectedAttribute);
+                
                 Listitem item = new Listitem();
-                item.appendChild(new Listcell(value));
+                item.appendChild(new Listcell(displayValue));
                 item.appendChild(new Listcell(String.valueOf(cases)));
-                item.appendChild(new Listcell(String.format("%.1f%%", frequency)));
+                item.appendChild(new Listcell(formatFrequency(frequency)));
                 
                 attributeValuesList.appendChild(item);
                 
-                LOGGER.debug("✅ Listitem добавлен в таблицу для значения: '{}'", value);
+                LOGGER.debug("✅ Listitem добавлен в таблицу для значения: '{}' (отформатировано: '{}')", value, displayValue);
             } else {
                 LOGGER.warn("⚠️ attributeValuesList == null в addAttributeValue");
             }
         } catch (Exception e) {
             LOGGER.error("❌ Ошибка при добавлении значения атрибута '{}' в таблицу", value, e);
+        }
+    }
+    
+    /**
+     * Format frequency with smart decimal places
+     * Shows 2 decimal places when needed, but only 1 when it rounds nicely
+     */
+    private String formatFrequency(double frequency) {
+        // Round to 2 decimal places first
+        double rounded2 = Math.round(frequency * 100.0) / 100.0;
+        
+        // Check if it rounds to exactly 1 decimal place
+        double rounded1 = Math.round(frequency * 10.0) / 10.0;
+        
+        if (Math.abs(rounded2 - rounded1) < 0.001) {
+            // It rounds nicely to 1 decimal place
+            return String.format("%.1f%%", rounded1);
+        } else {
+            // Need 2 decimal places for precision
+            return String.format("%.2f%%", rounded2);
+        }
+    }
+    
+    /**
+     * Format date values to display format "06 Nov 20, 17:27:04"
+     */
+    private String formatDateValue(String value, String attributeName) {
+        // Check if this is a date attribute
+        if (attributeName != null && (attributeName.startsWith("date_") || 
+            attributeName.equals("time:timestamp") || 
+            attributeName.contains("time") || 
+            attributeName.contains("date"))) {
+            
+            try {
+                // Try to parse the date value and format it
+                return formatDateString(value);
+            } catch (Exception e) {
+                // If parsing fails, return the original value
+                LOGGER.debug("Could not parse date value '{}' for attribute '{}': {}", value, attributeName, e.getMessage());
+                return value;
+            }
+        }
+        return value;
+    }
+    
+    /**
+     * Parse and format a date string to "06 Nov 20, 17:27:04" format
+     */
+    private String formatDateString(String dateStr) {
+        if (dateStr == null || dateStr.trim().isEmpty()) {
+            return dateStr;
+        }
+        
+        try {
+            // Try multiple date formats that might be in the CSV
+            String[] possibleFormats = {
+                "yyyy-MM-dd'T'HH:mm:ss.SSS",
+                "yyyy-MM-dd'T'HH:mm:ss",
+                "yyyy-MM-dd HH:mm:ss.SSS",
+                "yyyy-MM-dd HH:mm:ss",
+                "dd/MM/yyyy HH:mm:ss",
+                "MM/dd/yyyy HH:mm:ss",
+                "yyyy/MM/dd HH:mm:ss",
+                "dd-MM-yyyy HH:mm:ss",
+                "MM-dd-yyyy HH:mm:ss",
+                "yyyy-MM-dd",
+                "dd/MM/yyyy",
+                "MM/dd/yyyy"
+            };
+            
+            for (String format : possibleFormats) {
+                try {
+                    SimpleDateFormat parser = new SimpleDateFormat(format);
+                    Date date = parser.parse(dateStr.trim());
+                    
+                    // Format to desired output format "06 Nov 20, 17:27:04"
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd MMM yy, HH:mm:ss");
+                    return formatter.format(date);
+                } catch (Exception ignored) {
+                    // Try next format
+                }
+            }
+            
+            // If none of the formats work, return original
+            return dateStr;
+            
+        } catch (Exception e) {
+            LOGGER.debug("Error formatting date string '{}': {}", dateStr, e.getMessage());
+            return dateStr;
         }
     }
 
@@ -1705,7 +1943,7 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
             
             switch (currentFilter) {
                 case "caseAttribute":
-                    rules = createCaseAttributeFilterRules(selectedValues);
+                    rules = createAttributeFilterRules(selectedValues);
                     break;
                 case "caseId":
                     rules = createCaseIdFilterRules(selectedValues);
@@ -1734,7 +1972,114 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
     }
     
     /**
-     * Create filter rules for Case Attribute filtering
+     * Create filter rules for Attribute filtering (both Case and Event attributes)
+     */
+    private List<LogFilterRule> createAttributeFilterRules(List<String> selectedValues) {
+        List<LogFilterRule> rules = new ArrayList<>();
+        
+        try {
+            // Get the selected attribute type (Event vs Case)
+            String selectedAttributeType = "event"; // default to event
+            if (primaryAttributeType != null && primaryAttributeType.getSelectedItem() != null) {
+                selectedAttributeType = primaryAttributeType.getSelectedItem().getValue();
+                LOGGER.info("🔧 Radio button selection: primaryAttributeType={}, selectedItem={}, value={}", 
+                           primaryAttributeType, primaryAttributeType.getSelectedItem(), selectedAttributeType);
+            } else {
+                LOGGER.warn("⚠️ primaryAttributeType is null or has no selected item");
+                if (primaryAttributeType == null) {
+                    LOGGER.warn("⚠️ primaryAttributeType is null");
+                } else {
+                    LOGGER.warn("⚠️ primaryAttributeType.getSelectedItem() is null");
+                }
+            }
+            
+                           // Get the selected attribute
+               String selectedAttribute = "concept:name"; // default
+               if (primaryAttributeCombo != null && primaryAttributeCombo.getSelectedItem() != null) {
+                   Comboitem selectedItem = primaryAttributeCombo.getSelectedItem();
+                   // Try to get value first, then fallback to label if value is null
+                   if (selectedItem.getValue() != null) {
+                       selectedAttribute = String.valueOf(selectedItem.getValue());
+                   } else if (selectedItem.getLabel() != null) {
+                       selectedAttribute = selectedItem.getLabel();
+                   }
+                   LOGGER.info("🔧 Выбранный элемент: value='{}', label='{}', используем: '{}'", 
+                              selectedItem.getValue(), selectedItem.getLabel(), selectedAttribute);
+               }
+               
+               // Add debugging to show what we're creating
+               LOGGER.info("🔧 Создание LogFilterRule: filterType={}, key={}, selectedAttribute={}", 
+                          selectedAttributeType.equals("case") ? "CASE_CASE_ATTRIBUTE" : "EVENT_EVENT_ATTRIBUTE",
+                          selectedAttribute, selectedAttribute);
+            
+            LOGGER.info("🔧 Создание правил фильтрации для атрибута: {} (тип: {})", selectedAttribute, selectedAttributeType);
+            
+            // Получаем условие фильтрации (Retain/Remove)
+            String condition = caseAttributeCondition != null ? caseAttributeCondition.getSelectedItem().getValue() : "retain";
+            Choice choice = "retain".equals(condition) ? Choice.RETAIN : Choice.REMOVE;
+            
+            // Determine filter type based on attribute type and selected attribute
+            FilterType filterType;
+            if ("event".equals(selectedAttributeType)) {
+                if ("Activity".equals(selectedAttribute)) {
+                    filterType = FilterType.EVENT_EVENT_ATTRIBUTE;
+                    selectedAttribute = "concept:name"; // Use concept:name for Activity filtering
+                } else {
+                    filterType = FilterType.EVENT_EVENT_ATTRIBUTE;
+                }
+            } else {
+                filterType = FilterType.CASE_CASE_ATTRIBUTE;
+            }
+            
+            // Создаем RuleValue для каждого выбранного значения
+            Set<RuleValue> ruleValues = new HashSet<>();
+            for (String value : selectedValues) {
+                Set<String> valueSet = new HashSet<>();
+                valueSet.add(value);
+                LOGGER.info("🔧 Создание RuleValue для атрибута: filterType={}, operationType={}, key={}, value={}", 
+                           filterType, OperationType.EQUAL, selectedAttribute, value);
+                RuleValue ruleValue = new RuleValue(
+                    filterType,
+                    OperationType.EQUAL,
+                    selectedAttribute,
+                    valueSet
+                );
+                ruleValues.add(ruleValue);
+                LOGGER.info("RuleValue создан: objectVal={}, stringVal={}, stringSetValue={}", 
+                           ruleValue.getObjectVal(), ruleValue.getStringValue(), ruleValue.getStringSetValue());
+            }
+            
+            // Создаем правило фильтрации используя конструктор напрямую
+            LogFilterRule rule = new LogFilterRuleImpl(
+                choice,
+                Inclusion.ANY_VALUE,
+                selectedAttributeType.equals("case") ? Section.CASE : Section.EVENT,
+                filterType,
+                selectedAttribute,  // Pass the key here
+                ruleValues,
+                null
+            );
+            
+            // Add debugging to show the created rule details
+            LOGGER.info("🔧 Создан LogFilterRule: filterType={}, key='{}', choice={}, inclusion={}, section={}", 
+                       rule.getFilterType(), rule.getKey(), rule.getChoice(), rule.getInclusion(), rule.getSection());
+            
+            rules.add(rule);
+            LOGGER.info("Создано правило фильтрации: {} значений, условие: {}, тип: {}", 
+                       selectedValues.size(), condition, filterType);
+            
+        } catch (Exception e) {
+            LOGGER.error("Ошибка при создании правил фильтрации атрибутов", e);
+            LOGGER.error("Полный стек ошибки:", e);
+            LOGGER.error("Тип ошибки: {}", e.getClass().getSimpleName());
+            LOGGER.error("Сообщение ошибки: {}", e.getMessage());
+        }
+        
+        return rules;
+    }
+    
+    /**
+     * Create filter rules for Case Attribute filtering (legacy method - kept for compatibility)
      */
     private List<LogFilterRule> createCaseAttributeFilterRules(List<String> selectedValues) {
         List<LogFilterRule> rules = new ArrayList<>();
@@ -2191,10 +2536,13 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
                 String selectedAttribute = (selectedItem.getValue() != null) ? String.valueOf(selectedItem.getValue()) : selectedItem.getLabel();
                 LOGGER.info("🔧 Отображение данных для атрибута: {}", selectedAttribute);
                 
-                // Определяем тип атрибута (case или event)
-                boolean isCaseAttribute = selectedAttribute.equals("concept:case:id") || 
-                                       selectedAttribute.equals("concept:name") ||
-                                       selectedAttribute.startsWith("case:");
+                // Определяем тип атрибута (case или event) на основе выбранного типа в radio button
+                String selectedAttributeType = "event"; // default to event
+                if (primaryAttributeType != null && primaryAttributeType.getSelectedItem() != null) {
+                    selectedAttributeType = primaryAttributeType.getSelectedItem().getValue();
+                }
+                
+                boolean isCaseAttribute = "case".equals(selectedAttributeType);
                 
                 LOGGER.info("🔧 Тип атрибута: {}", isCaseAttribute ? "CASE" : "EVENT");
                 
@@ -2210,13 +2558,33 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
                     }
                 } else {
                     // Обрабатываем event attributes
-                    for (ATrace trace : apmLog.getTraces()) {
-                        for (ActivityInstance activityInstance : trace.getActivityInstances()) {
-                            if (activityInstance.getAttributes() != null && 
-                                activityInstance.getAttributes().containsKey(selectedAttribute)) {
-                                String value = activityInstance.getAttributes().get(selectedAttribute).toString();
-                                if (value != null && !value.isEmpty()) {
-                                    attributeValueCounts.put(value, attributeValueCounts.getOrDefault(value, 0) + 1);
+                    if (selectedAttribute.equals("Activity")) {
+                        // Special handling for Activity: count cases (traces) that contain each activity
+                        LOGGER.info("🔧 Специальная обработка статистики для Activity...");
+                        for (ATrace trace : apmLog.getTraces()) {
+                            Set<String> activitiesInTrace = new HashSet<>();
+                            for (ActivityInstance activityInstance : trace.getActivityInstances()) {
+                                String activityName = activityInstance.getName();
+                                if (activityName != null && !activityName.isEmpty()) {
+                                    activitiesInTrace.add(activityName);
+                                }
+                            }
+                            // Count each activity once per trace (case)
+                            for (String activityName : activitiesInTrace) {
+                                attributeValueCounts.put(activityName, attributeValueCounts.getOrDefault(activityName, 0) + 1);
+                            }
+                        }
+                        LOGGER.info("🔧 Статистика Activity: каждая активность подсчитывается один раз на случай");
+                    } else {
+                        // Regular event attributes: count each occurrence
+                        for (ATrace trace : apmLog.getTraces()) {
+                            for (ActivityInstance activityInstance : trace.getActivityInstances()) {
+                                if (activityInstance.getAttributes() != null && 
+                                    activityInstance.getAttributes().containsKey(selectedAttribute)) {
+                                    String value = activityInstance.getAttributes().get(selectedAttribute).toString();
+                                    if (value != null && !value.isEmpty()) {
+                                        attributeValueCounts.put(value, attributeValueCounts.getOrDefault(value, 0) + 1);
+                                    }
                                 }
                             }
                         }
@@ -2226,8 +2594,30 @@ public class AdvancedLogFilterController extends SelectorComposer<Component> {
                 LOGGER.info("🔧 Найдено {} уникальных значений атрибута '{}'", attributeValueCounts.size(), selectedAttribute);
             }
             
-            int totalCases = attributeValueCounts.values().stream().mapToInt(Integer::intValue).sum();
-            LOGGER.info("🔧 Общее количество случаев: {}", totalCases);
+            // Calculate total cases correctly based on attribute type
+            int totalCases;
+            if (apmLog != null && primaryAttributeCombo != null) {
+                Comboitem selectedItem = primaryAttributeCombo.getSelectedItem();
+                if (selectedItem != null) {
+                    String selectedAttribute = (selectedItem.getValue() != null) ? String.valueOf(selectedItem.getValue()) : selectedItem.getLabel();
+                    
+                    if (selectedAttribute.equals("Activity")) {
+                        // For Activity: use total number of cases in the log
+                        totalCases = apmLog.getTraces().size();
+                        LOGGER.info("🔧 Для Activity используем общее количество случаев в логе: {}", totalCases);
+                    } else {
+                        // For other attributes: use sum of attribute counts (existing logic)
+                        totalCases = attributeValueCounts.values().stream().mapToInt(Integer::intValue).sum();
+                        LOGGER.info("🔧 Для других атрибутов используем сумму значений: {}", totalCases);
+                    }
+                } else {
+                    totalCases = attributeValueCounts.values().stream().mapToInt(Integer::intValue).sum();
+                    LOGGER.info("🔧 Fallback: общее количество случаев: {}", totalCases);
+                }
+            } else {
+                totalCases = attributeValueCounts.values().stream().mapToInt(Integer::intValue).sum();
+                LOGGER.info("🔧 Fallback: общее количество случаев: {}", totalCases);
+            }
             
             // Отображаем элементы текущей страницы
             LOGGER.info("🔧 Начинаем добавление элементов в таблицу...");
